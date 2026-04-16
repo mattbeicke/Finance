@@ -10,17 +10,16 @@
             xmlns:fx="http://javafx.com/fxml"
             fx:controller="mattb.controller.MainController"
             prefHeight="750.0" prefWidth="1500.0">
-    <children>
-        <BorderPane prefHeight="750.0" prefWidth="1500.0" fx:id="mainBorderPane">
-            <left>
-                <VBox prefHeight="750.0" prefWidth="100.0" BorderPane.alignment="CENTER">
-                    <children>
-                        <Button alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" text="Dashboard" onAction="#showDashboard"/>
-                        <Button alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" text="Transactions" onAction="#showTransactions"/>
-                        <Button alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" text="Accounts" onAction="#showAccounts"/>
-                    </children>
-                </VBox>
-            </left>
-        </BorderPane>
-    </children>
+    <BorderPane prefHeight="750.0" prefWidth="1500.0" fx:id="mainBorderPane">
+        <left>
+            <VBox prefHeight="750.0" prefWidth="100.0" BorderPane.alignment="CENTER">
+                <Button alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" text="Dashboard"
+                        onAction="#showDashboard"/>
+                <Button alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" text="Transactions"
+                        onAction="#showTransactions"/>
+                <Button alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" text="Accounts"
+                        onAction="#showAccounts"/>
+            </VBox>
+        </left>
+    </BorderPane>
 </AnchorPane>
