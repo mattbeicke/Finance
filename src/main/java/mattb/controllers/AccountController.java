@@ -40,7 +40,7 @@ public class AccountController {
     private final ObservableList<Account> masterData = FXCollections.observableArrayList();
 
     private Connection conn = null;
-    private HashSet<Integer> ignoredAccounts = null;
+    private HashSet<Integer> hiddenAccounts = null;
 
     /**
      * Initializes all FXML items for the account tab
@@ -48,7 +48,7 @@ public class AccountController {
     @FXML
     public void initialize() {
         conn = Main.getConn();
-        ignoredAccounts = Main.getIgnoredAccounts();
+        hiddenAccounts = Main.getHiddenAccounts();
 
         if (colName != null) {
             colName.setCellValueFactory(new PropertyValueFactory<>("name"));
@@ -101,7 +101,7 @@ public class AccountController {
 
             while (rs.next()) {
                 int acc_id = rs.getInt("acc_id");
-                if (acc_id == 0 || ignoredAccounts.contains(acc_id)) continue;
+                if (acc_id == 0 || hiddenAccounts.contains(acc_id)) continue;
                 map.put(acc_id, new Account(
                         rs.getDouble("balance"),
                         rs.getString("type"),

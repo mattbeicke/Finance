@@ -50,9 +50,10 @@ public class TransactionController {
     private DatePicker datePicker;
 
     private final ObservableList<Transaction> masterData = FXCollections.observableArrayList();
+    private HashMap<Integer, Transaction> map;
 
     private Connection conn = null;
-    private HashSet<Integer> ignoredTransactions = null;
+    private HashSet<Integer> hiddenTransactions = null;
 
     /**
      * Initializes all FXML items for the transaction tab
@@ -60,7 +61,7 @@ public class TransactionController {
     @FXML
     public void initialize() {
         conn = Main.getConn();
-        ignoredTransactions = Main.getIgnoredTransactions();
+        hiddenTransactions = Main.getHiddenTransactions();
 
         if (colDate != null) {
             colDate.setCellValueFactory(new PropertyValueFactory<>("date"));
@@ -104,7 +105,7 @@ public class TransactionController {
      * Refreshes the transaction table
      */
     private void refreshTable() {
-        HashMap<Integer, Transaction> map = new HashMap<>();
+        map = new HashMap<>();
         masterData.clear();
 
         String sql = """
@@ -118,7 +119,7 @@ public class TransactionController {
              ResultSet rs = pstmt.executeQuery()) {
 
             while (rs.next()) {
-                if (ignoredTransactions.contains(rs.getInt("t_id"))) continue;
+                if (hiddenTransactions.contains(rs.getInt("t_id"))) continue;
                 if (map.containsKey(rs.getInt("t_id"))) {
                     map.get(rs.getInt("t_id")).setCategory(map.get(rs.getInt("t_id")).getCategory() + ", " + rs.getString("cat_name"));
                 } else {
@@ -309,5 +310,36 @@ public class TransactionController {
     private void cancel(ActionEvent event) {
         Stage stage = (Stage) ((Button) event.getSource()).getScene().getWindow();
         stage.close();
+    }
+
+    private int getId(Transaction t) {
+        for (Integer i : map.keySet()) {
+            if (map.get(i).equals(t)) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+
+    @FXML
+    private void hideSelected() {
+        Transaction selected = transactionTable.getSelectionModel().getSelectedItem();
+        String sql = "insert or ignore into hidden_transactions (t_id) values (?)";
+        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setInt(1, getId(selected));
+
+            pstmt.executeUpdate();
+
+            Main.updateHidden();
+            refreshTable();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    @FXML
+    private void viewHidden(){
+
     }
 }

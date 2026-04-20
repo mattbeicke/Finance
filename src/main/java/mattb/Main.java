@@ -11,8 +11,8 @@ import java.sql.*;
 import java.util.HashSet;
 
 public class Main extends Application {
-    private static HashSet<Integer> ignoredTransactions;
-    private static HashSet<Integer> ignoredAccounts;
+    private static HashSet<Integer> hiddenTransactions;
+    private static HashSet<Integer> hiddenAccounts;
     private static Connection conn;
 
     @Override
@@ -23,26 +23,10 @@ public class Main extends Application {
             e.printStackTrace();
         }
 
-        ignoredTransactions = new HashSet<>();
-        ignoredAccounts = new HashSet<>();
+        hiddenTransactions = new HashSet<>();
+        hiddenAccounts = new HashSet<>();
 
-        try {
-            String sql = "select t_id from ignored_transactions";
-            PreparedStatement pstmt = conn.prepareStatement(sql);
-            ResultSet rs = pstmt.executeQuery();
-            while (rs.next()) {
-                ignoredTransactions.add(rs.getInt("t_id"));
-            }
-
-            sql = "select acc_id from ignored_accounts";
-            pstmt = conn.prepareStatement(sql);
-            rs = pstmt.executeQuery();
-            while (rs.next()) {
-                ignoredAccounts.add(rs.getInt("acc_id"));
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+        updateHidden();
 
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/mattb/controllers/main.fxml"));
         Parent root = loader.load();
@@ -50,12 +34,32 @@ public class Main extends Application {
         stage.show();
     }
 
-    public static HashSet<Integer> getIgnoredTransactions() {
-        return ignoredTransactions;
+    public static void updateHidden(){
+        try {
+            String sql = "select t_id from hidden_transactions";
+            PreparedStatement pstmt = conn.prepareStatement(sql);
+            ResultSet rs = pstmt.executeQuery();
+            while (rs.next()) {
+                hiddenTransactions.add(rs.getInt("t_id"));
+            }
+
+            sql = "select acc_id from hidden_accounts";
+            pstmt = conn.prepareStatement(sql);
+            rs = pstmt.executeQuery();
+            while (rs.next()) {
+                hiddenAccounts.add(rs.getInt("acc_id"));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
-    public static HashSet<Integer> getIgnoredAccounts() {
-        return ignoredAccounts;
+    public static HashSet<Integer> getHiddenTransactions() {
+        return hiddenTransactions;
+    }
+
+    public static HashSet<Integer> getHiddenAccounts() {
+        return hiddenAccounts;
     }
 
     public static Connection getConn() {
