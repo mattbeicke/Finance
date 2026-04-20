@@ -43,6 +43,7 @@ public class Main extends Application {
 
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/mattb/controllers/main.fxml"));
         Parent root = loader.load();
+        stage.setTitle("Matt's Finance App");
         stage.setScene(new Scene(root));
         stage.show();
     }

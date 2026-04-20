@@ -11,6 +11,7 @@
             <Button fx:id="addType" onAction="#addNewType">Add New Type</Button>
             <Button fx:id="hideAccount" onAction="#hideAccount">Hide Account</Button>
             <Button fx:id="viewHidden" onAction="#viewHidden">View Hidden</Button>
+            <Button onAction="#editSelected">Edit Selected</Button>
         </HBox>
         <TableView prefHeight="750.0" prefWidth="1400.0" fx:id="accountTable">
             <columnResizePolicy>

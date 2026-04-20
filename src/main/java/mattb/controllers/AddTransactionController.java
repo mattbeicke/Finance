@@ -31,39 +31,38 @@ public class AddTransactionController {
     private DatePicker datePicker;
 
     private Connection conn = null;
-
     private boolean editing;
-
     private int id;
 
+    /**
+     * Initializes all FXML items for the add transaction modal
+     */
     @FXML
     public void initialize() {
         conn = Main.getConn();
 
-        if (fromCombo != null && toCombo != null) {
-            ObservableList<String> accountNames = FXCollections.observableArrayList();
+        ObservableList<String> accountNames = FXCollections.observableArrayList();
 
-            String sql = "select name from account where acc_id not in (select acc_id from hidden_accounts)";
-            try (PreparedStatement pstmt = conn.prepareStatement(sql);
-                 ResultSet rs = pstmt.executeQuery()) {
+        String sql = "select name from account where acc_id not in (select acc_id from hidden_accounts)";
+        try (PreparedStatement pstmt = conn.prepareStatement(sql);
+             ResultSet rs = pstmt.executeQuery()) {
 
-                while (rs.next()) {
-                    accountNames.add(rs.getString("name"));
-                }
-
-                accountNames.add("Add more via Accounts tab");
-                fromCombo.setItems(accountNames);
-                toCombo.setItems(accountNames);
-            } catch (SQLException e) {
-                System.err.println("Could not load accounts: " + e.getMessage());
+            while (rs.next()) {
+                accountNames.add(rs.getString("name"));
             }
 
-            amountField.textProperty().addListener((_, oldVal, newVal) -> {
-                if (!newVal.matches("\\d*(\\.\\d*)?")) {
-                    amountField.setText(oldVal);
-                }
-            });
+            accountNames.add("Add more via Accounts tab");
+            fromCombo.setItems(accountNames);
+            toCombo.setItems(accountNames);
+        } catch (SQLException e) {
+            System.err.println("Could not load accounts: " + e.getMessage());
         }
+
+        amountField.textProperty().addListener((_, oldVal, newVal) -> {
+            if (!newVal.matches("\\d*(\\.\\d*)?")) {
+                amountField.setText(oldVal);
+            }
+        });
     }
 
     /**
@@ -225,6 +224,12 @@ public class AddTransactionController {
         stage.close();
     }
 
+    /**
+     * Sets fields of transaction edit modal
+     *
+     * @param t  {@link Transaction} who is being edited
+     * @param id Database id of {@link Transaction} who is being edited
+     */
     public void setFields(Transaction t, int id) {
         editing = true;
         this.id = id;

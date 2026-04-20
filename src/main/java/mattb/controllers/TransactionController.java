@@ -39,15 +39,12 @@ public class TransactionController {
     private Button hideButton;
     @FXML
     private Button viewButton;
-    @FXML
-    private Button edit;
 
     private final ObservableList<Transaction> masterData = FXCollections.observableArrayList();
     private HashMap<Integer, Transaction> map;
-
-    private Connection conn = null;
     private HashSet<Integer> hiddenTransactions = null;
 
+    private Connection conn = null;
     private boolean onHidden = false;
 
     /**
@@ -206,7 +203,11 @@ public class TransactionController {
         refreshTable();
     }
 
-    public void editSelected() {
+    /**
+     * Setup for editing a transaction
+     */
+    @FXML
+    private void editSelected() {
         Transaction selected = transactionTable.getSelectionModel().getSelectedItem();
         int id = getId(selected);
         try {
