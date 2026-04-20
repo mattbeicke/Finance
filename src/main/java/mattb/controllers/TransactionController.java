@@ -110,7 +110,7 @@ public class TransactionController {
     }
 
     /**
-     * Refreshes the transaction table
+     * Refreshes the transaction table with either not hidden or hidden transactions
      */
     private void refreshTable() {
         String sql;
@@ -332,6 +332,12 @@ public class TransactionController {
         stage.close();
     }
 
+    /**
+     * Gets the id of the inputted {@link Transaction}
+     *
+     * @param t {@link Transaction} to get the id of
+     * @return database id of the {@link Transaction} or -1 if its not found
+     */
     private int getId(Transaction t) {
         for (Integer i : map.keySet()) {
             if (map.get(i).equals(t)) {
@@ -341,6 +347,9 @@ public class TransactionController {
         return -1;
     }
 
+    /**
+     * Hides or unhides currently selected transaction in list
+     */
     @FXML
     private void hideSelected() {
         Transaction selected = transactionTable.getSelectionModel().getSelectedItem();
@@ -363,6 +372,9 @@ public class TransactionController {
         }
     }
 
+    /**
+     * Toggles transaction list between hidden and not hidden transactions
+     */
     @FXML
     private void viewHidden() {
         if (!onHidden) {

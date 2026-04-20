@@ -15,6 +15,15 @@ public class Main extends Application {
     private static HashSet<Integer> hiddenAccounts;
     private static Connection conn;
 
+    /**
+     * Initializes Database {@link Connection}, Hidden transaction and account {@link HashSet}, and the GUI
+     *
+     * @param stage the primary stage for this application, onto which
+     *              the application scene can be set.
+     *              Applications may create other stages, if needed, but they will not be
+     *              primary stages.
+     * @throws IOException If something goes wrong?
+     */
     @Override
     public void start(Stage stage) throws IOException {
         try {
@@ -34,7 +43,10 @@ public class Main extends Application {
         stage.show();
     }
 
-    public static void updateHidden(){
+    /**
+     * Recalculates the hidden transaction and account lists
+     */
+    public static void updateHidden() {
         hiddenTransactions.clear();
         hiddenAccounts.clear();
 
@@ -57,14 +69,29 @@ public class Main extends Application {
         }
     }
 
+    /**
+     * Gets the hidden transaction list
+     *
+     * @return hidden transaction list
+     */
     public static HashSet<Integer> getHiddenTransactions() {
         return hiddenTransactions;
     }
 
+    /**
+     * Gets the hidden account list
+     *
+     * @return hidden account list
+     */
     public static HashSet<Integer> getHiddenAccounts() {
         return hiddenAccounts;
     }
 
+    /**
+     * Gets the database {@link Connection}
+     *
+     * @return Database {@link Connection}
+     */
     public static Connection getConn() {
         return conn;
     }
