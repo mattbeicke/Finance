@@ -1,3 +1,5 @@
 goals
 
 restructure resources folder
+
+update all sql exceptions to do a rollback

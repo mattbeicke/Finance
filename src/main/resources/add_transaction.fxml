@@ -17,9 +17,9 @@
         </HBox>
         <HBox alignment="CENTER" spacing="15.0">
             <Label text="To"/>
-            <ComboBox/>
+            <ComboBox fx:id="toCombo"/>
         </HBox>
-        <Label text="Category:"/>
+        <Label text="Category (comma separated):"/>
         <TextField fx:id="categoryField"/>
         <Label text="Amount:"/>
         <TextField fx:id="amountField"/>
