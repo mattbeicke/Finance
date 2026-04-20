@@ -1,4 +1,4 @@
-package mattb.controller;
+package mattb.controllers;
 
 import java.sql.Connection;
 import java.sql.ResultSet;

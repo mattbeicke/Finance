@@ -1,4 +1,4 @@
-package mattb.controller;
+package mattb.controllers;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -11,11 +11,13 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import mattb.Main;
 import mattb.model.Account;
 
 import java.io.IOException;
 import java.sql.*;
 import java.util.HashMap;
+import java.util.HashSet;
 
 public class AccountController {
     @FXML
@@ -38,19 +40,15 @@ public class AccountController {
     private final ObservableList<Account> masterData = FXCollections.observableArrayList();
 
     private Connection conn = null;
+    private HashSet<Integer> ignoredAccounts = null;
 
     /**
-     * Initializes all FXML items and a database connection for the account tab
+     * Initializes all FXML items for the account tab
      */
     @FXML
     public void initialize() {
-        if (conn == null) {
-            try {
-                conn = DriverManager.getConnection("jdbc:sqlite:finance.db");
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-        }
+        conn = Main.getConn();
+        ignoredAccounts = Main.getIgnoredAccounts();
 
         if (colName != null) {
             colName.setCellValueFactory(new PropertyValueFactory<>("name"));
@@ -102,8 +100,9 @@ public class AccountController {
              ResultSet rs = pstmt.executeQuery()) {
 
             while (rs.next()) {
-                if (rs.getInt("acc_id") == 0) continue;
-                map.put(rs.getInt("acc_id"), new Account(
+                int acc_id = rs.getInt("acc_id");
+                if (acc_id == 0 || ignoredAccounts.contains(acc_id)) continue;
+                map.put(acc_id, new Account(
                         rs.getDouble("balance"),
                         rs.getString("type"),
                         rs.getString("name")
@@ -122,7 +121,7 @@ public class AccountController {
     @FXML
     private void addNewAccount() {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/add_account.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/mattb/controllers/add_account.fxml"));
             Parent root = loader.load();
 
             Stage stage = new Stage();
@@ -143,7 +142,7 @@ public class AccountController {
     @FXML
     private void addNewType() {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/add_type.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/mattb/controllers/add_type.fxml"));
             Parent root = loader.load();
 
             Stage stage = new Stage();

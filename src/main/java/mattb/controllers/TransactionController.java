@@ -1,4 +1,4 @@
-package mattb.controller;
+package mattb.controllers;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -11,6 +11,7 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import mattb.Main;
 import mattb.model.Transaction;
 
 import java.io.IOException;
@@ -18,6 +19,7 @@ import java.sql.*;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.HashMap;
+import java.util.HashSet;
 
 public class TransactionController {
     @FXML
@@ -50,19 +52,15 @@ public class TransactionController {
     private final ObservableList<Transaction> masterData = FXCollections.observableArrayList();
 
     private Connection conn = null;
+    private HashSet<Integer> ignoredTransactions = null;
 
     /**
-     * Initializes all FXML items and a database connection for the transaction tab
+     * Initializes all FXML items for the transaction tab
      */
     @FXML
     public void initialize() {
-        if (conn == null) {
-            try {
-                conn = DriverManager.getConnection("jdbc:sqlite:finance.db");
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-        }
+        conn = Main.getConn();
+        ignoredTransactions = Main.getIgnoredTransactions();
 
         if (colDate != null) {
             colDate.setCellValueFactory(new PropertyValueFactory<>("date"));
@@ -120,6 +118,7 @@ public class TransactionController {
              ResultSet rs = pstmt.executeQuery()) {
 
             while (rs.next()) {
+                if (ignoredTransactions.contains(rs.getInt("t_id"))) continue;
                 if (map.containsKey(rs.getInt("t_id"))) {
                     map.get(rs.getInt("t_id")).setCategory(map.get(rs.getInt("t_id")).getCategory() + ", " + rs.getString("cat_name"));
                 } else {
@@ -146,7 +145,7 @@ public class TransactionController {
     @FXML
     private void addNew() {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/add_transaction.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/mattb/controllers/add_transaction.fxml"));
             Parent root = loader.load();
 
             Stage stage = new Stage();
