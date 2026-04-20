@@ -4,14 +4,19 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.TextField;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 import mattb.Main;
 import mattb.model.Transaction;
 
+import java.io.IOException;
 import java.sql.*;
 import java.time.LocalDate;
 import java.time.ZoneId;
@@ -33,6 +38,7 @@ public class AddTransactionController {
     private Connection conn = null;
     private boolean editing;
     private int id;
+    private boolean update = false;
 
     /**
      * Initializes all FXML items for the add transaction modal
@@ -41,28 +47,30 @@ public class AddTransactionController {
     public void initialize() {
         conn = Main.getConn();
 
-        ObservableList<String> accountNames = FXCollections.observableArrayList();
+        if (fromCombo != null && toCombo != null) {
+            ObservableList<String> accountNames = FXCollections.observableArrayList();
 
-        String sql = "select name from account where acc_id not in (select acc_id from hidden_accounts)";
-        try (PreparedStatement pstmt = conn.prepareStatement(sql);
-             ResultSet rs = pstmt.executeQuery()) {
+            String sql = "select name from account where acc_id not in (select acc_id from hidden_accounts)";
+            try (PreparedStatement pstmt = conn.prepareStatement(sql);
+                 ResultSet rs = pstmt.executeQuery()) {
 
-            while (rs.next()) {
-                accountNames.add(rs.getString("name"));
+                while (rs.next()) {
+                    accountNames.add(rs.getString("name"));
+                }
+
+                accountNames.add("Add more via Accounts tab");
+                fromCombo.setItems(accountNames);
+                toCombo.setItems(accountNames);
+            } catch (SQLException e) {
+                System.err.println("Could not load accounts: " + e.getMessage());
             }
 
-            accountNames.add("Add more via Accounts tab");
-            fromCombo.setItems(accountNames);
-            toCombo.setItems(accountNames);
-        } catch (SQLException e) {
-            System.err.println("Could not load accounts: " + e.getMessage());
+            amountField.textProperty().addListener((_, oldVal, newVal) -> {
+                if (!newVal.matches("\\d*(\\.\\d*)?")) {
+                    amountField.setText(oldVal);
+                }
+            });
         }
-
-        amountField.textProperty().addListener((_, oldVal, newVal) -> {
-            if (!newVal.matches("\\d*(\\.\\d*)?")) {
-                amountField.setText(oldVal);
-            }
-        });
     }
 
     /**
@@ -102,6 +110,29 @@ public class AddTransactionController {
             pstmt.executeUpdate();
 
             addCategory();
+
+            try {
+                FXMLLoader loader = new FXMLLoader(getClass().getResource("/mattb/controllers/update_balance.fxml"));
+                Parent root = loader.load();
+
+                AddTransactionController popupController = loader.getController();
+
+                Stage stage = new Stage();
+                stage.initModality(Modality.APPLICATION_MODAL);
+                stage.setTitle("Update Balances");
+                stage.setScene(new Scene(root));
+                stage.showAndWait();
+
+                if (popupController.update) {
+                    updateBalances();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            if (update) {
+                updateBalances();
+            }
 
             ((Stage) amountField.getScene().getWindow()).close();
         } catch (Exception e) {
@@ -156,8 +187,7 @@ public class AddTransactionController {
         // Find transaction id
         int t_id;
         String sql = "select max(t_id) as t_id from \"transaction\"";
-        try (Connection conn = DriverManager.getConnection("jdbc:sqlite:finance.db");
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
             ResultSet rs = pstmt.executeQuery();
             rs.next();
@@ -248,5 +278,47 @@ public class AddTransactionController {
             memoField.setText(t.getMemo());
         }
         datePicker.setValue(LocalDate.ofInstant(t.getDate().toInstant(), ZoneId.systemDefault()));
+    }
+
+    @FXML
+    private void yes(ActionEvent event) {
+        update = true;
+        cancel(event);
+    }
+
+    @FXML
+    private void no(ActionEvent event) {
+        update = false;
+        cancel(event);
+    }
+
+    private void updateBalances() {
+        double amount = Double.parseDouble(amountField.getText());
+        int fromAccId = getAccId(fromCombo.getValue());
+        int toAccId = getAccId(toCombo.getValue());
+
+        if (fromAccId != 0) {
+            String sql = "update account set balance=balance-? where acc_id=?";
+            try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+                pstmt.setDouble(1, amount);
+                pstmt.setInt(2, fromAccId);
+
+                pstmt.executeUpdate();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
+        if (toAccId != 0) {
+            String sql = "update account set balance=balance+? where acc_id=?";
+            try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+                pstmt.setDouble(1, amount);
+                pstmt.setInt(2, toAccId);
+
+                pstmt.executeUpdate();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
     }
 }
