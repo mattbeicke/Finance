@@ -16,9 +16,7 @@ import mattb.model.Transaction;
 import java.io.IOException;
 import java.sql.*;
 import java.time.LocalDate;
-import java.time.LocalTime;
 import java.time.ZoneId;
-import java.time.ZoneOffset;
 import java.util.HashMap;
 
 public class TransactionController {
@@ -49,10 +47,13 @@ public class TransactionController {
     @FXML
     private DatePicker datePicker;
 
-    private ObservableList<Transaction> masterData = FXCollections.observableArrayList();
+    private final ObservableList<Transaction> masterData = FXCollections.observableArrayList();
 
     private Connection conn = null;
 
+    /**
+     * Initializes all FXML items and a database connection for the transaction tab
+     */
     @FXML
     public void initialize() {
         if (conn == null) {
@@ -93,7 +94,7 @@ public class TransactionController {
                 System.err.println("Could not load accounts: " + e.getMessage());
             }
 
-            amountField.textProperty().addListener((obs, oldVal, newVal) -> {
+            amountField.textProperty().addListener((_, oldVal, newVal) -> {
                 if (!newVal.matches("\\d*(\\.\\d*)?")) {
                     amountField.setText(oldVal);
                 }
@@ -101,6 +102,9 @@ public class TransactionController {
         }
     }
 
+    /**
+     * Refreshes the transaction table
+     */
     private void refreshTable() {
         HashMap<Integer, Transaction> map = new HashMap<>();
         masterData.clear();
@@ -136,6 +140,9 @@ public class TransactionController {
         masterData.addAll(map.values());
     }
 
+    /**
+     * Opens the "create new transaction" modal
+     */
     @FXML
     private void addNew() {
         try {
@@ -154,6 +161,12 @@ public class TransactionController {
         }
     }
 
+    /**
+     * Gets an account id from an account name
+     *
+     * @param accName Account name
+     * @return Account ID associated with the account name or -1 if no account was found
+     */
     private int getAccId(String accName) {
         String sql = "select acc_id from account where name=?";
         try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -171,6 +184,10 @@ public class TransactionController {
         return -1;
     }
 
+    /**
+     * Activates when save button is pressed on the "create transaction" modal.
+     * Populates the transaction table with the provided data
+     */
     @FXML
     private void onSave() {
         if (fromCombo.getValue().equals("Add more via Accounts tab") || toCombo.getValue().equals("Add more via Accounts tab")) {
@@ -204,6 +221,11 @@ public class TransactionController {
         }
     }
 
+    /**
+     * Creates a category if it does not exist
+     *
+     * @param cat Category to add if needed
+     */
     private void createCatIfNeeded(String cat) {
         String sql = "insert or ignore into category(cat_name) values (?)";
         try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -215,7 +237,11 @@ public class TransactionController {
         }
     }
 
+    /**
+     * Populates the tcat table for the transaction
+     */
     private void addCategory() {
+        // Find transaction id
         int t_id;
         String sql = "select max(t_id) as t_id from \"transaction\"";
         try (Connection conn = DriverManager.getConnection("jdbc:sqlite:finance.db");
@@ -229,6 +255,7 @@ public class TransactionController {
             return;
         }
 
+        // Get all categories the user entered
         String[] categories = categoryField.getText().split(",\\s*");
         int[] cats = new int[categories.length];
 
@@ -248,6 +275,7 @@ public class TransactionController {
             }
         }
 
+        // Update the tcat table
         sql = "insert into tcat(trans, cat) values (?,?)";
         try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
             conn.setAutoCommit(false);
@@ -262,17 +290,22 @@ public class TransactionController {
         } catch (Exception e) {
             if (conn != null) try {
                 conn.rollback();
-            } catch (Exception ex) {
+            } catch (Exception ignored) {
             }
             e.printStackTrace();
         } finally {
             try {
                 conn.setAutoCommit(true);
-            } catch (Exception ex) {
+            } catch (Exception ignored) {
             }
         }
     }
 
+    /**
+     * Exits the "create new transaction" modal
+     *
+     * @param event Button press event
+     */
     @FXML
     private void cancel(ActionEvent event) {
         Stage stage = (Stage) ((Button) event.getSource()).getScene().getWindow();
