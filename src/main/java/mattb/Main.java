@@ -15,6 +15,10 @@ public class Main extends Application {
     private static HashSet<Integer> hiddenAccounts;
     private static Connection conn;
 
+    static void main() {
+        launch();
+    }
+
     /**
      * Initializes Database {@link Connection}, Hidden transaction and account {@link HashSet}, and the GUI
      *
