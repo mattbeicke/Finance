@@ -116,6 +116,9 @@ public class AccountController {
         masterData.addAll(map.values());
     }
 
+    /**
+     * Opens create new account modal
+     */
     @FXML
     private void addNewAccount() {
         try {
@@ -134,6 +137,9 @@ public class AccountController {
         }
     }
 
+    /**
+     * Opens create new account type modal
+     */
     @FXML
     private void addNewType() {
         try {
@@ -142,20 +148,54 @@ public class AccountController {
 
             Stage stage = new Stage();
             stage.initModality(Modality.APPLICATION_MODAL);
-            stage.setTitle("Add New Type");
+            stage.setTitle("Add New Account Type");
             stage.setScene(new Scene(root));
-            stage.showAndWait();
-
-            refreshTable();
+            stage.show();
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    @FXML
-    private void onAccountSave() {
+    public int getType() {
+        String sql = "select type_id from account_type where type=?";
+        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setString(1, typeCombo.getValue());
+
+            ResultSet rs = pstmt.executeQuery();
+
+            if (!rs.next()) {
+                return -1;
+            }
+
+            return rs.getInt("type_id");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return -1;
     }
 
+    /**
+     * Saves new account
+     */
+    @FXML
+    private void onAccountSave() {
+        String sql = "insert or ignore into account (acc_type, balance, name) VALUES (?,?,?)";
+        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setInt(1, getType());
+            pstmt.setDouble(2, Double.parseDouble(balanceField.getText()));
+            pstmt.setString(3, nameField.getText());
+
+            pstmt.executeUpdate();
+
+            ((Stage) typeCombo.getScene().getWindow()).close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Saves new type
+     */
     @FXML
     private void onTypeSave() {
         if (typeField.getText().isBlank()) return;

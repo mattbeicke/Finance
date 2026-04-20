@@ -3,6 +3,7 @@ goals
 restructure resources folder
 
 update all sql exceptions to do a rollback
+also make sure to do checks on the helper methods if their return is -1 or whatever
 
 
 update adding transactions to include section that adds and subtracts to balance of accounts
