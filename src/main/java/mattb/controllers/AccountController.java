@@ -13,7 +13,6 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import mattb.Main;
 import mattb.model.Account;
-import mattb.model.Transaction;
 
 import java.io.IOException;
 import java.sql.*;

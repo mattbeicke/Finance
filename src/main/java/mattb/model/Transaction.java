@@ -82,16 +82,4 @@ public class Transaction {
     public int hashCode() {
         return Objects.hash(toAccountName, fromAccountName, amount, category, memo, date);
     }
-
-    @Override
-    public String toString() {
-        return "Transaction{" +
-                "toAccountName='" + toAccountName + '\'' +
-                ", fromAccountName='" + fromAccountName + '\'' +
-                ", amount=" + amount +
-                ", category='" + category + '\'' +
-                ", memo='" + memo + '\'' +
-                ", date=" + date +
-                '}';
-    }
 }
