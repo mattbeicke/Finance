@@ -13,7 +13,8 @@ public class MainController {
 
     public void showDashboard() {
         try {
-            Parent view = FXMLLoader.load(getClass().getResource("/mattb/controllers/dashboard.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/mattb/controllers/dashboard.fxml"));
+            Parent view = loader.load();
             mainBorderPane.setCenter(view);
         } catch (IOException e) {
             e.printStackTrace();
@@ -22,7 +23,8 @@ public class MainController {
 
     public void showTransactions() {
         try {
-            Parent view = FXMLLoader.load(getClass().getResource("/mattb/controllers/transactions.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/mattb/controllers/transactions.fxml"));
+            Parent view = loader.load();
             mainBorderPane.setCenter(view);
         } catch (IOException e) {
             e.printStackTrace();
@@ -31,7 +33,8 @@ public class MainController {
 
     public void showAccounts() {
         try {
-            Parent view = FXMLLoader.load(getClass().getResource("/mattb/controllers/accounts.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/mattb/controllers/accounts.fxml"));
+            Parent view = loader.load();
             mainBorderPane.setCenter(view);
         } catch (IOException e) {
             e.printStackTrace();
