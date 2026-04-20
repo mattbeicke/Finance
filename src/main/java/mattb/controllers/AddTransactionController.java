@@ -280,23 +280,37 @@ public class AddTransactionController {
         datePicker.setValue(LocalDate.ofInstant(t.getDate().toInstant(), ZoneId.systemDefault()));
     }
 
+    /**
+     * Indicates a 'yes' answer to the update balances modal
+     *
+     * @param event Button press {@link ActionEvent}
+     */
     @FXML
     private void yes(ActionEvent event) {
         update = true;
         cancel(event);
     }
 
+    /**
+     * Indicates a 'no' answer to the update balances modal
+     *
+     * @param event Button press {@link ActionEvent}
+     */
     @FXML
     private void no(ActionEvent event) {
         update = false;
         cancel(event);
     }
 
+    /**
+     * Updates account balances (if they are not the reserved external one)
+     */
     private void updateBalances() {
         double amount = Double.parseDouble(amountField.getText());
         int fromAccId = getAccId(fromCombo.getValue());
         int toAccId = getAccId(toCombo.getValue());
 
+        // Update from account's balance
         if (fromAccId != 0) {
             String sql = "update account set balance=balance-? where acc_id=?";
             try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -309,6 +323,7 @@ public class AddTransactionController {
             }
         }
 
+        // Update to account's balance
         if (toAccId != 0) {
             String sql = "update account set balance=balance+? where acc_id=?";
             try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
