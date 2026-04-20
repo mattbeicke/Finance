@@ -156,6 +156,11 @@ public class AccountController {
         }
     }
 
+    /**
+     * Gets the id number of the currently selected type
+     *
+     * @return id number that corresponds to the type selected in the type combo box
+     */
     public int getType() {
         String sql = "select type_id from account_type where type=?";
         try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
