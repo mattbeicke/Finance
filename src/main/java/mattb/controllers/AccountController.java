@@ -251,7 +251,7 @@ public class AccountController {
      * Gets the id of the inputted {@link Account}
      *
      * @param a {@link Account} to get the id of
-     * @return database id of the {@link Account} or -1 if its not found
+     * @return database id of the {@link Account} or -1 if it's not found
      */
     private int getId(Account a) {
         for (Integer i : map.keySet()) {

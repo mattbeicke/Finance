@@ -86,7 +86,7 @@ public class TransactionController {
         if (fromCombo != null && toCombo != null) {
             ObservableList<String> accountNames = FXCollections.observableArrayList();
 
-            String sql = "select name from account";
+            String sql = "select name from account where acc_id not in (select acc_id from hidden_accounts)";
             try (PreparedStatement pstmt = conn.prepareStatement(sql);
                  ResultSet rs = pstmt.executeQuery()) {
 
@@ -336,7 +336,7 @@ public class TransactionController {
      * Gets the id of the inputted {@link Transaction}
      *
      * @param t {@link Transaction} to get the id of
-     * @return database id of the {@link Transaction} or -1 if its not found
+     * @return database id of the {@link Transaction} or -1 if it's not found
      */
     private int getId(Transaction t) {
         for (Integer i : map.keySet()) {
