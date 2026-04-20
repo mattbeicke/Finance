@@ -7,8 +7,10 @@
             xmlns:fx="http://javafx.com/fxml/1" fx:controller="mattb.controllers.AccountController">
     <VBox BorderPane.alignment="CENTER">
         <HBox>
-            <Button onAction="#addNewAccount">Add New Account</Button>
-            <Button onAction="#addNewType">Add New Type</Button>
+            <Button fx:id="addAccount" onAction="#addNewAccount">Add New Account</Button>
+            <Button fx:id="addType" onAction="#addNewType">Add New Type</Button>
+            <Button fx:id="hideAccount" onAction="#hideAccount">Hide Account</Button>
+            <Button fx:id="viewHidden" onAction="#viewHidden">View Hidden</Button>
         </HBox>
         <TableView prefHeight="750.0" prefWidth="1400.0" fx:id="accountTable">
             <columnResizePolicy>

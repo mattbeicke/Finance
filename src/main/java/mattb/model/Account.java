@@ -1,5 +1,7 @@
 package mattb.model;
 
+import java.util.Objects;
+
 public class Account {
     double balance;
     String type;
@@ -36,5 +38,17 @@ public class Account {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        Account account = (Account) o;
+        return Double.compare(balance, account.balance) == 0 && Objects.equals(type, account.type) && Objects.equals(name, account.name);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(balance, type, name);
     }
 }

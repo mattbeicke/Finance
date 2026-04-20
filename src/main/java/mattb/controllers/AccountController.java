@@ -36,11 +36,22 @@ public class AccountController {
     private TextField balanceField;
     @FXML
     private TextField typeField;
+    @FXML
+    private Button addAccount;
+    @FXML
+    private Button addType;
+    @FXML
+    private Button hideAccount;
+    @FXML
+    private Button viewHidden;
 
     private final ObservableList<Account> masterData = FXCollections.observableArrayList();
+    private HashMap<Integer, Account> map;
 
     private Connection conn = null;
     private HashSet<Integer> hiddenAccounts = null;
+
+    private boolean onHidden = false;
 
     /**
      * Initializes all FXML items for the account tab
@@ -89,19 +100,28 @@ public class AccountController {
      * Refreshes the Account table
      */
     private void refreshTable() {
-        HashMap<Integer, Account> map = new HashMap<>();
+        map = new HashMap<>();
         masterData.clear();
 
-        String sql = """
-                select acc_id, name,balance,type from account
-                left join account_type on acc_type = type_id
-                """;
+        String sql;
+        if (!onHidden) {
+            sql = """
+                    select acc_id, name,balance,type from account
+                    left join account_type on acc_type = type_id
+                    """;
+        } else {
+            sql = """
+                    select a.acc_id, name,balance,type from account as a
+                    join hidden_accounts ha on a.acc_id = ha.acc_id
+                    left join account_type on acc_type = type_id
+                    """;
+        }
         try (PreparedStatement pstmt = conn.prepareStatement(sql);
              ResultSet rs = pstmt.executeQuery()) {
 
             while (rs.next()) {
                 int acc_id = rs.getInt("acc_id");
-                if (acc_id == 0 || hiddenAccounts.contains(acc_id)) continue;
+                if (acc_id == 0 || (!onHidden && hiddenAccounts.contains(acc_id))) continue;
                 map.put(acc_id, new Account(
                         rs.getDouble("balance"),
                         rs.getString("type"),
@@ -225,5 +245,72 @@ public class AccountController {
     private void cancel(ActionEvent event) {
         Stage stage = (Stage) ((Button) event.getSource()).getScene().getWindow();
         stage.close();
+    }
+
+    /**
+     * Gets the id of the inputted {@link Account}
+     *
+     * @param a {@link Account} to get the id of
+     * @return database id of the {@link Account} or -1 if its not found
+     */
+    private int getId(Account a) {
+        for (Integer i : map.keySet()) {
+            if (map.get(i).equals(a)) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    /**
+     * Hides or unhides currently selected account in list
+     */
+    @FXML
+    private void hideAccount() {
+        Account selected = accountTable.getSelectionModel().getSelectedItem();
+        String sql;
+        if (onHidden) {
+            sql = "delete from hidden_accounts where acc_id=?";
+        } else {
+            sql = "insert or ignore into hidden_accounts (acc_id) values (?)";
+        }
+
+        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setInt(1, getId(selected));
+
+            pstmt.executeUpdate();
+
+            Main.updateHidden();
+            refreshTable();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Toggles account list between hidden and not hidden accounts
+     */
+    @FXML
+    private void viewHidden() {
+        if (!onHidden) {
+            onHidden = true;
+            addAccount.setVisible(false);
+            addAccount.setManaged(false);
+            addType.setVisible(false);
+            addType.setManaged(false);
+            hideAccount.setText("Unhide Selected");
+            viewHidden.setText("Reset View");
+        } else {
+            onHidden = false;
+            addAccount.setVisible(true);
+            addAccount.setManaged(true);
+            addType.setVisible(true);
+            addType.setManaged(true);
+            hideAccount.setText("Hide Selected");
+            viewHidden.setText("View Hidden");
+        }
+
+        Main.updateHidden();
+        refreshTable();
     }
 }
