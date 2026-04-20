@@ -3,8 +3,9 @@ goals
 update all sql exceptions to do a rollback
 also make sure to do checks on the helper methods if their return is -1 or whatever
 additionally must do checks for emptys <-- important
+additionally+1 DO NULL CHECKS ALOT
 
 
 update adding transactions to include section that adds and subtracts to balance of accounts
 
-add modify account and modify transaction buttons (need anyway for account to do balance adjustments)
+add modify account button
