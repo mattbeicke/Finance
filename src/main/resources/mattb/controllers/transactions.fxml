@@ -7,9 +7,9 @@
             xmlns:fx="http://javafx.com/fxml/1" fx:controller="mattb.controllers.TransactionController">
     <VBox BorderPane.alignment="CENTER">
         <HBox>
-            <Button onAction="#addNew">Add New</Button>
-            <Button onAction="#hideSelected">Hide Selected</Button>
-            <Button onAction="#viewHidden">View Hidden</Button>
+            <Button fx:id="addButton" onAction="#addNew">Add New</Button>
+            <Button fx:id="hideButton" onAction="#hideSelected">Hide Selected</Button>
+            <Button fx:id="viewButton" onAction="#viewHidden">View Hidden</Button>
         </HBox>
         <TableView prefHeight="750.0" prefWidth="1400.0" fx:id="transactionTable">
             <columnResizePolicy>

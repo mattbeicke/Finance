@@ -35,6 +35,9 @@ public class Main extends Application {
     }
 
     public static void updateHidden(){
+        hiddenTransactions.clear();
+        hiddenAccounts.clear();
+
         try {
             String sql = "select t_id from hidden_transactions";
             PreparedStatement pstmt = conn.prepareStatement(sql);

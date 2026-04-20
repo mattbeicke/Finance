@@ -48,12 +48,20 @@ public class TransactionController {
     private TextField memoField;
     @FXML
     private DatePicker datePicker;
+    @FXML
+    private Button addButton;
+    @FXML
+    private Button hideButton;
+    @FXML
+    private Button viewButton;
 
     private final ObservableList<Transaction> masterData = FXCollections.observableArrayList();
     private HashMap<Integer, Transaction> map;
 
     private Connection conn = null;
     private HashSet<Integer> hiddenTransactions = null;
+
+    private boolean onHidden = false;
 
     /**
      * Initializes all FXML items for the transaction tab
@@ -105,21 +113,33 @@ public class TransactionController {
      * Refreshes the transaction table
      */
     private void refreshTable() {
+        String sql;
+        if (!onHidden) {
+            sql = """
+                    select t_id, date, fa.name as from_acc_name, ta.name as to_acc_name, amount, memo, cat_name from "transaction"
+                    left join tcat on t_id = trans
+                    left join category on cat = cat_id
+                    left join account ta on to_acc = ta.acc_id
+                    left join account fa on from_acc = fa.acc_id
+                    """;
+        } else {
+            sql = """
+                    select t.t_id, date, fa.name as from_acc_name, ta.name as to_acc_name, amount, memo, cat_name from "transaction" t
+                    join hidden_transactions ht on ht.t_id = t.t_id
+                    left join tcat on t.t_id = trans
+                    left join category on cat = cat_id
+                    left join account ta on to_acc = ta.acc_id
+                    left join account fa on from_acc = fa.acc_id
+                    """;
+        }
         map = new HashMap<>();
         masterData.clear();
 
-        String sql = """
-                select t_id, date, fa.name as from_acc_name, ta.name as to_acc_name, amount, memo, cat_name from "transaction"
-                left join tcat on t_id = trans
-                left join category on cat = cat_id
-                left join account ta on to_acc = ta.acc_id
-                left join account fa on from_acc = fa.acc_id
-                """;
         try (PreparedStatement pstmt = conn.prepareStatement(sql);
              ResultSet rs = pstmt.executeQuery()) {
 
             while (rs.next()) {
-                if (hiddenTransactions.contains(rs.getInt("t_id"))) continue;
+                if (!onHidden && hiddenTransactions.contains(rs.getInt("t_id"))) continue;
                 if (map.containsKey(rs.getInt("t_id"))) {
                     map.get(rs.getInt("t_id")).setCategory(map.get(rs.getInt("t_id")).getCategory() + ", " + rs.getString("cat_name"));
                 } else {
@@ -321,11 +341,16 @@ public class TransactionController {
         return -1;
     }
 
-
     @FXML
     private void hideSelected() {
         Transaction selected = transactionTable.getSelectionModel().getSelectedItem();
-        String sql = "insert or ignore into hidden_transactions (t_id) values (?)";
+        String sql;
+        if (onHidden) {
+            sql = "delete from hidden_transactions where t_id=?";
+        } else {
+            sql = "insert or ignore into hidden_transactions (t_id) values (?)";
+        }
+
         try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setInt(1, getId(selected));
 
@@ -339,7 +364,22 @@ public class TransactionController {
     }
 
     @FXML
-    private void viewHidden(){
+    private void viewHidden() {
+        if (!onHidden) {
+            onHidden = true;
+            addButton.setVisible(false);
+            addButton.setManaged(false);
+            hideButton.setText("Unhide Selected");
+            viewButton.setText("Reset View");
+        } else {
+            onHidden = false;
+            addButton.setVisible(true);
+            addButton.setManaged(true);
+            hideButton.setText("Hide Selected");
+            viewButton.setText("View Hidden");
+        }
 
+        Main.updateHidden();
+        refreshTable();
     }
 }
