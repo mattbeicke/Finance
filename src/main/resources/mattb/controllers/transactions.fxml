@@ -10,7 +10,7 @@
             <Button fx:id="addButton" onAction="#addNew">Add New</Button>
             <Button fx:id="hideButton" onAction="#hideSelected">Hide Selected</Button>
             <Button fx:id="viewButton" onAction="#viewHidden">View Hidden</Button>
-            <Button fx:id="edit" onAction="#editSelected">Edit Selected</Button>
+            <Button onAction="#editSelected">Edit Selected</Button>
         </HBox>
         <TableView prefHeight="750.0" prefWidth="1400.0" fx:id="transactionTable">
             <columnResizePolicy>

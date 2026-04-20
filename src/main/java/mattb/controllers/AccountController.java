@@ -13,6 +13,7 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import mattb.Main;
 import mattb.model.Account;
+import mattb.model.Transaction;
 
 import java.io.IOException;
 import java.sql.*;
@@ -29,12 +30,6 @@ public class AccountController {
     @FXML
     private TableColumn<Account, String> colType;
     @FXML
-    private ComboBox<String> typeCombo;
-    @FXML
-    private TextField nameField;
-    @FXML
-    private TextField balanceField;
-    @FXML
     private TextField typeField;
     @FXML
     private Button addAccount;
@@ -47,10 +42,9 @@ public class AccountController {
 
     private final ObservableList<Account> masterData = FXCollections.observableArrayList();
     private HashMap<Integer, Account> map;
-
-    private Connection conn = null;
     private HashSet<Integer> hiddenAccounts = null;
 
+    private Connection conn = null;
     private boolean onHidden = false;
 
     /**
@@ -68,31 +62,6 @@ public class AccountController {
 
             accountTable.setItems(masterData);
             refreshTable();
-        }
-
-        if (typeCombo != null) {
-            ObservableList<String> types = FXCollections.observableArrayList();
-
-            String sql = "select type_id, type from account_type";
-            try (PreparedStatement pstmt = conn.prepareStatement(sql);
-                 ResultSet rs = pstmt.executeQuery()) {
-
-                while (rs.next()) {
-                    if (rs.getInt("type_id") == 0) continue;
-                    types.add(rs.getString("type"));
-                }
-
-                types.add("Add more via Accounts tab");
-                typeCombo.setItems(types);
-            } catch (SQLException e) {
-                System.err.println("Could not load types: " + e.getMessage());
-            }
-
-            balanceField.textProperty().addListener((_, oldVal, newVal) -> {
-                if (!newVal.matches("\\d*(\\.\\d*)?")) {
-                    balanceField.setText(oldVal);
-                }
-            });
         }
     }
 
@@ -176,48 +145,6 @@ public class AccountController {
     }
 
     /**
-     * Gets the id number of the currently selected type
-     *
-     * @return id number that corresponds to the type selected in the type combo box
-     */
-    public int getType() {
-        String sql = "select type_id from account_type where type=?";
-        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setString(1, typeCombo.getValue());
-
-            ResultSet rs = pstmt.executeQuery();
-
-            if (!rs.next()) {
-                return -1;
-            }
-
-            return rs.getInt("type_id");
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return -1;
-    }
-
-    /**
-     * Saves new account
-     */
-    @FXML
-    private void onAccountSave() {
-        String sql = "insert or ignore into account (acc_type, balance, name) VALUES (?,?,?)";
-        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setInt(1, getType());
-            pstmt.setDouble(2, Double.parseDouble(balanceField.getText()));
-            pstmt.setString(3, nameField.getText());
-
-            pstmt.executeUpdate();
-
-            ((Stage) typeCombo.getScene().getWindow()).close();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    /**
      * Saves new type
      */
     @FXML
@@ -237,7 +164,7 @@ public class AccountController {
     }
 
     /**
-     * Exits either "create new" modal
+     * Exits either add type modal
      *
      * @param event Button press event
      */
@@ -312,5 +239,32 @@ public class AccountController {
 
         Main.updateHidden();
         refreshTable();
+    }
+
+    /**
+     * Setup for editing an account
+     */
+    @FXML
+    private void editSelected() {
+        Account selected = accountTable.getSelectionModel().getSelectedItem();
+        int id = getId(selected);
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/mattb/controllers/add_account.fxml"));
+            Parent root = loader.load();
+
+            AddAccountController controller = loader.getController();
+
+            controller.setFields(selected, id);
+
+            Stage stage = new Stage();
+            stage.initModality(Modality.APPLICATION_MODAL);
+            stage.setTitle("Edit Transaction");
+            stage.setScene(new Scene(root));
+            stage.showAndWait();
+
+            refreshTable();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }
