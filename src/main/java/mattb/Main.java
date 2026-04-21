@@ -7,9 +7,10 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 
 import java.io.IOException;
-import static mattb.FinanceError.*;
 import java.sql.*;
 import java.util.HashSet;
+
+import static mattb.FinanceError.*;
 
 public class Main extends Application {
     private static HashSet<Integer> hiddenTransactions;

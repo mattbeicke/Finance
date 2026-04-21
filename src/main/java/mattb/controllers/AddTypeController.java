@@ -5,13 +5,14 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
-import static mattb.FinanceError.*;
 import mattb.FinanceException;
 import mattb.Main;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+
+import static mattb.FinanceError.SAVE_ACCOUNT_TYPE_FAIL;
 
 public class AddTypeController {
     @FXML
