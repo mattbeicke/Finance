@@ -4,6 +4,8 @@ import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.TableCell;
+import javafx.scene.control.TableColumn;
 import javafx.stage.Stage;
 
 import java.io.IOException;
@@ -114,4 +116,25 @@ public class Main extends Application {
     public static String formatDouble(double input) {
         return NumberFormat.getCurrencyInstance(Locale.US).format(input);
     }
+
+    /**
+     * Reduces redundant code controllers by setting the Balance and Amount columns to use the currency format above
+     *
+     * @param toConvert {@link TableColumn} to convert
+     * @param <S> Lets {@code toConvert} be any from any table as long as the column is of a double type
+     */
+    public static <S> void useCurrency(TableColumn<S, Double> toConvert) {
+        toConvert.setCellFactory(_ -> new TableCell<>() {
+            @Override
+            protected void updateItem(Double balance, boolean empty) {
+                super.updateItem(balance, empty);
+                if (empty || balance == null) {
+                    setText(null);
+                } else {
+                    setText(Main.formatDouble(balance));
+                }
+            }
+        });
+    }
+
 }

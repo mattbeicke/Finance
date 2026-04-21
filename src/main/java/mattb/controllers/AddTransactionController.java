@@ -87,7 +87,7 @@ public class AddTransactionController {
     private void onSave() {
         int fromAccId = getAccId(fromCombo.getValue());
         int toAccId = getAccId(toCombo.getValue());
-        if (fromAccId == -1 || toAccId == -1 || datePicker.getValue() == null || amountField.getText().isBlank() || fromCombo.getValue().equals("Add more via Accounts tab") || toCombo.getValue().equals("Add more via Accounts tab")) {
+        if (fromAccId == -1 || toAccId == -1 || amountField.getText().isBlank() || fromCombo.getValue().equals("Add more via Accounts tab") || toCombo.getValue().equals("Add more via Accounts tab")) {
             return;
         }
 
@@ -268,20 +268,20 @@ public class AddTransactionController {
         editing = true;
         this.id = id;
 
-        fromCombo.setValue(t.getFromAccountName());
-        toCombo.setValue(t.getToAccountName());
-        if (t.getCategory() == null) {
+        fromCombo.setValue(t.fromAccountName());
+        toCombo.setValue(t.toAccountName());
+        if (t.category() == null) {
             categoryField.setText("");
         } else {
-            categoryField.setText(t.getCategory());
+            categoryField.setText(t.category());
         }
-        amountField.setText(String.valueOf(t.getAmount()));
-        if (t.getMemo() == null) {
+        amountField.setText(String.valueOf(t.amount()));
+        if (t.memo() == null) {
             memoField.setText("");
         } else {
-            memoField.setText(t.getMemo());
+            memoField.setText(t.memo());
         }
-        datePicker.setValue(LocalDate.ofInstant(t.getDate().toInstant(), ZoneId.systemDefault()));
+        datePicker.setValue(LocalDate.ofInstant(t.date().toInstant(), ZoneId.systemDefault()));
     }
 
     /**

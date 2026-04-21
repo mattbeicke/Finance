@@ -1,5 +1,6 @@
 package mattb.controllers;
 
+import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -7,10 +8,8 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
-import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
-import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import mattb.FinanceException;
@@ -61,21 +60,17 @@ public class AccountController {
         hiddenAccounts = Main.getHiddenAccounts();
 
         if (colName != null) {
-            colName.setCellValueFactory(new PropertyValueFactory<>("name"));
-            colBalance.setCellValueFactory(new PropertyValueFactory<>("balance"));
-            colType.setCellValueFactory(new PropertyValueFactory<>("type"));
+            colName.setCellValueFactory(cellData ->
+                    new ReadOnlyObjectWrapper<>(cellData.getValue().name())
+            );
+            colBalance.setCellValueFactory(cellData ->
+                    new ReadOnlyObjectWrapper<>(cellData.getValue().balance())
+            );
+            colType.setCellValueFactory(cellData ->
+                    new ReadOnlyObjectWrapper<>(cellData.getValue().type())
+            );
 
-            colBalance.setCellFactory(_ -> new TableCell<>() {
-                @Override
-                protected void updateItem(Double balance, boolean empty) {
-                    super.updateItem(balance, empty);
-                    if (empty || balance == null) {
-                        setText(null);
-                    } else {
-                        setText(Main.formatDouble(balance));
-                    }
-                }
-            });
+            Main.useCurrency(colBalance);
 
             accountTable.setItems(masterData);
             refreshTable();

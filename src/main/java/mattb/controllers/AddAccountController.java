@@ -139,8 +139,8 @@ public class AddAccountController {
         editing = true;
         this.id = id;
 
-        nameField.setText(a.getName());
-        typeCombo.setValue(a.getType());
-        balanceField.setText(String.valueOf(a.getBalance()));
+        nameField.setText(a.name());
+        typeCombo.setValue(a.type());
+        balanceField.setText(String.valueOf(a.balance()));
     }
 }
