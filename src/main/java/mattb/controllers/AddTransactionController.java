@@ -13,7 +13,7 @@ import javafx.scene.control.DatePicker;
 import javafx.scene.control.TextField;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import mattb.FinanceError;
+import static mattb.FinanceError.*;
 import mattb.FinanceException;
 import mattb.Main;
 import mattb.model.Transaction;
@@ -64,7 +64,7 @@ public class AddTransactionController {
                 fromCombo.setItems(accountNames);
                 toCombo.setItems(accountNames);
             } catch (SQLException ignored) {
-                throw new FinanceException(FinanceError.LOAD_ACCOUNTS_FAIL);
+                throw new FinanceException(LOAD_ACCOUNTS_FAIL);
             }
 
             amountField.textProperty().addListener((_, oldVal, newVal) -> {
@@ -131,7 +131,7 @@ public class AddTransactionController {
                     updateBalances();
                 }
             } catch (IOException ignored) {
-                throw new FinanceException(FinanceError.OPEN_UPDATE_BALANCE_MODAL_FAIL);
+                throw new FinanceException(OPEN_UPDATE_BALANCE_MODAL_FAIL);
             }
 
             if (update) {
@@ -140,7 +140,7 @@ public class AddTransactionController {
 
             ((Stage) amountField.getScene().getWindow()).close();
         } catch (SQLException ignored) {
-            throw new FinanceException(FinanceError.SAVE_TRANSACTION_FAIL);
+            throw new FinanceException(SAVE_TRANSACTION_FAIL);
         }
     }
 
@@ -164,7 +164,7 @@ public class AddTransactionController {
                 return -1;
             }
         } catch (SQLException ignored) {
-            throw new FinanceException(FinanceError.GET_ACCOUNT_ID_FAIL);
+            throw new FinanceException(GET_ACCOUNT_ID_FAIL);
         }
     }
 
@@ -180,7 +180,7 @@ public class AddTransactionController {
             rs.next();
             t_id = rs.getInt("t_id");
         } catch (SQLException ignored) {
-            throw new FinanceException(FinanceError.GET_TRANSACTION_ID_FAIL);
+            throw new FinanceException(GET_TRANSACTION_ID_FAIL);
         }
 
         if (t_id <= 0) return;
@@ -204,7 +204,7 @@ public class AddTransactionController {
                 rs.next();
                 cats[i] = rs.getInt("cat_id");
             } catch (SQLException ignored) {
-                throw new FinanceException(FinanceError.GET_CATEGORY_ID_FAIL);
+                throw new FinanceException(GET_CATEGORY_ID_FAIL);
             }
         }
 
@@ -219,7 +219,7 @@ public class AddTransactionController {
 
             pstmt.executeUpdate();
         } catch (SQLException ignored) {
-            throw new FinanceException(FinanceError.SAVE_TRANSACTION_CATEGORY_FAIL);
+            throw new FinanceException(SAVE_TRANSACTION_CATEGORY_FAIL);
         }
     }
 
@@ -237,7 +237,7 @@ public class AddTransactionController {
 
             pstmt.executeUpdate();
         } catch (SQLException ignored) {
-            throw new FinanceException(FinanceError.SAVE_CATEGORY_FAIL);
+            throw new FinanceException(SAVE_CATEGORY_FAIL);
         }
     }
 
@@ -321,7 +321,7 @@ public class AddTransactionController {
 
                 pstmt.executeUpdate();
             } catch (SQLException ignored) {
-                throw new FinanceException(FinanceError.UPDATE_ACCOUNT_BALANCE_FAIL);
+                throw new FinanceException(UPDATE_ACCOUNT_BALANCE_FAIL);
             }
         }
 
@@ -334,7 +334,7 @@ public class AddTransactionController {
 
                 pstmt.executeUpdate();
             } catch (SQLException ignored) {
-                throw new FinanceException(FinanceError.UPDATE_ACCOUNT_BALANCE_FAIL);
+                throw new FinanceException(UPDATE_ACCOUNT_BALANCE_FAIL);
             }
         }
     }

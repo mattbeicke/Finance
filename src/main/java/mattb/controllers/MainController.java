@@ -4,7 +4,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.layout.BorderPane;
-import mattb.FinanceError;
+import static mattb.FinanceError.*;
 import mattb.FinanceException;
 
 import java.io.IOException;
@@ -24,7 +24,7 @@ public class MainController {
             Parent view = loader.load();
             mainBorderPane.setCenter(view);
         } catch (IOException ignored) {
-            throw new FinanceException(FinanceError.OPEN_DASHBOARD_TAB_FAILED);
+            throw new FinanceException(OPEN_DASHBOARD_TAB_FAILED);
         }
     }
 
@@ -39,7 +39,7 @@ public class MainController {
             Parent view = loader.load();
             mainBorderPane.setCenter(view);
         } catch (IOException ignored) {
-            throw new FinanceException(FinanceError.OPEN_TRANSACTIONS_TAB_FAILED);
+            throw new FinanceException(OPEN_TRANSACTIONS_TAB_FAILED);
         }
     }
 
@@ -54,7 +54,7 @@ public class MainController {
             Parent view = loader.load();
             mainBorderPane.setCenter(view);
         } catch (IOException ignored) {
-            throw new FinanceException(FinanceError.OPEN_ACCOUNTS_TAB_FAILED);
+            throw new FinanceException(OPEN_ACCOUNTS_TAB_FAILED);
         }
     }
 }

@@ -10,7 +10,7 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import mattb.FinanceError;
+import static mattb.FinanceError.*;
 import mattb.FinanceException;
 import mattb.Main;
 import mattb.model.Account;
@@ -96,7 +96,7 @@ public class AccountController {
                 ));
             }
         } catch (SQLException ignored) {
-            throw new FinanceException(FinanceError.LOAD_ACCOUNTS_FAIL);
+            throw new FinanceException(LOAD_ACCOUNTS_FAIL);
         }
 
         masterData.addAll(map.values());
@@ -145,7 +145,7 @@ public class AccountController {
             Main.updateHidden();
             refreshTable();
         } catch (SQLException ignored) {
-            throw new FinanceException(FinanceError.UPDATE_HIDDEN_ACCOUNT_LIST_FAIL);
+            throw new FinanceException(UPDATE_HIDDEN_ACCOUNT_LIST_FAIL);
         }
     }
 
@@ -193,7 +193,7 @@ public class AccountController {
 
             refreshTable();
         } catch (IOException ignored) {
-            throw new FinanceException(FinanceError.OPEN_NEW_ACCOUNT_MODAL_FAIL);
+            throw new FinanceException(OPEN_NEW_ACCOUNT_MODAL_FAIL);
         }
     }
 
@@ -212,7 +212,7 @@ public class AccountController {
             stage.setScene(new Scene(root));
             stage.show();
         } catch (IOException ignored) {
-            throw new FinanceException(FinanceError.OPEN_NEW_TYPE_MODAL_FAIL);
+            throw new FinanceException(OPEN_NEW_TYPE_MODAL_FAIL);
         }
     }
 
@@ -241,7 +241,7 @@ public class AccountController {
 
             refreshTable();
         } catch (IOException ignored) {
-            throw new FinanceException(FinanceError.OPEN_EDIT_ACCOUNT_MODAL_FAIL);
+            throw new FinanceException(OPEN_EDIT_ACCOUNT_MODAL_FAIL);
         }
     }
 }

@@ -7,6 +7,7 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 
 import java.io.IOException;
+import static mattb.FinanceError.*;
 import java.sql.*;
 import java.util.HashSet;
 
@@ -33,7 +34,7 @@ public class Main extends Application {
         try {
             conn = DriverManager.getConnection("jdbc:sqlite:finance.db");
         } catch (SQLException ignored) {
-            throw new FinanceException(FinanceError.DATABASE_CONNECTION_FAIL);
+            throw new FinanceException(DATABASE_CONNECTION_FAIL);
         }
 
         hiddenTransactions = new HashSet<>();
@@ -61,7 +62,7 @@ public class Main extends Application {
                 hiddenTransactions.add(rs.getInt("t_id"));
             }
         } catch (SQLException ignored) {
-            throw new FinanceException(FinanceError.LOAD_HIDDEN_TRANSACTIONS_FAIL);
+            throw new FinanceException(LOAD_HIDDEN_TRANSACTIONS_FAIL);
         }
 
         sql = "select acc_id from hidden_accounts";
@@ -70,7 +71,7 @@ public class Main extends Application {
                 hiddenAccounts.add(rs.getInt("acc_id"));
             }
         } catch (SQLException ignored) {
-            throw new FinanceException(FinanceError.LOAD_HIDDEN_ACCOUNTS_FAIL);
+            throw new FinanceException(LOAD_HIDDEN_ACCOUNTS_FAIL);
         }
     }
 
