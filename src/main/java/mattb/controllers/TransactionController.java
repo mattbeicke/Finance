@@ -10,6 +10,8 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import mattb.FinanceError;
+import mattb.FinanceException;
 import mattb.Main;
 import mattb.model.Transaction;
 
@@ -96,7 +98,6 @@ public class TransactionController {
 
         try (PreparedStatement pstmt = conn.prepareStatement(sql);
              ResultSet rs = pstmt.executeQuery()) {
-
             while (rs.next()) {
                 if (!onHidden && hiddenTransactions.contains(rs.getInt("t_id"))) continue;
                 if (map.containsKey(rs.getInt("t_id"))) {
@@ -112,8 +113,8 @@ public class TransactionController {
                     ));
                 }
             }
-        } catch (SQLException e) {
-            e.printStackTrace();
+        } catch (SQLException ignored) {
+            throw new FinanceException(FinanceError.LOAD_TRANSACTIONS_FAIL);
         }
 
         masterData.addAll(map.values());
@@ -160,8 +161,8 @@ public class TransactionController {
 
             Main.updateHidden();
             refreshTable();
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (SQLException ignored) {
+            throw new FinanceException(FinanceError.UPDATE_HIDDEN_TRANSACTION_LIST_FAIL);
         }
     }
 
@@ -204,8 +205,8 @@ public class TransactionController {
             stage.showAndWait();
 
             refreshTable();
-        } catch (IOException e) {
-            e.printStackTrace();
+        } catch (IOException ignored) {
+            throw new FinanceException(FinanceError.OPEN_NEW_TRANSACTION_MODAL_FAIL);
         }
     }
 
@@ -231,8 +232,8 @@ public class TransactionController {
             stage.showAndWait();
 
             refreshTable();
-        } catch (IOException e) {
-            e.printStackTrace();
+        } catch (IOException ignored) {
+            throw new FinanceException(FinanceError.OPEN_EDIT_TRANSACTION_MODAL_FAIL);
         }
     }
 }

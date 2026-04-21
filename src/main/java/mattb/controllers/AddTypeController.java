@@ -5,10 +5,13 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
+import mattb.FinanceError;
+import mattb.FinanceException;
 import mattb.Main;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.SQLException;
 
 public class AddTypeController {
     @FXML
@@ -25,7 +28,7 @@ public class AddTypeController {
     }
 
     /**
-     * Saves new type
+     * Saves a new account type to the database
      */
     @FXML
     private void onTypeSave() {
@@ -38,8 +41,8 @@ public class AddTypeController {
             pstmt.executeUpdate();
 
             ((Stage) typeField.getScene().getWindow()).close();
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (SQLException ignored) {
+            throw new FinanceException(FinanceError.SAVE_TYPE_FAIL);
         }
     }
 
