@@ -13,16 +13,20 @@ import javafx.scene.control.DatePicker;
 import javafx.scene.control.TextField;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import static mattb.FinanceError.*;
 import mattb.FinanceException;
 import mattb.Main;
 import mattb.model.Transaction;
 
 import java.io.IOException;
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.Collections;
+
+import static mattb.FinanceError.*;
 
 public class AddTransactionController {
     @FXML

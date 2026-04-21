@@ -37,7 +37,12 @@ public enum FinanceError {
     GET_ACCOUNT_TYPE_ID_FAIL("Error finding account type id in database"),
     GET_ACCOUNT_ID_FAIL("Error finding account id in database"),
     GET_TRANSACTION_ID_FAIL("Error finding transaction id in database"),
-    GET_CATEGORY_ID_FAIL("Error finding category id in database");
+    GET_CATEGORY_ID_FAIL("Error finding category id in database"),
+
+    /**
+     * Misc
+     */
+    NET_WORTH_FAIL("Error calculating Net Worth");
 
     private final String message;
 
