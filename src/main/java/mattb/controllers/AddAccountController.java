@@ -8,7 +8,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
-import mattb.FinanceError;
+import static mattb.FinanceError.*;
 import mattb.FinanceException;
 import mattb.Main;
 import mattb.model.Account;
@@ -51,7 +51,7 @@ public class AddAccountController {
             types.add("Add more via Accounts tab");
             typeCombo.setItems(types);
         } catch (SQLException ignored) {
-            throw new FinanceException(FinanceError.LOAD_TYPES_FAIL);
+            throw new FinanceException(LOAD_ACCOUNT_TYPES_FAIL);
         }
 
         balanceField.textProperty().addListener((_, oldVal, newVal) -> {
@@ -87,7 +87,7 @@ public class AddAccountController {
 
             ((Stage) typeCombo.getScene().getWindow()).close();
         } catch (SQLException ignored) {
-            throw new FinanceException(FinanceError.SAVE_ACCOUNT_FAIL);
+            throw new FinanceException(SAVE_ACCOUNT_FAIL);
         }
     }
 
@@ -111,7 +111,7 @@ public class AddAccountController {
 
             return rs.getInt("type_id");
         } catch (SQLException ignored) {
-            throw new FinanceException(FinanceError.GET_TYPE_ID_FAIL);
+            throw new FinanceException(GET_ACCOUNT_TYPE_ID_FAIL);
         }
     }
 

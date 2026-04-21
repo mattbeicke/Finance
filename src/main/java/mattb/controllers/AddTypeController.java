@@ -5,7 +5,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
-import mattb.FinanceError;
+import static mattb.FinanceError.*;
 import mattb.FinanceException;
 import mattb.Main;
 
@@ -42,7 +42,7 @@ public class AddTypeController {
 
             ((Stage) typeField.getScene().getWindow()).close();
         } catch (SQLException ignored) {
-            throw new FinanceException(FinanceError.SAVE_TYPE_FAIL);
+            throw new FinanceException(SAVE_ACCOUNT_TYPE_FAIL);
         }
     }
 
