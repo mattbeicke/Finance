@@ -3,8 +3,10 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<AnchorPane prefHeight="750.0" prefWidth="1500.0" xmlns="http://javafx.com/javafx/17.0.12"
-            xmlns:fx="http://javafx.com/fxml/1" fx:controller="mattb.controllers.TransactionController">
+<AnchorPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="mattb.controllers.TransactionController"
+            prefHeight="750.0" prefWidth="1500.0">
     <VBox BorderPane.alignment="CENTER">
         <HBox>
             <Button fx:id="addButton" onAction="#addNew">Add New</Button>
