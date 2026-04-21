@@ -7,6 +7,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.stage.Stage;
+import mattb.controllers.MainController;
 
 import java.io.IOException;
 import java.sql.*;
@@ -52,6 +53,8 @@ public class Main extends Application {
         stage.setTitle("Matt's Finance App");
         stage.setScene(new Scene(root));
         stage.show();
+        MainController mainController = loader.getController();
+        mainController.showDashboard();
     }
 
     /**
@@ -121,7 +124,7 @@ public class Main extends Application {
      * Reduces redundant code controllers by setting the Balance and Amount columns to use the currency format above
      *
      * @param toConvert {@link TableColumn} to convert
-     * @param <S> Lets {@code toConvert} be any from any table as long as the column is of a double type
+     * @param <S>       Lets {@code toConvert} be any from any table as long as the column is of a double type
      */
     public static <S> void useCurrency(TableColumn<S, Double> toConvert) {
         toConvert.setCellFactory(_ -> new TableCell<>() {

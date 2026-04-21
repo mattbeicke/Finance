@@ -16,10 +16,8 @@ public class MainController {
 
     /**
      * Sets tab to the dashboard tab
-     *
-     * @throws FinanceException If there is an error opening the dashboard tab
      */
-    public void showDashboard() throws FinanceException {
+    public void showDashboard() {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/mattb/controllers/dashboard.fxml"));
             Parent view = loader.load();
@@ -31,10 +29,8 @@ public class MainController {
 
     /**
      * Sets tab to the transactions tab
-     *
-     * @throws FinanceException If there is an error opening the transactions tab
      */
-    public void showTransactions() throws FinanceException {
+    public void showTransactions() {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/mattb/controllers/transactions.fxml"));
             Parent view = loader.load();
@@ -46,10 +42,8 @@ public class MainController {
 
     /**
      * Sets tab to the accounts tab
-     *
-     * @throws FinanceException If there is an error opening the accounts tab
      */
-    public void showAccounts() throws FinanceException {
+    public void showAccounts() {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/mattb/controllers/accounts.fxml"));
             Parent view = loader.load();
