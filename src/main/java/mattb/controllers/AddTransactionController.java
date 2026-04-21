@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.sql.*;
 import java.time.LocalDate;
 import java.time.ZoneId;
+import java.util.Collections;
 
 public class AddTransactionController {
     @FXML
@@ -51,8 +52,7 @@ public class AddTransactionController {
             ObservableList<String> accountNames = FXCollections.observableArrayList();
 
             String sql = "select name from account where acc_id not in (select acc_id from hidden_accounts)";
-            try (PreparedStatement pstmt = conn.prepareStatement(sql);
-                 ResultSet rs = pstmt.executeQuery()) {
+            try (PreparedStatement pstmt = conn.prepareStatement(sql); ResultSet rs = pstmt.executeQuery()) {
 
                 while (rs.next()) {
                     accountNames.add(rs.getString("name"));
@@ -79,7 +79,9 @@ public class AddTransactionController {
      */
     @FXML
     private void onSave() {
-        if (fromCombo.getValue().equals("Add more via Accounts tab") || toCombo.getValue().equals("Add more via Accounts tab")) {
+        int fromAccId = getAccId(fromCombo.getValue());
+        int toAccId = getAccId(toCombo.getValue());
+        if (fromAccId == -1 || toAccId == -1 || datePicker.getValue() == null || amountField.getText().isBlank() || fromCombo.getValue().equals("Add more via Accounts tab") || toCombo.getValue().equals("Add more via Accounts tab")) {
             return;
         }
 
@@ -95,8 +97,8 @@ public class AddTransactionController {
                 selectedDate = LocalDate.now();
             }
             pstmt.setInt(1, (int) selectedDate.atStartOfDay(ZoneId.systemDefault()).toEpochSecond());
-            pstmt.setInt(2, getAccId(fromCombo.getValue()));
-            pstmt.setInt(3, getAccId(toCombo.getValue()));
+            pstmt.setInt(2, fromAccId);
+            pstmt.setInt(3, toAccId);
             pstmt.setDouble(4, Double.parseDouble(amountField.getText()));
             if (!memoField.getText().isBlank()) {
                 pstmt.setString(5, memoField.getText());
@@ -147,6 +149,8 @@ public class AddTransactionController {
      * @return Account ID associated with the account name or -1 if no account was found
      */
     private int getAccId(String accName) {
+        if (accName == null || accName.isBlank()) return -1;
+
         String sql = "select acc_id from account where name=?";
         try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setString(1, accName);
@@ -161,23 +165,6 @@ public class AddTransactionController {
             e.printStackTrace();
         }
         return -1;
-    }
-
-
-    /**
-     * Creates a category if it does not exist
-     *
-     * @param cat Category to add if needed
-     */
-    private void createCatIfNeeded(String cat) {
-        String sql = "insert or ignore into category(cat_name) values (?)";
-        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setString(1, cat);
-
-            pstmt.executeUpdate();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
     }
 
     /**
@@ -197,8 +184,13 @@ public class AddTransactionController {
             return;
         }
 
+        if (t_id <= 0) return;
+
         // Get all categories the user entered
         String[] categories = categoryField.getText().split(",\\s*");
+
+        if (categories.length == 0) return;
+
         int[] cats = new int[categories.length];
 
         for (int i = 0; i < categories.length; i++) {
@@ -218,28 +210,35 @@ public class AddTransactionController {
         }
 
         // Update the tcat table
-        sql = "insert into tcat(trans, cat) values (?,?)";
+        String placeholders = String.join(",", Collections.nCopies(cats.length, "(?,?)"));
+        sql = "insert into tcat(trans, cat) values " + placeholders;
         try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            conn.setAutoCommit(false);
+            for (int i = 0; i < cats.length; i++) {
+                pstmt.setInt(i * 2 + 1, t_id);
+                pstmt.setInt(i * 2 + 2, cats[i]);
+            }
 
-            for (int category : cats) {
-                pstmt.setInt(1, t_id);
-                pstmt.setInt(2, category);
-                pstmt.addBatch();
-            }
-            pstmt.executeBatch();
-            conn.commit();
+            pstmt.executeUpdate();
         } catch (Exception e) {
-            if (conn != null) try {
-                conn.rollback();
-            } catch (Exception ignored) {
-            }
             e.printStackTrace();
-        } finally {
-            try {
-                conn.setAutoCommit(true);
-            } catch (Exception ignored) {
-            }
+        }
+    }
+
+    /**
+     * Creates a category if it does not exist
+     *
+     * @param cat Category to add if needed
+     */
+    private void createCatIfNeeded(String cat) {
+        if (cat == null || cat.isBlank()) return;
+
+        String sql = "insert or ignore into category(cat_name) values (?)";
+        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setString(1, cat);
+
+            pstmt.executeUpdate();
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
@@ -261,6 +260,8 @@ public class AddTransactionController {
      * @param id Database id of {@link Transaction} who is being edited
      */
     public void setFields(Transaction t, int id) {
+        if (t == null || id <= 0) return;
+
         editing = true;
         this.id = id;
 
@@ -306,6 +307,8 @@ public class AddTransactionController {
      * Updates account balances (if they are not the reserved external one)
      */
     private void updateBalances() {
+        if (amountField.getText().isBlank() || fromCombo.getValue().isBlank() || toCombo.getValue().isBlank()) return;
+
         double amount = Double.parseDouble(amountField.getText());
         int fromAccId = getAccId(fromCombo.getValue());
         int toAccId = getAccId(toCombo.getValue());

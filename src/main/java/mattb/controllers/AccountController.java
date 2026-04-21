@@ -2,7 +2,6 @@ package mattb.controllers;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -28,8 +27,6 @@ public class AccountController {
     private TableColumn<Account, Double> colBalance;
     @FXML
     private TableColumn<Account, String> colType;
-    @FXML
-    private TextField typeField;
     @FXML
     private Button addAccount;
     @FXML
@@ -104,6 +101,80 @@ public class AccountController {
     }
 
     /**
+     * Gets the id of the inputted {@link Account}
+     *
+     * @param a {@link Account} to get the id of
+     * @return database id of the {@link Account} or -1 if it's not found
+     */
+    private int getId(Account a) {
+        if (a == null) return -1;
+
+        for (Integer i : map.keySet()) {
+            if (map.get(i).equals(a)) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    /**
+     * Hides or unhides currently selected account in list
+     */
+    @FXML
+    private void hideAccount() {
+        Account selected = accountTable.getSelectionModel().getSelectedItem();
+        if (selected == null) return;
+
+        int accountId = getId(selected);
+        if (accountId == -1) return;
+
+        String sql;
+        if (onHidden) {
+            sql = "delete from hidden_accounts where acc_id=?";
+        } else {
+            sql = "insert or ignore into hidden_accounts (acc_id) values (?)";
+        }
+
+        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setInt(1, accountId);
+
+            pstmt.executeUpdate();
+
+            Main.updateHidden();
+            refreshTable();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Toggles account list between hidden and not hidden accounts
+     */
+    @FXML
+    private void viewHidden() {
+        if (!onHidden) {
+            onHidden = true;
+            addAccount.setVisible(false);
+            addAccount.setManaged(false);
+            addType.setVisible(false);
+            addType.setManaged(false);
+            hideAccount.setText("Unhide Selected");
+            viewHidden.setText("Reset View");
+        } else {
+            onHidden = false;
+            addAccount.setVisible(true);
+            addAccount.setManaged(true);
+            addType.setVisible(true);
+            addType.setManaged(true);
+            hideAccount.setText("Hide Selected");
+            viewHidden.setText("View Hidden");
+        }
+
+        Main.updateHidden();
+        refreshTable();
+    }
+
+    /**
      * Opens create new account modal
      */
     @FXML
@@ -144,109 +215,14 @@ public class AccountController {
     }
 
     /**
-     * Saves new type
-     */
-    @FXML
-    private void onTypeSave() {
-        if (typeField.getText().isBlank()) return;
-
-        String sql = "insert or ignore into account_type(type) values (?)";
-        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setString(1, typeField.getText());
-
-            pstmt.executeUpdate();
-
-            ((Stage) typeField.getScene().getWindow()).close();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    /**
-     * Exits either add type modal
-     *
-     * @param event Button press event
-     */
-    @FXML
-    private void cancel(ActionEvent event) {
-        Stage stage = (Stage) ((Button) event.getSource()).getScene().getWindow();
-        stage.close();
-    }
-
-    /**
-     * Gets the id of the inputted {@link Account}
-     *
-     * @param a {@link Account} to get the id of
-     * @return database id of the {@link Account} or -1 if it's not found
-     */
-    private int getId(Account a) {
-        for (Integer i : map.keySet()) {
-            if (map.get(i).equals(a)) {
-                return i;
-            }
-        }
-        return -1;
-    }
-
-    /**
-     * Hides or unhides currently selected account in list
-     */
-    @FXML
-    private void hideAccount() {
-        Account selected = accountTable.getSelectionModel().getSelectedItem();
-        String sql;
-        if (onHidden) {
-            sql = "delete from hidden_accounts where acc_id=?";
-        } else {
-            sql = "insert or ignore into hidden_accounts (acc_id) values (?)";
-        }
-
-        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setInt(1, getId(selected));
-
-            pstmt.executeUpdate();
-
-            Main.updateHidden();
-            refreshTable();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    /**
-     * Toggles account list between hidden and not hidden accounts
-     */
-    @FXML
-    private void viewHidden() {
-        if (!onHidden) {
-            onHidden = true;
-            addAccount.setVisible(false);
-            addAccount.setManaged(false);
-            addType.setVisible(false);
-            addType.setManaged(false);
-            hideAccount.setText("Unhide Selected");
-            viewHidden.setText("Reset View");
-        } else {
-            onHidden = false;
-            addAccount.setVisible(true);
-            addAccount.setManaged(true);
-            addType.setVisible(true);
-            addType.setManaged(true);
-            hideAccount.setText("Hide Selected");
-            viewHidden.setText("View Hidden");
-        }
-
-        Main.updateHidden();
-        refreshTable();
-    }
-
-    /**
-     * Setup for editing an account
+     * Opens edit account modal, filling all fields with current account information
      */
     @FXML
     private void editSelected() {
         Account selected = accountTable.getSelectionModel().getSelectedItem();
         int id = getId(selected);
+        if (id == -1) return;
+
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/mattb/controllers/add_account.fxml"));
             Parent root = loader.load();

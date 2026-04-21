@@ -60,11 +60,43 @@ public class AddAccountController {
     }
 
     /**
+     * Saves new account
+     */
+    @FXML
+    private void onAccountSave() {
+        int typeId = getTypeId();
+        if (typeId == -1 || balanceField.getText().isBlank() || nameField.getText().isBlank()) return;
+
+        String sql;
+        if (editing) {
+            sql = "update account set acc_type=?,balance=?,name=? where acc_id=?";
+        } else {
+            sql = "insert or ignore into account (acc_type, balance, name) VALUES (?,?,?)";
+        }
+        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setInt(1, typeId);
+            pstmt.setDouble(2, Double.parseDouble(balanceField.getText()));
+            pstmt.setString(3, nameField.getText());
+            if (editing) {
+                pstmt.setInt(4, id);
+            }
+
+            pstmt.executeUpdate();
+
+            ((Stage) typeCombo.getScene().getWindow()).close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
      * Gets the id number of the currently selected type
      *
      * @return id number that corresponds to the type selected in the type combo box
      */
-    public int getType() {
+    public int getTypeId() {
+        if (typeCombo.getValue().isBlank()) return -1;
+
         String sql = "select type_id from account_type where type=?";
         try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setString(1, typeCombo.getValue());
@@ -83,33 +115,6 @@ public class AddAccountController {
     }
 
     /**
-     * Saves new account
-     */
-    @FXML
-    private void onAccountSave() {
-        String sql;
-        if (editing) {
-            sql = "update account set acc_type=?,balance=?,name=? where acc_id=?";
-        } else {
-            sql = "insert or ignore into account (acc_type, balance, name) VALUES (?,?,?)";
-        }
-        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setInt(1, getType());
-            pstmt.setDouble(2, Double.parseDouble(balanceField.getText()));
-            pstmt.setString(3, nameField.getText());
-            if (editing) {
-                pstmt.setInt(4, id);
-            }
-
-            pstmt.executeUpdate();
-
-            ((Stage) typeCombo.getScene().getWindow()).close();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    /**
      * Exits either add/edit account modal
      *
      * @param event Button press event
@@ -123,15 +128,17 @@ public class AddAccountController {
     /**
      * Sets fields of account edit modal
      *
-     * @param t  {@link Account} who is being edited
+     * @param a  {@link Account} who is being edited
      * @param id Database id of {@link Account} who is being edited
      */
-    public void setFields(Account t, int id) {
+    public void setFields(Account a, int id) {
+        if (a == null || id <= 0) return;
+
         editing = true;
         this.id = id;
 
-        nameField.setText(t.getName());
-        typeCombo.setValue(t.getType());
-        balanceField.setText(String.valueOf(t.getBalance()));
+        nameField.setText(a.getName());
+        typeCombo.setValue(a.getType());
+        balanceField.setText(String.valueOf(a.getBalance()));
     }
 }

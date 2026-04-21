@@ -120,33 +120,14 @@ public class TransactionController {
     }
 
     /**
-     * Opens the "create new transaction" modal
-     */
-    @FXML
-    private void addNew() {
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/mattb/controllers/add_transaction.fxml"));
-            Parent root = loader.load();
-
-            Stage stage = new Stage();
-            stage.initModality(Modality.APPLICATION_MODAL);
-            stage.setTitle("Add New Transaction");
-            stage.setScene(new Scene(root));
-            stage.showAndWait();
-
-            refreshTable();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    /**
      * Gets the id of the inputted {@link Transaction}
      *
      * @param t {@link Transaction} to get the id of
      * @return database id of the {@link Transaction} or -1 if it's not found
      */
     private int getId(Transaction t) {
+        if (t == null) return -1;
+
         for (Integer i : map.keySet()) {
             if (map.get(i).equals(t)) {
                 return i;
@@ -161,6 +142,10 @@ public class TransactionController {
     @FXML
     private void hideSelected() {
         Transaction selected = transactionTable.getSelectionModel().getSelectedItem();
+        if (selected == null) return;
+        int transactionId = getId(selected);
+        if (transactionId == -1) return;
+
         String sql;
         if (onHidden) {
             sql = "delete from hidden_transactions where t_id=?";
@@ -169,7 +154,7 @@ public class TransactionController {
         }
 
         try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setInt(1, getId(selected));
+            pstmt.setInt(1, transactionId);
 
             pstmt.executeUpdate();
 
@@ -204,7 +189,28 @@ public class TransactionController {
     }
 
     /**
-     * Setup for editing a transaction
+     * Opens create new transaction modal
+     */
+    @FXML
+    private void addNew() {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/mattb/controllers/add_transaction.fxml"));
+            Parent root = loader.load();
+
+            Stage stage = new Stage();
+            stage.initModality(Modality.APPLICATION_MODAL);
+            stage.setTitle("Add New Transaction");
+            stage.setScene(new Scene(root));
+            stage.showAndWait();
+
+            refreshTable();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Opens edit transaction modal, filling all fields with current transaction information
      */
     @FXML
     private void editSelected() {

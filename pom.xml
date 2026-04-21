@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>mattb</groupId>
-    <artifactId>FinanceApp</artifactId>
+    <artifactId>Finance</artifactId>
     <version>1.0.0</version>
 
     <properties>
