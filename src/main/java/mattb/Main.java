@@ -8,7 +8,9 @@ import javafx.stage.Stage;
 
 import java.io.IOException;
 import java.sql.*;
+import java.text.NumberFormat;
 import java.util.HashSet;
+import java.util.Locale;
 
 import static mattb.FinanceError.*;
 
@@ -101,5 +103,15 @@ public class Main extends Application {
      */
     public static Connection getConn() {
         return conn;
+    }
+
+    /**
+     * Converts a double (that reflects a balance or amount) to a nice formatted string (dollar signs and appropriate decimals)
+     *
+     * @param input String to convert
+     * @return Converted string
+     */
+    public static String formatDouble(double input) {
+        return NumberFormat.getCurrencyInstance(Locale.US).format(input);
     }
 }

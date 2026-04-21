@@ -20,31 +20,16 @@ public class Transaction {
         this.date = date;
     }
 
-    public Transaction() {
-    }
-
     public String getToAccountName() {
         return toAccountName;
-    }
-
-    public void setToAccountName(String toAccountName) {
-        this.toAccountName = toAccountName;
     }
 
     public String getFromAccountName() {
         return fromAccountName;
     }
 
-    public void setFromAccountName(String fromAccountName) {
-        this.fromAccountName = fromAccountName;
-    }
-
     public double getAmount() {
         return amount;
-    }
-
-    public void setAmount(double amount) {
-        this.amount = amount;
     }
 
     public String getCategory() {
@@ -59,16 +44,8 @@ public class Transaction {
         return memo;
     }
 
-    public void setMemo(String memo) {
-        this.memo = memo;
-    }
-
     public Date getDate() {
         return date;
-    }
-
-    public void setDate(Date date) {
-        this.date = date;
     }
 
     @Override

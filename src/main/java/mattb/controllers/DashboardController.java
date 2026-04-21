@@ -23,9 +23,9 @@ public class DashboardController {
         String sql = "select sum(balance) as networth from account where acc_id not in(select acc_id from hidden_accounts)";
         try (PreparedStatement pstmt = conn.prepareStatement(sql); ResultSet rs = pstmt.executeQuery()) {
             if (!rs.next()) {
-                netWorth.setText("0");
+                netWorth.setText("$0.00");
             } else {
-                netWorth.setText("$" + rs.getDouble("networth"));
+                netWorth.setText(Main.formatDouble(rs.getDouble("networth")));
             }
         } catch (SQLException ignored) {
             throw new FinanceException(NET_WORTH_FAIL);

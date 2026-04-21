@@ -7,6 +7,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
@@ -63,6 +64,18 @@ public class AccountController {
             colName.setCellValueFactory(new PropertyValueFactory<>("name"));
             colBalance.setCellValueFactory(new PropertyValueFactory<>("balance"));
             colType.setCellValueFactory(new PropertyValueFactory<>("type"));
+
+            colBalance.setCellFactory(_ -> new TableCell<>() {
+                @Override
+                protected void updateItem(Double balance, boolean empty) {
+                    super.updateItem(balance, empty);
+                    if (empty || balance == null) {
+                        setText(null);
+                    } else {
+                        setText(Main.formatDouble(balance));
+                    }
+                }
+            });
 
             accountTable.setItems(masterData);
             refreshTable();
