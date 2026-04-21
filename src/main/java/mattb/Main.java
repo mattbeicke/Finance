@@ -32,8 +32,8 @@ public class Main extends Application {
     public void start(Stage stage) throws IOException {
         try {
             conn = DriverManager.getConnection("jdbc:sqlite:finance.db");
-        } catch (SQLException e) {
-            e.printStackTrace();
+        } catch (SQLException ignored) {
+            throw new FinanceException(FinanceError.DATABASE_CONNECTION_FAIL);
         }
 
         hiddenTransactions = new HashSet<>();
@@ -55,22 +55,22 @@ public class Main extends Application {
         hiddenTransactions.clear();
         hiddenAccounts.clear();
 
-        try {
-            String sql = "select t_id from hidden_transactions";
-            PreparedStatement pstmt = conn.prepareStatement(sql);
-            ResultSet rs = pstmt.executeQuery();
+        String sql = "select t_id from hidden_transactions";
+        try (PreparedStatement pstmt = conn.prepareStatement(sql); ResultSet rs = pstmt.executeQuery()) {
             while (rs.next()) {
                 hiddenTransactions.add(rs.getInt("t_id"));
             }
+        } catch (SQLException ignored) {
+            throw new FinanceException(FinanceError.LOAD_HIDDEN_TRANSACTIONS_FAIL);
+        }
 
-            sql = "select acc_id from hidden_accounts";
-            pstmt = conn.prepareStatement(sql);
-            rs = pstmt.executeQuery();
+        sql = "select acc_id from hidden_accounts";
+        try (PreparedStatement pstmt = conn.prepareStatement(sql); ResultSet rs = pstmt.executeQuery()) {
             while (rs.next()) {
                 hiddenAccounts.add(rs.getInt("acc_id"));
             }
-        } catch (SQLException e) {
-            e.printStackTrace();
+        } catch (SQLException ignored) {
+            throw new FinanceException(FinanceError.LOAD_HIDDEN_ACCOUNTS_FAIL);
         }
     }
 

@@ -10,6 +10,8 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import mattb.FinanceError;
+import mattb.FinanceException;
 import mattb.Main;
 import mattb.model.Account;
 
@@ -93,8 +95,8 @@ public class AccountController {
                         rs.getString("name")
                 ));
             }
-        } catch (SQLException e) {
-            e.printStackTrace();
+        } catch (SQLException ignored) {
+            throw new FinanceException(FinanceError.LOAD_ACCOUNTS_FAIL);
         }
 
         masterData.addAll(map.values());
@@ -142,8 +144,8 @@ public class AccountController {
 
             Main.updateHidden();
             refreshTable();
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (SQLException ignored) {
+            throw new FinanceException(FinanceError.UPDATE_HIDDEN_ACCOUNT_LIST_FAIL);
         }
     }
 
@@ -190,8 +192,8 @@ public class AccountController {
             stage.showAndWait();
 
             refreshTable();
-        } catch (IOException e) {
-            e.printStackTrace();
+        } catch (IOException ignored) {
+            throw new FinanceException(FinanceError.OPEN_NEW_ACCOUNT_MODAL_FAIL);
         }
     }
 
@@ -209,8 +211,8 @@ public class AccountController {
             stage.setTitle("Add New Account Type");
             stage.setScene(new Scene(root));
             stage.show();
-        } catch (IOException e) {
-            e.printStackTrace();
+        } catch (IOException ignored) {
+            throw new FinanceException(FinanceError.OPEN_NEW_TYPE_MODAL_FAIL);
         }
     }
 
@@ -238,8 +240,8 @@ public class AccountController {
             stage.showAndWait();
 
             refreshTable();
-        } catch (IOException e) {
-            e.printStackTrace();
+        } catch (IOException ignored) {
+            throw new FinanceException(FinanceError.OPEN_EDIT_ACCOUNT_MODAL_FAIL);
         }
     }
 }

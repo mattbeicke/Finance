@@ -2,4 +2,3 @@ goals
 
 Exceptions and Error handling:
  - Add custom exception class
- - All catch statements for SQL must do a rollback

@@ -8,6 +8,8 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
+import mattb.FinanceError;
+import mattb.FinanceException;
 import mattb.Main;
 import mattb.model.Account;
 
@@ -48,8 +50,8 @@ public class AddAccountController {
 
             types.add("Add more via Accounts tab");
             typeCombo.setItems(types);
-        } catch (SQLException e) {
-            System.err.println("Could not load types: " + e.getMessage());
+        } catch (SQLException ignored) {
+            throw new FinanceException(FinanceError.LOAD_TYPES_FAIL);
         }
 
         balanceField.textProperty().addListener((_, oldVal, newVal) -> {
@@ -60,7 +62,7 @@ public class AddAccountController {
     }
 
     /**
-     * Saves new account
+     * Saves new account to database
      */
     @FXML
     private void onAccountSave() {
@@ -84,15 +86,15 @@ public class AddAccountController {
             pstmt.executeUpdate();
 
             ((Stage) typeCombo.getScene().getWindow()).close();
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (SQLException ignored) {
+            throw new FinanceException(FinanceError.SAVE_ACCOUNT_FAIL);
         }
     }
 
     /**
      * Gets the id number of the currently selected type
      *
-     * @return id number that corresponds to the type selected in the type combo box
+     * @return id number that corresponds to the type selected in the type combo box or -1 if it cannot be found
      */
     public int getTypeId() {
         if (typeCombo.getValue().isBlank()) return -1;
@@ -108,10 +110,9 @@ public class AddAccountController {
             }
 
             return rs.getInt("type_id");
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (SQLException ignored) {
+            throw new FinanceException(FinanceError.GET_TYPE_ID_FAIL);
         }
-        return -1;
     }
 
     /**

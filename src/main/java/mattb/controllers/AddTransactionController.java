@@ -13,6 +13,8 @@ import javafx.scene.control.DatePicker;
 import javafx.scene.control.TextField;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import mattb.FinanceError;
+import mattb.FinanceException;
 import mattb.Main;
 import mattb.model.Transaction;
 
@@ -61,8 +63,8 @@ public class AddTransactionController {
                 accountNames.add("Add more via Accounts tab");
                 fromCombo.setItems(accountNames);
                 toCombo.setItems(accountNames);
-            } catch (SQLException e) {
-                System.err.println("Could not load accounts: " + e.getMessage());
+            } catch (SQLException ignored) {
+                throw new FinanceException(FinanceError.LOAD_ACCOUNTS_FAIL);
             }
 
             amountField.textProperty().addListener((_, oldVal, newVal) -> {
@@ -128,8 +130,8 @@ public class AddTransactionController {
                 if (popupController.update) {
                     updateBalances();
                 }
-            } catch (IOException e) {
-                e.printStackTrace();
+            } catch (IOException ignored) {
+                throw new FinanceException(FinanceError.OPEN_UPDATE_BALANCE_MODAL_FAIL);
             }
 
             if (update) {
@@ -137,8 +139,8 @@ public class AddTransactionController {
             }
 
             ((Stage) amountField.getScene().getWindow()).close();
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (SQLException ignored) {
+            throw new FinanceException(FinanceError.SAVE_TRANSACTION_FAIL);
         }
     }
 
@@ -161,10 +163,9 @@ public class AddTransactionController {
             } else {
                 return -1;
             }
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (SQLException ignored) {
+            throw new FinanceException(FinanceError.GET_ACCOUNT_ID_FAIL);
         }
-        return -1;
     }
 
     /**
@@ -175,13 +176,11 @@ public class AddTransactionController {
         int t_id;
         String sql = "select max(t_id) as t_id from \"transaction\"";
         try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
-
             ResultSet rs = pstmt.executeQuery();
             rs.next();
             t_id = rs.getInt("t_id");
-        } catch (Exception e) {
-            e.printStackTrace();
-            return;
+        } catch (SQLException ignored) {
+            throw new FinanceException(FinanceError.GET_TRANSACTION_ID_FAIL);
         }
 
         if (t_id <= 0) return;
@@ -204,8 +203,8 @@ public class AddTransactionController {
                 ResultSet rs = pstmt.executeQuery();
                 rs.next();
                 cats[i] = rs.getInt("cat_id");
-            } catch (Exception e) {
-                e.printStackTrace();
+            } catch (SQLException ignored) {
+                throw new FinanceException(FinanceError.GET_CATEGORY_ID_FAIL);
             }
         }
 
@@ -219,8 +218,8 @@ public class AddTransactionController {
             }
 
             pstmt.executeUpdate();
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (SQLException ignored) {
+            throw new FinanceException(FinanceError.SAVE_TRANSACTION_CATEGORY_FAIL);
         }
     }
 
@@ -237,8 +236,8 @@ public class AddTransactionController {
             pstmt.setString(1, cat);
 
             pstmt.executeUpdate();
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (SQLException ignored) {
+            throw new FinanceException(FinanceError.SAVE_CATEGORY_FAIL);
         }
     }
 
@@ -321,8 +320,8 @@ public class AddTransactionController {
                 pstmt.setInt(2, fromAccId);
 
                 pstmt.executeUpdate();
-            } catch (Exception e) {
-                e.printStackTrace();
+            } catch (SQLException ignored) {
+                throw new FinanceException(FinanceError.UPDATE_ACCOUNT_BALANCE_FAIL);
             }
         }
 
@@ -334,8 +333,8 @@ public class AddTransactionController {
                 pstmt.setInt(2, toAccId);
 
                 pstmt.executeUpdate();
-            } catch (Exception e) {
-                e.printStackTrace();
+            } catch (SQLException ignored) {
+                throw new FinanceException(FinanceError.UPDATE_ACCOUNT_BALANCE_FAIL);
             }
         }
     }
