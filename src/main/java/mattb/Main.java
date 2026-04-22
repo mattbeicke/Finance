@@ -9,11 +9,14 @@ import javafx.scene.control.TableColumn;
 import javafx.stage.Stage;
 import mattb.controllers.MainController;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.sql.*;
 import java.text.NumberFormat;
 import java.util.HashSet;
 import java.util.Locale;
+import java.util.stream.Collectors;
 
 import static mattb.FinanceError.*;
 
@@ -41,6 +44,10 @@ public class Main extends Application {
             conn = DriverManager.getConnection("jdbc:sqlite:finance.db");
         } catch (SQLException ignored) {
             throw new FinanceException(DATABASE_CONNECTION_FAIL);
+        }
+
+        if (ensureDB()) {
+            return;
         }
 
         hiddenTransactions = new HashSet<>();
@@ -140,4 +147,30 @@ public class Main extends Application {
         });
     }
 
+    /**
+     * Initializes all database tables and populates them with the initial data
+     *
+     * @return false if everything went right
+     */
+    private boolean ensureDB() {
+        try (Statement stmt = conn.createStatement()) {
+            stmt.execute("PRAGMA foreign_keys = ON;");
+
+            var is = Main.class.getResourceAsStream("/mattb/schema.sql");
+            if (is == null) throw new FinanceException(SCHEMA_NOT_FOUND);
+
+            String sql = new BufferedReader(new InputStreamReader(is))
+                    .lines().collect(Collectors.joining("\n"));
+
+            for (String part : sql.split(";")) {
+                if (!part.trim().isEmpty()) {
+                    stmt.execute(part);
+                }
+            }
+
+            return false;
+        } catch (SQLException ignored) {
+            throw new FinanceException(DATABASE_CREATION_FAIL);
+        }
+    }
 }

@@ -18,6 +18,8 @@ public enum FinanceError {
      * SQL
      **/
     DATABASE_CONNECTION_FAIL("Failed to connect to database"),
+    SCHEMA_NOT_FOUND("Database schema file not found"),
+    DATABASE_CREATION_FAIL("Failed to initialize tables"),
     // Saving
     SAVE_ACCOUNT_TYPE_FAIL("Error saving new type to database"),
     SAVE_ACCOUNT_FAIL("Error saving account to database"),

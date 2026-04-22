@@ -1,5 +1,3 @@
 goals
 
 error reporting to user
-
-ensure database columns exist on init (run create or ignore (if that sort of thing exists))
