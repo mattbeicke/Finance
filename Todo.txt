@@ -1,4 +1,5 @@
 goals
 
-Exceptions and Error handling:
- - Add custom exception class
+error reporting to user
+
+ensure database columns exist on init (run create or ignore (if that sort of thing exists))
