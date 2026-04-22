@@ -3,13 +3,23 @@ package mattb;
 import javafx.application.Platform;
 import javafx.scene.control.Alert;
 
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+
 public class FinanceException extends RuntimeException {
     public FinanceException(FinanceError error) {
         super(error.getMessage());
     }
 
+    /**
+     * Determines whether to display the error alert now or when the application thread can, depending on whom the calling thread is
+     */
     public void displayAndLog() {
         String errorMessage = this.getMessage();
+        logToFile(errorMessage);
         if (Platform.isFxApplicationThread()) {
             showDialog(errorMessage);
         } else {
@@ -17,11 +27,32 @@ public class FinanceException extends RuntimeException {
         }
     }
 
+    /**
+     * Prints error to error.log file
+     *
+     * @param msg Error message to print
+     */
+    public static void logToFile(String msg) {
+        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        String timestamp = dtf.format(LocalDateTime.now());
+
+        try (FileWriter fw = new FileWriter("error.log", true); PrintWriter pw = new PrintWriter(fw)) {
+            pw.println("[" + timestamp + "] ERROR: " + msg);
+        } catch (IOException e) {
+            System.err.println("Could not write to log file: " + e.getMessage());
+        }
+    }
+
+    /**
+     * Displays the alert box with the specified message
+     *
+     * @param msg Error message to display
+     */
     private void showDialog(String msg) {
         Alert alert = new Alert(Alert.AlertType.ERROR);
         alert.setTitle("Application Error");
-        alert.setHeaderText("An Error Occurred");
-        alert.setContentText(msg);
+        alert.setHeaderText(msg);
+        alert.setContentText("Saved to error.log file");
         alert.showAndWait();
     }
 }

@@ -94,16 +94,18 @@ public class Main extends Application {
         } catch (FinanceException e) {
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle("Critical Startup Error");
-            alert.setHeaderText("Failed to initialize application");
-            alert.setContentText(e.getMessage());
+            alert.setHeaderText(e.getMessage());
+            alert.setContentText("Saved to error.log file");
+            FinanceException.logToFile(e.getMessage());
             alert.showAndWait();
 
             Platform.exit();
         } catch (IOException e) {
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle("Critical Startup Error");
-            alert.setHeaderText("Failed to load user interface");
-            alert.setContentText("A necessary JavaFX FXML file could not be found");
+            alert.setHeaderText("A necessary JavaFX FXML file could not be found");
+            alert.setContentText("Saved to error.log file");
+            FinanceException.logToFile("A necessary JavaFX FXML file could not be found");
             alert.showAndWait();
 
             Platform.exit();
