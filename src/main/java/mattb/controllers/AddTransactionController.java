@@ -18,6 +18,7 @@ import mattb.Main;
 import mattb.model.Transaction;
 
 import java.io.IOException;
+import java.net.URL;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -68,7 +69,7 @@ public class AddTransactionController {
                 fromCombo.setItems(accountNames);
                 toCombo.setItems(accountNames);
             } catch (SQLException ignored) {
-                throw new FinanceException(LOAD_ACCOUNTS_FAIL);
+                new FinanceException(LOAD_ACCOUNTS_FAIL).displayAndLog();
             }
 
             amountField.textProperty().addListener((_, oldVal, newVal) -> {
@@ -120,7 +121,12 @@ public class AddTransactionController {
             addCategory();
 
             try {
-                FXMLLoader loader = new FXMLLoader(getClass().getResource("/mattb/controllers/update_balance.fxml"));
+                URL resource = getClass().getResource("/mattb/controllers/update_balance.fxml");
+                if (resource == null) {
+                    new FinanceException(OPEN_UPDATE_BALANCE_MODAL_FAIL).displayAndLog();
+                    return;
+                }
+                FXMLLoader loader = new FXMLLoader(resource);
                 Parent root = loader.load();
 
                 AddTransactionController popupController = loader.getController();
@@ -132,10 +138,10 @@ public class AddTransactionController {
                 stage.showAndWait();
 
                 if (popupController.update) {
-                    updateBalances();
+                    update = true;
                 }
             } catch (IOException ignored) {
-                throw new FinanceException(OPEN_UPDATE_BALANCE_MODAL_FAIL);
+                new FinanceException(OPEN_UPDATE_BALANCE_MODAL_FAIL).displayAndLog();
             }
 
             if (update) {
@@ -144,7 +150,7 @@ public class AddTransactionController {
 
             ((Stage) amountField.getScene().getWindow()).close();
         } catch (SQLException ignored) {
-            throw new FinanceException(SAVE_TRANSACTION_FAIL);
+            new FinanceException(SAVE_TRANSACTION_FAIL).displayAndLog();
         }
     }
 
@@ -168,8 +174,9 @@ public class AddTransactionController {
                 return -1;
             }
         } catch (SQLException ignored) {
-            throw new FinanceException(GET_ACCOUNT_ID_FAIL);
+            new FinanceException(GET_ACCOUNT_ID_FAIL).displayAndLog();
         }
+        return -1;
     }
 
     /**
@@ -177,14 +184,14 @@ public class AddTransactionController {
      */
     private void addCategory() {
         // Find transaction id
-        int t_id;
+        int t_id = 0;
         String sql = "select max(t_id) as t_id from \"transaction\"";
         try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
             ResultSet rs = pstmt.executeQuery();
             rs.next();
             t_id = rs.getInt("t_id");
         } catch (SQLException ignored) {
-            throw new FinanceException(GET_TRANSACTION_ID_FAIL);
+            new FinanceException(GET_TRANSACTION_ID_FAIL).displayAndLog();
         }
 
         if (t_id <= 0) return;
@@ -208,7 +215,7 @@ public class AddTransactionController {
                 rs.next();
                 cats[i] = rs.getInt("cat_id");
             } catch (SQLException ignored) {
-                throw new FinanceException(GET_CATEGORY_ID_FAIL);
+                new FinanceException(GET_CATEGORY_ID_FAIL).displayAndLog();
             }
         }
 
@@ -223,7 +230,7 @@ public class AddTransactionController {
 
             pstmt.executeUpdate();
         } catch (SQLException ignored) {
-            throw new FinanceException(SAVE_TRANSACTION_CATEGORY_FAIL);
+            new FinanceException(SAVE_TRANSACTION_CATEGORY_FAIL).displayAndLog();
         }
     }
 
@@ -241,7 +248,7 @@ public class AddTransactionController {
 
             pstmt.executeUpdate();
         } catch (SQLException ignored) {
-            throw new FinanceException(SAVE_CATEGORY_FAIL);
+            new FinanceException(SAVE_CATEGORY_FAIL).displayAndLog();
         }
     }
 
@@ -325,7 +332,7 @@ public class AddTransactionController {
 
                 pstmt.executeUpdate();
             } catch (SQLException ignored) {
-                throw new FinanceException(UPDATE_ACCOUNT_BALANCE_FAIL);
+                new FinanceException(UPDATE_ACCOUNT_BALANCE_FAIL).displayAndLog();
             }
         }
 
@@ -338,7 +345,7 @@ public class AddTransactionController {
 
                 pstmt.executeUpdate();
             } catch (SQLException ignored) {
-                throw new FinanceException(UPDATE_ACCOUNT_BALANCE_FAIL);
+                new FinanceException(UPDATE_ACCOUNT_BALANCE_FAIL).displayAndLog();
             }
         }
     }

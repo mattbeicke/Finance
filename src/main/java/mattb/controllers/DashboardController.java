@@ -28,7 +28,7 @@ public class DashboardController {
                 netWorth.setText(Main.formatDouble(rs.getDouble("networth")));
             }
         } catch (SQLException ignored) {
-            throw new FinanceException(NET_WORTH_FAIL);
+            new FinanceException(NET_WORTH_FAIL).displayAndLog();
         }
     }
 }

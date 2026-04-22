@@ -4,6 +4,7 @@ public enum FinanceError {
     /**
      * Opening Tabs/Modals
      **/
+    OPEN_MAIN_FAILED("Failed to open Main page"),
     OPEN_DASHBOARD_TAB_FAILED("Failed to open Dashboard tab"),
     OPEN_TRANSACTIONS_TAB_FAILED("Failed to open Transactions tab"),
     OPEN_ACCOUNTS_TAB_FAILED("Failed to open Accounts tab"),

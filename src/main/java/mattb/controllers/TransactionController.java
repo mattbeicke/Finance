@@ -17,6 +17,7 @@ import mattb.Main;
 import mattb.model.Transaction;
 
 import java.io.IOException;
+import java.net.URL;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -142,7 +143,7 @@ public class TransactionController {
                 }
             }
         } catch (SQLException ignored) {
-            throw new FinanceException(LOAD_TRANSACTIONS_FAIL);
+            new FinanceException(LOAD_TRANSACTIONS_FAIL).displayAndLog();
         }
 
         masterData.addAll(map.values());
@@ -190,7 +191,7 @@ public class TransactionController {
             Main.updateHidden();
             refreshTable();
         } catch (SQLException ignored) {
-            throw new FinanceException(UPDATE_HIDDEN_TRANSACTION_LIST_FAIL);
+            new FinanceException(UPDATE_HIDDEN_TRANSACTION_LIST_FAIL).displayAndLog();
         }
     }
 
@@ -223,7 +224,12 @@ public class TransactionController {
     @FXML
     private void addNew() {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/mattb/controllers/add_transaction.fxml"));
+            URL resource = getClass().getResource("/mattb/controllers/add_transaction.fxml");
+            if (resource == null) {
+                new FinanceException(OPEN_NEW_TRANSACTION_MODAL_FAIL).displayAndLog();
+                return;
+            }
+            FXMLLoader loader = new FXMLLoader(resource);
             Parent root = loader.load();
 
             Stage stage = new Stage();
@@ -234,7 +240,7 @@ public class TransactionController {
 
             refreshTable();
         } catch (IOException ignored) {
-            throw new FinanceException(OPEN_NEW_TRANSACTION_MODAL_FAIL);
+            new FinanceException(OPEN_NEW_TRANSACTION_MODAL_FAIL).displayAndLog();
         }
     }
 
@@ -246,11 +252,15 @@ public class TransactionController {
         Transaction selected = transactionTable.getSelectionModel().getSelectedItem();
         int id = getId(selected);
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/mattb/controllers/add_transaction.fxml"));
+            URL resource = getClass().getResource("/mattb/controllers/add_transaction.fxml");
+            if (resource == null) {
+                new FinanceException(OPEN_NEW_TRANSACTION_MODAL_FAIL).displayAndLog();
+                return;
+            }
+            FXMLLoader loader = new FXMLLoader(resource);
             Parent root = loader.load();
 
             AddTransactionController controller = loader.getController();
-
             controller.setFields(selected, id);
 
             Stage stage = new Stage();
@@ -261,7 +271,7 @@ public class TransactionController {
 
             refreshTable();
         } catch (IOException ignored) {
-            throw new FinanceException(OPEN_EDIT_TRANSACTION_MODAL_FAIL);
+            new FinanceException(OPEN_EDIT_TRANSACTION_MODAL_FAIL).displayAndLog();
         }
     }
 }

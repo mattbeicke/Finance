@@ -43,7 +43,7 @@ public class AddTypeController {
 
             ((Stage) typeField.getScene().getWindow()).close();
         } catch (SQLException ignored) {
-            throw new FinanceException(SAVE_ACCOUNT_TYPE_FAIL);
+            new FinanceException(SAVE_ACCOUNT_TYPE_FAIL).displayAndLog();
         }
     }
 

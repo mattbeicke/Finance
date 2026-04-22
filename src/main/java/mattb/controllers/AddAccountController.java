@@ -52,7 +52,7 @@ public class AddAccountController {
             types.add("Add more via Accounts tab");
             typeCombo.setItems(types);
         } catch (SQLException ignored) {
-            throw new FinanceException(LOAD_ACCOUNT_TYPES_FAIL);
+            new FinanceException(LOAD_ACCOUNT_TYPES_FAIL).displayAndLog();
         }
 
         balanceField.textProperty().addListener((_, oldVal, newVal) -> {
@@ -88,7 +88,7 @@ public class AddAccountController {
 
             ((Stage) typeCombo.getScene().getWindow()).close();
         } catch (SQLException ignored) {
-            throw new FinanceException(SAVE_ACCOUNT_FAIL);
+            new FinanceException(SAVE_ACCOUNT_FAIL).displayAndLog();
         }
     }
 
@@ -112,8 +112,9 @@ public class AddAccountController {
 
             return rs.getInt("type_id");
         } catch (SQLException ignored) {
-            throw new FinanceException(GET_ACCOUNT_TYPE_ID_FAIL);
+            new FinanceException(GET_ACCOUNT_TYPE_ID_FAIL).displayAndLog();
         }
+        return -1;
     }
 
     /**

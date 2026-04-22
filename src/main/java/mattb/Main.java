@@ -1,9 +1,11 @@
 package mattb;
 
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.stage.Stage;
@@ -12,6 +14,7 @@ import mattb.controllers.MainController;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.net.URL;
 import java.sql.*;
 import java.text.NumberFormat;
 import java.util.HashSet;
@@ -40,28 +43,71 @@ public class Main extends Application {
      */
     @Override
     public void start(Stage stage) throws IOException {
+        Thread.setDefaultUncaughtExceptionHandler((_, throwable) -> {
+            Throwable cause = throwable;
+            while (cause != null) {
+                if (cause instanceof FinanceException) {
+                    final String errorMessage = cause.getMessage();
+                    Platform.runLater(() -> {
+                        Alert alert = new Alert(Alert.AlertType.ERROR);
+                        alert.setTitle("Application Error");
+                        alert.setHeaderText("An Error Occurred");
+                        alert.setContentText(errorMessage);
+                        alert.showAndWait();
+                    });
+                    return;
+                }
+                cause = cause.getCause();
+            }
+            throwable.printStackTrace();
+        });
+
         try {
-            conn = DriverManager.getConnection("jdbc:sqlite:finance.db");
-        } catch (SQLException ignored) {
-            throw new FinanceException(DATABASE_CONNECTION_FAIL);
+            try {
+                conn = DriverManager.getConnection("jdbc:sqlite:finance.db");
+            } catch (SQLException ignored) {
+                new FinanceException(DATABASE_CONNECTION_FAIL).displayAndLog();
+            }
+
+            if (ensureDB()) {
+                return;
+            }
+
+            hiddenTransactions = new HashSet<>();
+            hiddenAccounts = new HashSet<>();
+
+            updateHidden();
+
+            URL resource = getClass().getResource("/mattb/controllers/main.fxml");
+            if (resource == null) {
+                new FinanceException(OPEN_MAIN_FAILED).displayAndLog();
+                return;
+            }
+            FXMLLoader loader = new FXMLLoader(resource);
+            Parent root = loader.load();
+
+            stage.setTitle("Matt's Finance App");
+            stage.setScene(new Scene(root));
+            stage.show();
+            MainController mainController = loader.getController();
+            mainController.showDashboard();
+        } catch (FinanceException e) {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Critical Startup Error");
+            alert.setHeaderText("Failed to initialize application");
+            alert.setContentText(e.getMessage());
+            alert.showAndWait();
+
+            Platform.exit();
+        } catch (IOException e) {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Critical Startup Error");
+            alert.setHeaderText("Failed to load user interface");
+            alert.setContentText("A necessary JavaFX FXML file could not be found");
+            alert.showAndWait();
+
+            Platform.exit();
         }
-
-        if (ensureDB()) {
-            return;
-        }
-
-        hiddenTransactions = new HashSet<>();
-        hiddenAccounts = new HashSet<>();
-
-        updateHidden();
-
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/mattb/controllers/main.fxml"));
-        Parent root = loader.load();
-        stage.setTitle("Matt's Finance App");
-        stage.setScene(new Scene(root));
-        stage.show();
-        MainController mainController = loader.getController();
-        mainController.showDashboard();
     }
 
     /**
@@ -77,7 +123,7 @@ public class Main extends Application {
                 hiddenTransactions.add(rs.getInt("t_id"));
             }
         } catch (SQLException ignored) {
-            throw new FinanceException(LOAD_HIDDEN_TRANSACTIONS_FAIL);
+            new FinanceException(LOAD_HIDDEN_TRANSACTIONS_FAIL).displayAndLog();
         }
 
         sql = "select acc_id from hidden_accounts";
@@ -86,7 +132,7 @@ public class Main extends Application {
                 hiddenAccounts.add(rs.getInt("acc_id"));
             }
         } catch (SQLException ignored) {
-            throw new FinanceException(LOAD_HIDDEN_ACCOUNTS_FAIL);
+            new FinanceException(LOAD_HIDDEN_ACCOUNTS_FAIL).displayAndLog();
         }
     }
 
@@ -150,17 +196,18 @@ public class Main extends Application {
     /**
      * Initializes all database tables and populates them with the initial data
      *
-     * @return false if everything went right
+     * @return true if something went wrong
      */
     private boolean ensureDB() {
         try (Statement stmt = conn.createStatement()) {
             stmt.execute("PRAGMA foreign_keys = ON;");
 
             var is = Main.class.getResourceAsStream("/mattb/schema.sql");
-            if (is == null) throw new FinanceException(SCHEMA_NOT_FOUND);
+            if (is == null) {
+                new FinanceException(SCHEMA_NOT_FOUND).displayAndLog();
+            }
 
-            String sql = new BufferedReader(new InputStreamReader(is))
-                    .lines().collect(Collectors.joining("\n"));
+            String sql = new BufferedReader(new InputStreamReader(is)).lines().collect(Collectors.joining("\n"));
 
             for (String part : sql.split(";")) {
                 if (!part.trim().isEmpty()) {
@@ -170,7 +217,8 @@ public class Main extends Application {
 
             return false;
         } catch (SQLException ignored) {
-            throw new FinanceException(DATABASE_CREATION_FAIL);
+            new FinanceException(DATABASE_CREATION_FAIL).displayAndLog();
         }
+        return true;
     }
 }

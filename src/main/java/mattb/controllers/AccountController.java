@@ -17,6 +17,7 @@ import mattb.Main;
 import mattb.model.Account;
 
 import java.io.IOException;
+import java.net.URL;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -110,7 +111,7 @@ public class AccountController {
                 ));
             }
         } catch (SQLException ignored) {
-            throw new FinanceException(LOAD_ACCOUNTS_FAIL);
+            new FinanceException(LOAD_ACCOUNTS_FAIL).displayAndLog();
         }
 
         masterData.addAll(map.values());
@@ -159,7 +160,7 @@ public class AccountController {
             Main.updateHidden();
             refreshTable();
         } catch (SQLException ignored) {
-            throw new FinanceException(UPDATE_HIDDEN_ACCOUNT_LIST_FAIL);
+            new FinanceException(UPDATE_HIDDEN_ACCOUNT_LIST_FAIL).displayAndLog();
         }
     }
 
@@ -196,7 +197,12 @@ public class AccountController {
     @FXML
     private void addNewAccount() {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/mattb/controllers/add_account.fxml"));
+            URL resource = getClass().getResource("/mattb/controllers/add_account.fxml");
+            if (resource == null) {
+                new FinanceException(OPEN_NEW_ACCOUNT_MODAL_FAIL).displayAndLog();
+                return;
+            }
+            FXMLLoader loader = new FXMLLoader(resource);
             Parent root = loader.load();
 
             Stage stage = new Stage();
@@ -207,7 +213,7 @@ public class AccountController {
 
             refreshTable();
         } catch (IOException ignored) {
-            throw new FinanceException(OPEN_NEW_ACCOUNT_MODAL_FAIL);
+            new FinanceException(OPEN_NEW_ACCOUNT_MODAL_FAIL).displayAndLog();
         }
     }
 
@@ -217,7 +223,12 @@ public class AccountController {
     @FXML
     private void addNewType() {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/mattb/controllers/add_type.fxml"));
+            URL resource = getClass().getResource("/mattb/controllers/add_type.fxml");
+            if (resource == null) {
+                new FinanceException(OPEN_NEW_ACCOUNT_MODAL_FAIL).displayAndLog();
+                return;
+            }
+            FXMLLoader loader = new FXMLLoader(resource);
             Parent root = loader.load();
 
             Stage stage = new Stage();
@@ -226,7 +237,7 @@ public class AccountController {
             stage.setScene(new Scene(root));
             stage.show();
         } catch (IOException ignored) {
-            throw new FinanceException(OPEN_NEW_TYPE_MODAL_FAIL);
+            new FinanceException(OPEN_NEW_TYPE_MODAL_FAIL).displayAndLog();
         }
     }
 
@@ -240,7 +251,12 @@ public class AccountController {
         if (id == -1) return;
 
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/mattb/controllers/add_account.fxml"));
+            URL resource = getClass().getResource("/mattb/controllers/add_account.fxml");
+            if (resource == null) {
+                new FinanceException(OPEN_NEW_ACCOUNT_MODAL_FAIL).displayAndLog();
+                return;
+            }
+            FXMLLoader loader = new FXMLLoader(resource);
             Parent root = loader.load();
 
             AddAccountController controller = loader.getController();
@@ -255,7 +271,7 @@ public class AccountController {
 
             refreshTable();
         } catch (IOException ignored) {
-            throw new FinanceException(OPEN_EDIT_ACCOUNT_MODAL_FAIL);
+            new FinanceException(OPEN_EDIT_ACCOUNT_MODAL_FAIL).displayAndLog();
         }
     }
 }
