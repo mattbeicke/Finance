@@ -24,7 +24,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.HashSet;
 
 import static mattb.FinanceError.*;
 
@@ -52,7 +51,6 @@ public class TransactionController {
 
     private final ObservableList<Transaction> masterData = FXCollections.observableArrayList();
     private HashMap<Integer, Transaction> map;
-    private HashSet<Integer> hiddenTransactions = null;
 
     private Connection conn = null;
     private boolean onHidden = false;
@@ -63,7 +61,6 @@ public class TransactionController {
     @FXML
     public void initialize() {
         conn = Main.getConn();
-        hiddenTransactions = Main.getHiddenTransactions();
 
         if (colDate != null) {
             colDate.setCellValueFactory(cellData ->
@@ -104,15 +101,16 @@ public class TransactionController {
                     left join category on cat = cat_id
                     left join account ta on to_acc = ta.acc_id
                     left join account fa on from_acc = fa.acc_id
+                    where t_id not in (select t_id from hidden_transactions)
                     """;
         } else {
             sql = """
-                    select t.t_id, date, fa.name as from_acc_name, ta.name as to_acc_name, amount, memo, cat_name from "transaction" t
-                    join hidden_transactions ht on ht.t_id = t.t_id
-                    left join tcat on t.t_id = trans
+                    select t_id, date, fa.name as from_acc_name, ta.name as to_acc_name, amount, memo, cat_name from "transaction"
+                    left join tcat on t_id = trans
                     left join category on cat = cat_id
                     left join account ta on to_acc = ta.acc_id
                     left join account fa on from_acc = fa.acc_id
+                    where t_id in (select t_id from hidden_transactions)
                     """;
         }
         map = new HashMap<>();
@@ -121,7 +119,6 @@ public class TransactionController {
         try (PreparedStatement pstmt = conn.prepareStatement(sql);
              ResultSet rs = pstmt.executeQuery()) {
             while (rs.next()) {
-                if (!onHidden && hiddenTransactions.contains(rs.getInt("t_id"))) continue;
                 if (map.containsKey(rs.getInt("t_id"))) {
                     Transaction temp = map.get(rs.getInt("t_id"));
                     map.put(rs.getInt("t_id"), new Transaction(
@@ -188,7 +185,6 @@ public class TransactionController {
 
             pstmt.executeUpdate();
 
-            Main.updateHidden();
             refreshTable();
         } catch (SQLException ignored) {
             new FinanceException(UPDATE_HIDDEN_TRANSACTION_LIST_FAIL).displayAndLog();
@@ -214,7 +210,6 @@ public class TransactionController {
             viewButton.setText("View Hidden");
         }
 
-        Main.updateHidden();
         refreshTable();
     }
 

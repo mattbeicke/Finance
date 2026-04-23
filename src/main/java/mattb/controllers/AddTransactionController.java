@@ -200,6 +200,7 @@ public class AddTransactionController {
         String[] categories = categoryField.getText().split(",\\s*");
 
         if (categories.length == 0) return;
+        if (categories.length == 1 && categories[0].isBlank()) return;
 
         int[] cats = new int[categories.length];
 

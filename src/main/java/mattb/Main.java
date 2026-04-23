@@ -15,7 +15,10 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.text.NumberFormat;
 import java.util.HashSet;
 import java.util.Locale;
@@ -24,8 +27,6 @@ import java.util.stream.Collectors;
 import static mattb.FinanceError.*;
 
 public class Main extends Application {
-    private static HashSet<Integer> hiddenTransactions;
-    private static HashSet<Integer> hiddenAccounts;
     private static Connection conn;
 
     static void main() {
@@ -73,11 +74,6 @@ public class Main extends Application {
                 return;
             }
 
-            hiddenTransactions = new HashSet<>();
-            hiddenAccounts = new HashSet<>();
-
-            updateHidden();
-
             URL resource = getClass().getResource("/mattb/controllers/main.fxml");
             if (resource == null) {
                 new FinanceException(OPEN_MAIN_FAILED).displayAndLog();
@@ -110,50 +106,6 @@ public class Main extends Application {
 
             Platform.exit();
         }
-    }
-
-    /**
-     * Recalculates the hidden transaction and account lists
-     */
-    public static void updateHidden() {
-        hiddenTransactions.clear();
-        hiddenAccounts.clear();
-
-        String sql = "select t_id from hidden_transactions";
-        try (PreparedStatement pstmt = conn.prepareStatement(sql); ResultSet rs = pstmt.executeQuery()) {
-            while (rs.next()) {
-                hiddenTransactions.add(rs.getInt("t_id"));
-            }
-        } catch (SQLException ignored) {
-            new FinanceException(LOAD_HIDDEN_TRANSACTIONS_FAIL).displayAndLog();
-        }
-
-        sql = "select acc_id from hidden_accounts";
-        try (PreparedStatement pstmt = conn.prepareStatement(sql); ResultSet rs = pstmt.executeQuery()) {
-            while (rs.next()) {
-                hiddenAccounts.add(rs.getInt("acc_id"));
-            }
-        } catch (SQLException ignored) {
-            new FinanceException(LOAD_HIDDEN_ACCOUNTS_FAIL).displayAndLog();
-        }
-    }
-
-    /**
-     * Gets the hidden transaction list
-     *
-     * @return hidden transaction list
-     */
-    public static HashSet<Integer> getHiddenTransactions() {
-        return hiddenTransactions;
-    }
-
-    /**
-     * Gets the hidden account list
-     *
-     * @return hidden account list
-     */
-    public static HashSet<Integer> getHiddenAccounts() {
-        return hiddenAccounts;
     }
 
     /**

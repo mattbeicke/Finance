@@ -23,7 +23,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.HashMap;
-import java.util.HashSet;
 
 import static mattb.FinanceError.*;
 
@@ -47,7 +46,6 @@ public class AccountController {
 
     private final ObservableList<Account> masterData = FXCollections.observableArrayList();
     private HashMap<Integer, Account> map;
-    private HashSet<Integer> hiddenAccounts = null;
 
     private Connection conn = null;
     private boolean onHidden = false;
@@ -58,7 +56,6 @@ public class AccountController {
     @FXML
     public void initialize() {
         conn = Main.getConn();
-        hiddenAccounts = Main.getHiddenAccounts();
 
         if (colName != null) {
             colName.setCellValueFactory(cellData ->
@@ -88,23 +85,21 @@ public class AccountController {
         String sql;
         if (!onHidden) {
             sql = """
-                    select acc_id, name,balance,type from account
+                    select acc_id, name, balance, type from account
                     left join account_type on acc_type = type_id
+                    where acc_id not in (select acc_id from hidden_accounts union select 0)
                     """;
         } else {
             sql = """
-                    select a.acc_id, name,balance,type from account as a
-                    join hidden_accounts ha on a.acc_id = ha.acc_id
+                    select acc_id, name, balance, type from account
                     left join account_type on acc_type = type_id
+                    where acc_id in (select acc_id from hidden_accounts)
                     """;
         }
         try (PreparedStatement pstmt = conn.prepareStatement(sql);
              ResultSet rs = pstmt.executeQuery()) {
-
             while (rs.next()) {
-                int acc_id = rs.getInt("acc_id");
-                if (acc_id == 0 || (!onHidden && hiddenAccounts.contains(acc_id))) continue;
-                map.put(acc_id, new Account(
+                map.put(rs.getInt("acc_id"), new Account(
                         rs.getDouble("balance"),
                         rs.getString("type"),
                         rs.getString("name")
@@ -157,7 +152,6 @@ public class AccountController {
 
             pstmt.executeUpdate();
 
-            Main.updateHidden();
             refreshTable();
         } catch (SQLException ignored) {
             new FinanceException(UPDATE_HIDDEN_ACCOUNT_LIST_FAIL).displayAndLog();
@@ -187,7 +181,6 @@ public class AccountController {
             viewHidden.setText("View Hidden");
         }
 
-        Main.updateHidden();
         refreshTable();
     }
 
