@@ -29,10 +29,9 @@ public class TransactionDAOImpl implements TransactionDAO {
      */
     @Override
     public HashMap<Integer, Transaction> getAllTransactions(boolean hidden) {
-        String sql = getTableQuery(hidden);
         HashMap<Integer, Transaction> map = new HashMap<>();
 
-        try (PreparedStatement pstmt = conn.prepareStatement(sql); ResultSet rs = pstmt.executeQuery()) {
+        try (PreparedStatement pstmt = conn.prepareStatement(getTableQuery(hidden)); ResultSet rs = pstmt.executeQuery()) {
             while (rs.next()) {
                 if (map.containsKey(rs.getInt("t_id"))) {
                     Transaction existing = map.get(rs.getInt("t_id"));

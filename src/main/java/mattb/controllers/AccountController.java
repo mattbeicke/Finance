@@ -14,14 +14,12 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import mattb.FinanceException;
 import mattb.Main;
+import mattb.dao.AccountDAO;
+import mattb.dao.AccountDAOImpl;
 import mattb.model.Account;
 
 import java.io.IOException;
 import java.net.URL;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.HashMap;
 
 import static mattb.FinanceError.*;
@@ -47,7 +45,8 @@ public class AccountController {
     private final ObservableList<Account> masterData = FXCollections.observableArrayList();
     private HashMap<Integer, Account> map;
 
-    private Connection conn = null;
+    private AccountDAO accountDAO;
+
     private boolean onHidden = false;
 
     /**
@@ -55,7 +54,7 @@ public class AccountController {
      */
     @FXML
     public void initialize() {
-        conn = Main.getConn();
+        accountDAO = new AccountDAOImpl(Main.getConn());
 
         if (colName != null) {
             colName.setCellValueFactory(cellData ->
@@ -79,37 +78,8 @@ public class AccountController {
      * Refreshes the Account table
      */
     private void refreshTable() {
-        map = new HashMap<>();
-        masterData.clear();
-
-        String sql;
-        if (!onHidden) {
-            sql = """
-                    select acc_id, name, balance, type from account
-                    left join account_type on acc_type = type_id
-                    where acc_id not in (select acc_id from hidden_accounts union select 0)
-                    """;
-        } else {
-            sql = """
-                    select acc_id, name, balance, type from account
-                    left join account_type on acc_type = type_id
-                    where acc_id in (select acc_id from hidden_accounts)
-                    """;
-        }
-        try (PreparedStatement pstmt = conn.prepareStatement(sql);
-             ResultSet rs = pstmt.executeQuery()) {
-            while (rs.next()) {
-                map.put(rs.getInt("acc_id"), new Account(
-                        rs.getDouble("balance"),
-                        rs.getString("type"),
-                        rs.getString("name")
-                ));
-            }
-        } catch (SQLException ignored) {
-            new FinanceException(LOAD_ACCOUNTS_FAIL).displayAndLog();
-        }
-
-        masterData.addAll(map.values());
+        map = accountDAO.getAllAccounts(onHidden);
+        masterData.setAll(map.values());
     }
 
     /**
@@ -140,22 +110,9 @@ public class AccountController {
         int accountId = getId(selected);
         if (accountId == -1) return;
 
-        String sql;
-        if (onHidden) {
-            sql = "delete from hidden_accounts where acc_id=?";
-        } else {
-            sql = "insert or ignore into hidden_accounts (acc_id) values (?)";
-        }
+        accountDAO.updateAccountVisibility(accountId, onHidden);
 
-        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setInt(1, accountId);
-
-            pstmt.executeUpdate();
-
-            refreshTable();
-        } catch (SQLException ignored) {
-            new FinanceException(UPDATE_HIDDEN_ACCOUNT_LIST_FAIL).displayAndLog();
-        }
+        refreshTable();
     }
 
     /**

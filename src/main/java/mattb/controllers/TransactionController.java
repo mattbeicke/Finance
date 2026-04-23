@@ -93,11 +93,8 @@ public class TransactionController {
      * Refreshes the transaction table with either not hidden or hidden transactions
      */
     private void refreshTable() {
-        masterData.clear();
-
         map = transactionDAO.getAllTransactions(onHidden);
-
-        masterData.addAll(map.values());
+        masterData.setAll(map.values());
     }
 
     /**
