@@ -14,18 +14,17 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import mattb.FinanceException;
 import mattb.Main;
+import mattb.dao.TransactionDAO;
+import mattb.dao.TransactionDAOImpl;
 import mattb.model.Transaction;
 
 import java.io.IOException;
 import java.net.URL;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.Date;
 import java.util.HashMap;
 
-import static mattb.FinanceError.*;
+import static mattb.FinanceError.OPEN_EDIT_TRANSACTION_MODAL_FAIL;
+import static mattb.FinanceError.OPEN_NEW_TRANSACTION_MODAL_FAIL;
 
 public class TransactionController {
     @FXML
@@ -52,7 +51,8 @@ public class TransactionController {
     private final ObservableList<Transaction> masterData = FXCollections.observableArrayList();
     private HashMap<Integer, Transaction> map;
 
-    private Connection conn = null;
+    private TransactionDAO transactionDAO;
+
     private boolean onHidden = false;
 
     /**
@@ -60,7 +60,7 @@ public class TransactionController {
      */
     @FXML
     public void initialize() {
-        conn = Main.getConn();
+        transactionDAO = new TransactionDAOImpl(Main.getConn());
 
         if (colDate != null) {
             colDate.setCellValueFactory(cellData ->
@@ -93,55 +93,9 @@ public class TransactionController {
      * Refreshes the transaction table with either not hidden or hidden transactions
      */
     private void refreshTable() {
-        String sql;
-        if (!onHidden) {
-            sql = """
-                    select t_id, date, fa.name as from_acc_name, ta.name as to_acc_name, amount, memo, cat_name from "transaction"
-                    left join tcat on t_id = trans
-                    left join category on cat = cat_id
-                    left join account ta on to_acc = ta.acc_id
-                    left join account fa on from_acc = fa.acc_id
-                    where t_id not in (select t_id from hidden_transactions)
-                    """;
-        } else {
-            sql = """
-                    select t_id, date, fa.name as from_acc_name, ta.name as to_acc_name, amount, memo, cat_name from "transaction"
-                    left join tcat on t_id = trans
-                    left join category on cat = cat_id
-                    left join account ta on to_acc = ta.acc_id
-                    left join account fa on from_acc = fa.acc_id
-                    where t_id in (select t_id from hidden_transactions)
-                    """;
-        }
-        map = new HashMap<>();
         masterData.clear();
 
-        try (PreparedStatement pstmt = conn.prepareStatement(sql);
-             ResultSet rs = pstmt.executeQuery()) {
-            while (rs.next()) {
-                if (map.containsKey(rs.getInt("t_id"))) {
-                    Transaction temp = map.get(rs.getInt("t_id"));
-                    map.put(rs.getInt("t_id"), new Transaction(
-                            temp.toAccountName(),
-                            temp.fromAccountName(),
-                            temp.amount(),
-                            temp.category() + ", " + rs.getString("cat_name"),
-                            temp.memo(), temp.date()
-                    ));
-                } else {
-                    map.put(rs.getInt("t_id"), new Transaction(
-                            rs.getString("to_acc_name"),
-                            rs.getString("from_acc_name"),
-                            rs.getDouble("amount"),
-                            rs.getString("cat_name"),
-                            rs.getString("memo"),
-                            new java.util.Date(1000L * rs.getInt("date"))
-                    ));
-                }
-            }
-        } catch (SQLException ignored) {
-            new FinanceException(LOAD_TRANSACTIONS_FAIL).displayAndLog();
-        }
+        map = transactionDAO.getAllTransactions(onHidden);
 
         masterData.addAll(map.values());
     }
@@ -173,22 +127,9 @@ public class TransactionController {
         int transactionId = getId(selected);
         if (transactionId == -1) return;
 
-        String sql;
-        if (onHidden) {
-            sql = "delete from hidden_transactions where t_id=?";
-        } else {
-            sql = "insert or ignore into hidden_transactions (t_id) values (?)";
-        }
+        transactionDAO.updateTransactionVisibility(transactionId, onHidden);
 
-        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setInt(1, transactionId);
-
-            pstmt.executeUpdate();
-
-            refreshTable();
-        } catch (SQLException ignored) {
-            new FinanceException(UPDATE_HIDDEN_TRANSACTION_LIST_FAIL).displayAndLog();
-        }
+        refreshTable();
     }
 
     /**
