@@ -1,3 +1,1 @@
 goals
-
-error reporting to user

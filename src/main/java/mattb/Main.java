@@ -39,10 +39,9 @@ public class Main extends Application {
      *              the application scene can be set.
      *              Applications may create other stages, if needed, but they will not be
      *              primary stages.
-     * @throws IOException If something goes wrong?
      */
     @Override
-    public void start(Stage stage) throws IOException {
+    public void start(Stage stage) {
         Thread.setDefaultUncaughtExceptionHandler((_, throwable) -> {
             Throwable cause = throwable;
             while (cause != null) {
@@ -51,8 +50,9 @@ public class Main extends Application {
                     Platform.runLater(() -> {
                         Alert alert = new Alert(Alert.AlertType.ERROR);
                         alert.setTitle("Application Error");
-                        alert.setHeaderText("An Error Occurred");
-                        alert.setContentText(errorMessage);
+                        alert.setHeaderText(errorMessage);
+                        alert.setContentText("Saved to error.log file");
+                        FinanceException.logToFile(errorMessage);
                         alert.showAndWait();
                     });
                     return;

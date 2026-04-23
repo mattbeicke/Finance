@@ -145,7 +145,7 @@ The application uses SQLite with normalized relational tables
 
 #### `account`
 
-```sql
+```sqlite
 CREATE TABLE account
 (
     acc_id   INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -160,7 +160,7 @@ CREATE TABLE account
 
 #### `account_type`
 
-```sql
+```sqlite
 CREATE TABLE account_type
 (
     type_id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -172,7 +172,7 @@ CREATE TABLE account_type
 
 #### `transaction`
 
-```sql
+```sqlite
 CREATE TABLE "transaction"
 (
     t_id     INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -190,7 +190,7 @@ CREATE TABLE "transaction"
 
 #### `category`
 
-```sql
+```sqlite
 CREATE TABLE category
 (
     cat_id   INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -200,9 +200,9 @@ CREATE TABLE category
 
 ---
 
-#### `tcat` (Transaction ↔ Category)
+#### `tcat` (Transaction <-> Category)
 
-```sql
+```sqlite
 CREATE TABLE tcat
 (
     trans INTEGER NOT NULL,
@@ -217,7 +217,7 @@ CREATE TABLE tcat
 
 #### `hidden_accounts`
 
-```sql
+```sqlite
 CREATE TABLE hidden_accounts
 (
     hidden_acc_id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -230,7 +230,7 @@ CREATE TABLE hidden_accounts
 
 #### `hidden_transactions`
 
-```sql
+```sqlite
 CREATE TABLE hidden_transactions
 (
     hidden_t_id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -243,9 +243,9 @@ CREATE TABLE hidden_transactions
 
 ### Relationships
 
-* `account → account_type` (many-to-one)
-* `transaction → account` (from/to)
-* `transaction ↔ category` (many-to-many via `tcat`)
+* `account -> account_type` (many-to-one)
+* `transaction -> account` (from/to)
+* `transaction <-> category` (many-to-many via `tcat`)
 * hidden tables act as filters
 
 ---
@@ -331,16 +331,13 @@ NumberFormat.getCurrencyInstance(Locale.US)
 ### Database connection fails
 
 * Ensure `finance.db` exists
-* Check working directory
-
----
+    * Check working directory
 
 ### JavaFX runtime issues
 
+* If Maven is installed correctly, running ```mvn clean install``` should install all required dependencies/libraries
+  for JavaFX
 * Make sure JavaFX is available or bundled properly
-* If Maven in installed correctly running ```mvn clean install``` should install all required things for JavaFX
-
----
 
 ### Data missing
 
@@ -363,7 +360,6 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 ## Potential Future Improvements
 
 * Add section for a user's financial goals and how close they are to achieving them
-* Error reporting to user (instead of just printing the FinanceError messages to the console that you won't see)
 * Separate DAO layer from controllers
 * Add unit tests
 * Ability to mass import data (via CSV) and export data
