@@ -1,6 +1,5 @@
 package mattb.controllers;
 
-import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -15,19 +14,16 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import mattb.FinanceException;
 import mattb.Main;
+import mattb.dao.AddTransactionDAO;
+import mattb.dao.AddTransactionDAOImpl;
 import mattb.model.Transaction;
 
 import java.io.IOException;
 import java.net.URL;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.ZoneId;
-import java.util.Collections;
 
-import static mattb.FinanceError.*;
+import static mattb.FinanceError.OPEN_UPDATE_BALANCE_MODAL_FAIL;
 
 public class AddTransactionController {
     @FXML
@@ -43,7 +39,8 @@ public class AddTransactionController {
     @FXML
     private DatePicker datePicker;
 
-    private Connection conn = null;
+    private AddTransactionDAO addTransactionDAO;
+
     private boolean editing;
     private int id;
     private boolean update = false;
@@ -53,24 +50,13 @@ public class AddTransactionController {
      */
     @FXML
     public void initialize() {
-        conn = Main.getConn();
+        addTransactionDAO = new AddTransactionDAOImpl(Main.getConn());
 
         if (fromCombo != null && toCombo != null) {
-            ObservableList<String> accountNames = FXCollections.observableArrayList();
+            ObservableList<String> accountNames = addTransactionDAO.loadAccountNames();
 
-            String sql = "select name from account where acc_id not in (select acc_id from hidden_accounts)";
-            try (PreparedStatement pstmt = conn.prepareStatement(sql); ResultSet rs = pstmt.executeQuery()) {
-
-                while (rs.next()) {
-                    accountNames.add(rs.getString("name"));
-                }
-
-                accountNames.add("Add more via Accounts tab");
-                fromCombo.setItems(accountNames);
-                toCombo.setItems(accountNames);
-            } catch (SQLException ignored) {
-                new FinanceException(LOAD_ACCOUNTS_FAIL).displayAndLog();
-            }
+            fromCombo.setItems(accountNames);
+            toCombo.setItems(accountNames);
 
             amountField.textProperty().addListener((_, oldVal, newVal) -> {
                 if (!newVal.matches("\\d*(\\.\\d*)?")) {
@@ -81,176 +67,53 @@ public class AddTransactionController {
     }
 
     /**
-     * Activates when save button is pressed on the "create transaction" modal.
+     * Activates when saveTransaction button is pressed on the "create transaction" modal.
      * Populates the transaction table with the provided data
      */
     @FXML
     private void onSave() {
-        int fromAccId = getAccId(fromCombo.getValue());
-        int toAccId = getAccId(toCombo.getValue());
+        int fromAccId = addTransactionDAO.getAccId(fromCombo.getValue());
+        int toAccId = addTransactionDAO.getAccId(toCombo.getValue());
         if (fromAccId == -1 || toAccId == -1 || amountField.getText().isBlank() || fromCombo.getValue().equals("Add more via Accounts tab") || toCombo.getValue().equals("Add more via Accounts tab")) {
             return;
         }
 
-        String sql;
-        if (editing) {
-            sql = "update \"transaction\" set date=?,from_acc=?,to_acc=?,amount=?,memo=? where t_id=?";
-        } else {
-            sql = "insert into \"transaction\" (date, from_acc, to_acc, amount, memo) values (?,?,?,?,?)";
-        }
-        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            LocalDate selectedDate = datePicker.getValue();
-            if (selectedDate == null) {
-                selectedDate = LocalDate.now();
-            }
-            pstmt.setInt(1, (int) selectedDate.atStartOfDay(ZoneId.systemDefault()).toEpochSecond());
-            pstmt.setInt(2, fromAccId);
-            pstmt.setInt(3, toAccId);
-            pstmt.setDouble(4, Double.parseDouble(amountField.getText()));
-            if (!memoField.getText().isBlank()) {
-                pstmt.setString(5, memoField.getText());
-            } else {
-                pstmt.setString(5, "");
-            }
-            if (editing) {
-                pstmt.setInt(6, id);
-            }
+        addTransactionDAO.saveTransaction(datePicker.getValue(), fromAccId, toAccId, Double.parseDouble(amountField.getText()), memoField.getText(), id, editing);
 
-            pstmt.executeUpdate();
+        addTransactionDAO.saveCategories(categoryField.getText());
 
-            addCategory();
-
-            try {
-                URL resource = getClass().getResource("/mattb/controllers/update_balance.fxml");
-                if (resource == null) {
-                    new FinanceException(OPEN_UPDATE_BALANCE_MODAL_FAIL).displayAndLog();
-                    return;
-                }
-                FXMLLoader loader = new FXMLLoader(resource);
-                Parent root = loader.load();
-
-                AddTransactionController popupController = loader.getController();
-
-                Stage stage = new Stage();
-                stage.initModality(Modality.APPLICATION_MODAL);
-                stage.setTitle("Update Balances");
-                stage.setScene(new Scene(root));
-                stage.showAndWait();
-
-                if (popupController.update) {
-                    update = true;
-                }
-            } catch (IOException ignored) {
+        try {
+            URL resource = getClass().getResource("/mattb/controllers/update_balance.fxml");
+            if (resource == null) {
                 new FinanceException(OPEN_UPDATE_BALANCE_MODAL_FAIL).displayAndLog();
+                return;
             }
+            FXMLLoader loader = new FXMLLoader(resource);
+            Parent root = loader.load();
 
-            if (update) {
-                updateBalances();
+            AddTransactionController popupController = loader.getController();
+
+            Stage stage = new Stage();
+            stage.initModality(Modality.APPLICATION_MODAL);
+            stage.setTitle("Update Balances");
+            stage.setScene(new Scene(root));
+            stage.showAndWait();
+
+            if (popupController.update) {
+                update = true;
             }
-
-            ((Stage) amountField.getScene().getWindow()).close();
-        } catch (SQLException ignored) {
-            new FinanceException(SAVE_TRANSACTION_FAIL).displayAndLog();
-        }
-    }
-
-    /**
-     * Gets an account id from an account name
-     *
-     * @param accName Account name
-     * @return Account ID associated with the account name or -1 if no account was found
-     */
-    private int getAccId(String accName) {
-        if (accName == null || accName.isBlank()) return -1;
-
-        String sql = "select acc_id from account where name=?";
-        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setString(1, accName);
-
-            ResultSet rs = pstmt.executeQuery();
-            if (rs.next()) {
-                return rs.getInt("acc_id");
-            } else {
-                return -1;
-            }
-        } catch (SQLException ignored) {
-            new FinanceException(GET_ACCOUNT_ID_FAIL).displayAndLog();
-        }
-        return -1;
-    }
-
-    /**
-     * Populates the tcat table for the transaction
-     */
-    private void addCategory() {
-        // Find transaction id
-        int t_id = 0;
-        String sql = "select max(t_id) as t_id from \"transaction\"";
-        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            ResultSet rs = pstmt.executeQuery();
-            rs.next();
-            t_id = rs.getInt("t_id");
-        } catch (SQLException ignored) {
-            new FinanceException(GET_TRANSACTION_ID_FAIL).displayAndLog();
+        } catch (IOException ignored) {
+            new FinanceException(OPEN_UPDATE_BALANCE_MODAL_FAIL).displayAndLog();
         }
 
-        if (t_id <= 0) return;
+        if (update) {
+            if (amountField.getText().isBlank() || fromCombo.getValue().isBlank() || toCombo.getValue().isBlank())
+                return;
 
-        // Get all categories the user entered
-        String[] categories = categoryField.getText().split(",\\s*");
-
-        if (categories.length == 0) return;
-        if (categories.length == 1 && categories[0].isBlank()) return;
-
-        int[] cats = new int[categories.length];
-
-        for (int i = 0; i < categories.length; i++) {
-            String category = categories[i];
-            createCatIfNeeded(category);
-
-            sql = "select cat_id from category where cat_name=?";
-            try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
-                pstmt.setString(1, category);
-
-                ResultSet rs = pstmt.executeQuery();
-                rs.next();
-                cats[i] = rs.getInt("cat_id");
-            } catch (SQLException ignored) {
-                new FinanceException(GET_CATEGORY_ID_FAIL).displayAndLog();
-            }
+            addTransactionDAO.updateBalances(Double.parseDouble(amountField.getText()), fromAccId, toAccId);
         }
 
-        // Update the tcat table
-        String placeholders = String.join(",", Collections.nCopies(cats.length, "(?,?)"));
-        sql = "insert into tcat(trans, cat) values " + placeholders;
-        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            for (int i = 0; i < cats.length; i++) {
-                pstmt.setInt(i * 2 + 1, t_id);
-                pstmt.setInt(i * 2 + 2, cats[i]);
-            }
-
-            pstmt.executeUpdate();
-        } catch (SQLException ignored) {
-            new FinanceException(SAVE_TRANSACTION_CATEGORY_FAIL).displayAndLog();
-        }
-    }
-
-    /**
-     * Creates a category if it does not exist
-     *
-     * @param cat Category to add if needed
-     */
-    private void createCatIfNeeded(String cat) {
-        if (cat == null || cat.isBlank()) return;
-
-        String sql = "insert or ignore into category(cat_name) values (?)";
-        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setString(1, cat);
-
-            pstmt.executeUpdate();
-        } catch (SQLException ignored) {
-            new FinanceException(SAVE_CATEGORY_FAIL).displayAndLog();
-        }
+        ((Stage) amountField.getScene().getWindow()).close();
     }
 
     /**
@@ -312,42 +175,5 @@ public class AddTransactionController {
     private void no(ActionEvent event) {
         update = false;
         cancel(event);
-    }
-
-    /**
-     * Updates account balances (if they are not the reserved external one)
-     */
-    private void updateBalances() {
-        if (amountField.getText().isBlank() || fromCombo.getValue().isBlank() || toCombo.getValue().isBlank()) return;
-
-        double amount = Double.parseDouble(amountField.getText());
-        int fromAccId = getAccId(fromCombo.getValue());
-        int toAccId = getAccId(toCombo.getValue());
-
-        // Update from account's balance
-        if (fromAccId != 0) {
-            String sql = "update account set balance=balance-? where acc_id=?";
-            try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
-                pstmt.setDouble(1, amount);
-                pstmt.setInt(2, fromAccId);
-
-                pstmt.executeUpdate();
-            } catch (SQLException ignored) {
-                new FinanceException(UPDATE_ACCOUNT_BALANCE_FAIL).displayAndLog();
-            }
-        }
-
-        // Update to account's balance
-        if (toAccId != 0) {
-            String sql = "update account set balance=balance+? where acc_id=?";
-            try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
-                pstmt.setDouble(1, amount);
-                pstmt.setInt(2, toAccId);
-
-                pstmt.executeUpdate();
-            } catch (SQLException ignored) {
-                new FinanceException(UPDATE_ACCOUNT_BALANCE_FAIL).displayAndLog();
-            }
-        }
     }
 }
