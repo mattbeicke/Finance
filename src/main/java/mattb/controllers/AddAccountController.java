@@ -1,6 +1,5 @@
 package mattb.controllers;
 
-import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -8,16 +7,10 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
-import mattb.FinanceException;
 import mattb.Main;
+import mattb.dao.AddAccountDAO;
+import mattb.dao.AddAccountDAOImpl;
 import mattb.model.Account;
-
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-
-import static mattb.FinanceError.*;
 
 public class AddAccountController {
     @FXML
@@ -27,7 +20,8 @@ public class AddAccountController {
     @FXML
     private TextField balanceField;
 
-    private Connection conn = null;
+    private AddAccountDAO addAccountDAO;
+
     private boolean editing;
     private int id;
 
@@ -36,24 +30,10 @@ public class AddAccountController {
      */
     @FXML
     public void initialize() {
-        conn = Main.getConn();
+        addAccountDAO = new AddAccountDAOImpl(Main.getConn());
 
-        ObservableList<String> types = FXCollections.observableArrayList();
-
-        String sql = "select type_id, type from account_type";
-        try (PreparedStatement pstmt = conn.prepareStatement(sql);
-             ResultSet rs = pstmt.executeQuery()) {
-
-            while (rs.next()) {
-                if (rs.getInt("type_id") == 0) continue;
-                types.add(rs.getString("type"));
-            }
-
-            types.add("Add more via Accounts tab");
-            typeCombo.setItems(types);
-        } catch (SQLException ignored) {
-            new FinanceException(LOAD_ACCOUNT_TYPES_FAIL).displayAndLog();
-        }
+        ObservableList<String> types = addAccountDAO.getAllTypes();
+        typeCombo.setItems(types);
 
         balanceField.textProperty().addListener((_, oldVal, newVal) -> {
             if (!newVal.matches("\\d*(\\.\\d*)?")) {
@@ -70,26 +50,9 @@ public class AddAccountController {
         int typeId = getTypeId();
         if (typeId == -1 || balanceField.getText().isBlank() || nameField.getText().isBlank()) return;
 
-        String sql;
-        if (editing) {
-            sql = "update account set acc_type=?,balance=?,name=? where acc_id=?";
-        } else {
-            sql = "insert or ignore into account (acc_type, balance, name) VALUES (?,?,?)";
-        }
-        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setInt(1, typeId);
-            pstmt.setDouble(2, Double.parseDouble(balanceField.getText()));
-            pstmt.setString(3, nameField.getText());
-            if (editing) {
-                pstmt.setInt(4, id);
-            }
+        addAccountDAO.saveAccount(typeId, Double.parseDouble(balanceField.getText()), nameField.getText(), id, editing);
 
-            pstmt.executeUpdate();
-
-            ((Stage) typeCombo.getScene().getWindow()).close();
-        } catch (SQLException ignored) {
-            new FinanceException(SAVE_ACCOUNT_FAIL).displayAndLog();
-        }
+        ((Stage) typeCombo.getScene().getWindow()).close();
     }
 
     /**
@@ -100,21 +63,7 @@ public class AddAccountController {
     public int getTypeId() {
         if (typeCombo.getValue().isBlank()) return -1;
 
-        String sql = "select type_id from account_type where type=?";
-        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setString(1, typeCombo.getValue());
-
-            ResultSet rs = pstmt.executeQuery();
-
-            if (!rs.next()) {
-                return -1;
-            }
-
-            return rs.getInt("type_id");
-        } catch (SQLException ignored) {
-            new FinanceException(GET_ACCOUNT_TYPE_ID_FAIL).displayAndLog();
-        }
-        return -1;
+        return addAccountDAO.getTypeId(typeCombo.getValue());
     }
 
     /**
