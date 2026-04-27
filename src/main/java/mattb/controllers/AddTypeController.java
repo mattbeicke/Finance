@@ -5,27 +5,22 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
-import mattb.FinanceException;
 import mattb.Main;
-
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
-
-import static mattb.FinanceError.SAVE_ACCOUNT_TYPE_FAIL;
+import mattb.dao.AddTypeDAO;
+import mattb.dao.AddTypeDAOImpl;
 
 public class AddTypeController {
     @FXML
     private TextField typeField;
 
-    private Connection conn = null;
+    private AddTypeDAO addTypeDAO;
 
     /**
      * Initializes all FXML items for the add type modal
      */
     @FXML
     public void initialize() {
-        conn = Main.getConn();
+        addTypeDAO = new AddTypeDAOImpl(Main.getConn());
     }
 
     /**
@@ -35,16 +30,9 @@ public class AddTypeController {
     private void onTypeSave() {
         if (typeField.getText().isBlank()) return;
 
-        String sql = "insert or ignore into account_type(type) values (?)";
-        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setString(1, typeField.getText());
+        addTypeDAO.saveType(typeField.getText());
 
-            pstmt.executeUpdate();
-
-            ((Stage) typeField.getScene().getWindow()).close();
-        } catch (SQLException ignored) {
-            new FinanceException(SAVE_ACCOUNT_TYPE_FAIL).displayAndLog();
-        }
+        ((Stage) typeField.getScene().getWindow()).close();
     }
 
     /**
