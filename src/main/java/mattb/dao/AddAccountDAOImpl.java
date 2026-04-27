@@ -68,7 +68,7 @@ public class AddAccountDAOImpl implements AddAccountDAO {
      * {@inheritDoc}
      */
     @Override
-    public void saveAccount(int typeId,double balance, String name, int id, boolean editing){
+    public void saveAccount(int typeId, double balance, String name, int id, boolean editing) {
         String sql;
         if (editing) {
             sql = "update account set acc_type = ?, balance = ?, name = ? where acc_id = ?";

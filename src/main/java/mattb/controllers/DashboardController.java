@@ -2,33 +2,23 @@ package mattb.controllers;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
-import mattb.FinanceException;
 import mattb.Main;
-
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-
-import static mattb.FinanceError.NET_WORTH_FAIL;
+import mattb.dao.DashboardDAO;
+import mattb.dao.DashboardDAOImpl;
 
 public class DashboardController {
     @FXML
     private Label netWorth;
 
+    private DashboardDAO dashboardDAO;
+
+    /**
+     * Initializes all FXML items for the dashboard tab
+     */
     @FXML
     private void initialize() {
-        Connection conn = Main.getConn();
+        dashboardDAO = new DashboardDAOImpl(Main.getConn());
 
-        String sql = "select sum(balance) as networth from account where acc_id not in(select acc_id from hidden_accounts)";
-        try (PreparedStatement pstmt = conn.prepareStatement(sql); ResultSet rs = pstmt.executeQuery()) {
-            if (!rs.next()) {
-                netWorth.setText("$0.00");
-            } else {
-                netWorth.setText(Main.formatDouble(rs.getDouble("networth")));
-            }
-        } catch (SQLException ignored) {
-            new FinanceException(NET_WORTH_FAIL).displayAndLog();
-        }
+        netWorth.setText(Main.formatDouble(dashboardDAO.getNetWorth()));
     }
 }
