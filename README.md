@@ -21,6 +21,7 @@ lightweight SQLite database.
 * [Troubleshooting](#troubleshooting)
 * [Contributors](#contributors)
 * [License](#license)
+* [Future Improvements](#potential-future-improvements)
 
 ---
 
@@ -360,7 +361,6 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 ## Potential Future Improvements
 
 * Add section for a user's financial goals and how close they are to achieving them
-* Separate DAO layer from controllers
 * Add unit tests
 * Ability to mass import data (via CSV) and export data
-* Make UI look nice
+* Pretty up the UI
