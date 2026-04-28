@@ -49,12 +49,18 @@ public class AccountController {
 
     private boolean onHidden = false;
 
+    public void setAccountDAO(AccountDAO accountDAO) {
+        this.accountDAO = accountDAO;
+    }
+
     /**
      * Initializes all FXML items for the account tab
      */
     @FXML
     public void initialize() {
-        accountDAO = new AccountDAOImpl(Main.getConn());
+        if (accountDAO == null) {
+            accountDAO = new AccountDAOImpl(Main.getConn());
+        }
 
         if (colName != null) {
             colName.setCellValueFactory(cellData ->
