@@ -1,1 +1,10 @@
 goals
+
+setup:
+how much do you want to have?
+which accounts?
+goal name
+
+Goals:
+
+current |--progress bar--| goal

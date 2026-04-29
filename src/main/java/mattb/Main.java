@@ -159,6 +159,7 @@ public class Main extends Application {
             var is = Main.class.getResourceAsStream("/mattb/schema.sql");
             if (is == null) {
                 new FinanceException(SCHEMA_NOT_FOUND).displayAndLog();
+                return true;
             }
 
             String sql = new BufferedReader(new InputStreamReader(is)).lines().collect(Collectors.joining("\n"));

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ProgressBar?>
+<?import javafx.scene.layout.HBox?>
+<HBox spacing="10" alignment="CENTER_LEFT" xmlns:fx="http://javafx.com">
+    <Label fx:id="currentBalanceLabel"/>
+    <ProgressBar fx:id="progressBar" HBox.hgrow="ALWAYS" maxWidth="Infinity" progress="0.5"/>
+    <Label fx:id="goalBalanceLabel"/>
+</HBox>
