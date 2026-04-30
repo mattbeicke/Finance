@@ -14,7 +14,6 @@ import java.io.IOException;
 import static mattb.FinanceError.OPEN_GOALS_LIST_FAILED;
 
 public class GoalListCellController extends ListCell<Goal> {
-    private FXMLLoader loader;
     private Node root;
     @FXML
     private Label goalNameAndCurrentBalance;
@@ -25,7 +24,7 @@ public class GoalListCellController extends ListCell<Goal> {
 
 
     public GoalListCellController() {
-        loader = new FXMLLoader(getClass().getResource("/mattb/controllers/goal_cell.fxml"));
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/mattb/controllers/goal_cell.fxml"));
         loader.setController(this);
         try {
             root = loader.load();

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<AnchorPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="mattb.controllers.AddGoalController"
+            prefHeight="400.0" prefWidth="600.0">
+    <VBox alignment="CENTER" spacing="10.0"
+          AnchorPane.bottomAnchor="0.0"
+          AnchorPane.leftAnchor="0.0"
+          AnchorPane.rightAnchor="0.0"
+          AnchorPane.topAnchor="0.0">
+        <Label text="Goal Name:"/>
+        <TextField fx:id="nameField"/>
+        <HBox alignment="CENTER" spacing="10.0">
+            <Label text="Account to Track"/>
+            <ComboBox fx:id="accountCombo"/>
+        </HBox>
+        <Label text="Target Balance:"/>
+        <TextField fx:id="targetField"/>
+        <Label text="Initial balance will be taken from the account's current balance"/>
+        <HBox alignment="CENTER" spacing="10.0">
+            <Button prefHeight="26.0" prefWidth="52.0" text="Save" onAction="#save"/>
+            <Button prefHeight="26.0" prefWidth="52.0" text="Cancel" onAction="#cancel"/>
+        </HBox>
+    </VBox>
+</AnchorPane>

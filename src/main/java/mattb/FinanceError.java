@@ -15,6 +15,7 @@ public enum FinanceError {
     OPEN_NEW_TRANSACTION_MODAL_FAIL("Failed to open Create New Transaction modal"),
     OPEN_EDIT_TRANSACTION_MODAL_FAIL("Failed to open Edit Transaction modal"),
     OPEN_GOALS_LIST_FAILED("Failed to open Goals list"),
+    OPEN_NEW_GOAL_MODAL_FAIL("Failed to open Create New Goal modal"),
 
     /**
      * SQL
@@ -28,6 +29,7 @@ public enum FinanceError {
     SAVE_TRANSACTION_FAIL("Error saving transaction to database"),
     SAVE_CATEGORY_FAIL("Error saving new category to database"),
     SAVE_TRANSACTION_CATEGORY_FAIL("Error saving transactions categories to database"),
+    SAVE_GOAL_FAIL("Error saving goal to database"),
     UPDATE_HIDDEN_ACCOUNT_LIST_FAIL("Error updating list of hidden accounts in database"),
     UPDATE_HIDDEN_TRANSACTION_LIST_FAIL("Error updating list of hidden transactions in database"),
     UPDATE_ACCOUNT_BALANCE_FAIL("Error updating account balance in database"),
@@ -43,6 +45,7 @@ public enum FinanceError {
     GET_ACCOUNT_ID_FAIL("Error finding account id in database"),
     GET_TRANSACTION_ID_FAIL("Error finding transaction id in database"),
     GET_CATEGORY_ID_FAIL("Error finding category id in database"),
+    GET_ACCOUNT_BALANCE_FAIL("Error finding account balance in database"),
 
     /**
      * Misc
