@@ -8,8 +8,8 @@
             prefHeight="750.0" prefWidth="1500.0">
     <VBox BorderPane.alignment="CENTER">
         <HBox>
-            <Button fx:id="create" onAction="createGoal">Create Goal</Button>
-            <Button fx:id="delete" onAction="deleteGoal">Delete Goal</Button>
+            <Button fx:id="create" onAction="#createGoal">Create Goal</Button>
+            <Button fx:id="viewDetails" onAction="#viewGoalDetails">View Details</Button>
         </HBox>
         <Label>Value in all non-hidden Accounts:</Label>
         <Label fx:id="netWorth"/>
@@ -17,7 +17,7 @@
 
         <ListView fx:id="goalsListView" VBox.vgrow="ALWAYS"/>
 
-        <Label fx:id="emptyStateLabel" text="No goals set yet. Click '+' to start!"
+        <Label fx:id="emptyStateLabel" text="No goals set yet. Click 'Create Goal' to start!"
                managed="false" visible="false"/>
     </VBox>
 </AnchorPane>

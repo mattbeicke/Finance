@@ -1,12 +1,16 @@
 package mattb.dao;
 
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import mattb.FinanceException;
+import mattb.model.Goal;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+import static mattb.FinanceError.LOAD_GOALS_FAIL;
 import static mattb.FinanceError.NET_WORTH_FAIL;
 
 public class DashboardDAOImpl implements DashboardDAO {
@@ -37,5 +41,33 @@ public class DashboardDAOImpl implements DashboardDAO {
             new FinanceException(NET_WORTH_FAIL).displayAndLog();
         }
         return 0;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public ObservableList<Goal> getGoals() {
+        ObservableList<Goal> goals = FXCollections.observableArrayList();
+
+        String sql = """
+                select account.name as acc_name, target, initial, account.balance as current, goal.name as goal_name from goal
+                left join account on goal.acc_id = account.acc_id
+                """;
+        try (PreparedStatement pstmt = conn.prepareStatement(sql); ResultSet rs = pstmt.executeQuery()) {
+            while (rs.next()) {
+                goals.add(new Goal(
+                        rs.getDouble("current"),
+                        rs.getDouble("initial"),
+                        rs.getDouble("target"),
+                        rs.getString("acc_name"),
+                        rs.getString("goal_name")
+                ));
+            }
+        } catch (SQLException ignored) {
+            new FinanceException(LOAD_GOALS_FAIL).displayAndLog();
+        }
+
+        return goals;
     }
 }

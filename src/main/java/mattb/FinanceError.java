@@ -14,6 +14,7 @@ public enum FinanceError {
     OPEN_UPDATE_BALANCE_MODAL_FAIL("Failed to open Update Balance modal"),
     OPEN_NEW_TRANSACTION_MODAL_FAIL("Failed to open Create New Transaction modal"),
     OPEN_EDIT_TRANSACTION_MODAL_FAIL("Failed to open Edit Transaction modal"),
+    OPEN_GOALS_LIST_FAILED("Failed to open Goals list"),
 
     /**
      * SQL
@@ -36,6 +37,7 @@ public enum FinanceError {
     LOAD_TRANSACTIONS_FAIL("Error loading transactions from database"),
     LOAD_HIDDEN_TRANSACTIONS_FAIL("Error loading hidden transactions from database"),
     LOAD_HIDDEN_ACCOUNTS_FAIL("Error loading hidden accounts from database"),
+    LOAD_GOALS_FAIL("Error loading goals from database"),
     // Finding
     GET_ACCOUNT_TYPE_ID_FAIL("Error finding account type id in database"),
     GET_ACCOUNT_ID_FAIL("Error finding account id in database"),

@@ -54,6 +54,16 @@ CREATE TABLE IF NOT EXISTS hidden_transactions
     FOREIGN KEY (t_id) REFERENCES "transaction" (t_id)
 );
 
+CREATE TABLE IF NOT EXISTS goal
+(
+    goal_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    acc_id  INTEGER        NOT NULL,
+    target  DECIMAL(15, 2) NOT NULL,
+    initial DECIMAL(15, 2) NOT NULL,
+    name    VARCHAR(50)    NOT NULL,
+    FOREIGN KEY (acc_id) REFERENCES account (acc_id)
+);
+
 INSERT OR IGNORE INTO account_type (type_id, type)
 VALUES (0, 'External'),
        (1, 'Savings'),
