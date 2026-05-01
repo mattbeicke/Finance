@@ -37,6 +37,10 @@ public class MainController {
         loadView("/mattb/controller/accounts.fxml", OPEN_ACCOUNTS_TAB_FAILED);
     }
 
+    public void showSettings(){
+        loadView("/mattb/controller/settings.fxml", OPEN_SETTINGS_TAB_FAILED);
+    }
+
     /**
      * Reduces redundant code in this class by doing the tab loading here
      */

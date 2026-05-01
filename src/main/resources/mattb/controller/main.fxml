@@ -2,9 +2,7 @@
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
-<?import javafx.scene.layout.AnchorPane?>
-<?import javafx.scene.layout.BorderPane?>
-<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.layout.*?>
 <AnchorPane xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
             fx:controller="mattb.controller.MainController"
@@ -13,7 +11,7 @@
         <left>
             <VBox prefHeight="750.0" prefWidth="100.0" BorderPane.alignment="CENTER">
                 <padding>
-                    <Insets top="2" right="10" left="2"/>
+                    <Insets top="2" right="10" left="2" bottom="2"/>
                 </padding>
 
                 <Button alignment="CENTER" maxWidth="Infinity" contentDisplay="CENTER" mnemonicParsing="false"
@@ -22,6 +20,11 @@
                         text="Transactions" onAction="#showTransactions"/>
                 <Button alignment="CENTER" maxWidth="Infinity" contentDisplay="CENTER" mnemonicParsing="false"
                         text="Accounts" onAction="#showAccounts"/>
+
+                <Region VBox.vgrow="ALWAYS"/>
+
+                <Button alignment="CENTER" maxWidth="Infinity" contentDisplay="CENTER" mnemonicParsing="false"
+                        text="Settings" onAction="#showSettings"/>
             </VBox>
         </left>
     </BorderPane>

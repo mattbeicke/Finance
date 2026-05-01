@@ -8,6 +8,7 @@ public enum FinanceError {
     OPEN_DASHBOARD_TAB_FAILED("Failed to open Dashboard tab"),
     OPEN_TRANSACTIONS_TAB_FAILED("Failed to open Transactions tab"),
     OPEN_ACCOUNTS_TAB_FAILED("Failed to open Accounts tab"),
+    OPEN_SETTINGS_TAB_FAILED("Failed to open Settings tab"),
     OPEN_NEW_ACCOUNT_MODAL_FAIL("Failed to open Create New Account modal"),
     OPEN_NEW_TYPE_MODAL_FAIL("Failed to open Create New Account Type modal"),
     OPEN_EDIT_ACCOUNT_MODAL_FAIL("Failed to open Edit Account modal"),
