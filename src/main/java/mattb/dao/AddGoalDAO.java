@@ -21,9 +21,9 @@ public interface AddGoalDAO {
     /**
      * Saves goal to database
      *
-     * @param accName  Name of account goal is tracking
+     * @param accId    Database id of account goal is tracking
      * @param goalName Name of goal
      * @param target   Target account balance
      */
-    void saveGoal(int accName, String goalName, double target);
+    void saveGoal(int accId, String goalName, double target);
 }

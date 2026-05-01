@@ -56,6 +56,7 @@ public class DashboardController {
      */
     private void refreshList() {
         map = dashboardDAO.getGoals();
+        goals.setAll(map.values());
 
         boolean hasNoGoals = goals.isEmpty();
         emptyStateLabel.setVisible(hasNoGoals);

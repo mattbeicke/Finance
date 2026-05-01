@@ -15,7 +15,7 @@
         <Label fx:id="netWorth"/>
         <Label text="Your Goals" style="-fx-font-size: 18px; -fx-font-weight: bold;"/>
 
-        <ListView fx:id="goalsListView" VBox.vgrow="ALWAYS"/>
+        <ListView fx:id="goalList" VBox.vgrow="ALWAYS"/>
 
         <Label fx:id="emptyStateLabel" text="No goals set yet. Click 'Create Goal' to start!"
                managed="false" visible="false"/>

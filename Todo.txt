@@ -2,10 +2,6 @@ update readme
 update comments across the board:
 - add @links and such
 - fix capitalization
-- standardize what things mean (id -> database id, etc)
+- standardize what things mean (id -> database id, etc.)
 
-view goal details:
-change name
-cannot change account
-can change target
-can delete
+add ability to delete things permanently

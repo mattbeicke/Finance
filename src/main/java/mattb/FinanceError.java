@@ -34,6 +34,8 @@ public enum FinanceError {
     UPDATE_HIDDEN_ACCOUNT_LIST_FAIL("Error updating list of hidden accounts in database"),
     UPDATE_HIDDEN_TRANSACTION_LIST_FAIL("Error updating list of hidden transactions in database"),
     UPDATE_ACCOUNT_BALANCE_FAIL("Error updating account balance in database"),
+    UPDATE_GOAL_FAIL("Error updating goal in database"),
+    DELETE_GOAL_FAIL("Error deleting goal from database"),
     // Loading
     LOAD_ACCOUNT_TYPES_FAIL("Error loading account types from database"),
     LOAD_ACCOUNTS_FAIL("Error loading accounts from database"),
