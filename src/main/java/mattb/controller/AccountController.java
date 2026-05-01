@@ -1,4 +1,4 @@
-package mattb.controllers;
+package mattb.controller;
 
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.collections.FXCollections;
@@ -153,7 +153,7 @@ public class AccountController {
     @FXML
     private void addNewAccount() {
         try {
-            URL resource = getClass().getResource("/mattb/controllers/add_account.fxml");
+            URL resource = getClass().getResource("/mattb/controller/add_account.fxml");
             if (resource == null) {
                 new FinanceException(OPEN_NEW_ACCOUNT_MODAL_FAIL).displayAndLog();
                 return;
@@ -179,7 +179,7 @@ public class AccountController {
     @FXML
     private void addNewType() {
         try {
-            URL resource = getClass().getResource("/mattb/controllers/add_type.fxml");
+            URL resource = getClass().getResource("/mattb/controller/add_type.fxml");
             if (resource == null) {
                 new FinanceException(OPEN_NEW_ACCOUNT_MODAL_FAIL).displayAndLog();
                 return;
@@ -207,7 +207,7 @@ public class AccountController {
         if (id == -1) return;
 
         try {
-            URL resource = getClass().getResource("/mattb/controllers/add_account.fxml");
+            URL resource = getClass().getResource("/mattb/controller/add_account.fxml");
             if (resource == null) {
                 new FinanceException(OPEN_NEW_ACCOUNT_MODAL_FAIL).displayAndLog();
                 return;

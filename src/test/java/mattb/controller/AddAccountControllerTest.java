@@ -1,4 +1,4 @@
-package mattb.controllers;
+package mattb.controller;
 
 public class AddAccountControllerTest {
 }

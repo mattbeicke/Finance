@@ -1,4 +1,4 @@
-package mattb.controllers;
+package mattb.controller;
 
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.collections.FXCollections;
@@ -157,7 +157,7 @@ public class TransactionController {
     @FXML
     private void addNew() {
         try {
-            URL resource = getClass().getResource("/mattb/controllers/add_transaction.fxml");
+            URL resource = getClass().getResource("/mattb/controller/add_transaction.fxml");
             if (resource == null) {
                 new FinanceException(OPEN_NEW_TRANSACTION_MODAL_FAIL).displayAndLog();
                 return;
@@ -185,7 +185,7 @@ public class TransactionController {
         Transaction selected = transactionTable.getSelectionModel().getSelectedItem();
         int id = getId(selected);
         try {
-            URL resource = getClass().getResource("/mattb/controllers/add_transaction.fxml");
+            URL resource = getClass().getResource("/mattb/controller/add_transaction.fxml");
             if (resource == null) {
                 new FinanceException(OPEN_NEW_TRANSACTION_MODAL_FAIL).displayAndLog();
                 return;

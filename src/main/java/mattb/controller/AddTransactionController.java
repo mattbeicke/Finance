@@ -1,4 +1,4 @@
-package mattb.controllers;
+package mattb.controller;
 
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -84,7 +84,7 @@ public class AddTransactionController {
         addTransactionDAO.saveCategories(categoryField.getText());
 
         try {
-            URL resource = getClass().getResource("/mattb/controllers/update_balance.fxml");
+            URL resource = getClass().getResource("/mattb/controller/update_balance.fxml");
             if (resource == null) {
                 new FinanceException(OPEN_UPDATE_BALANCE_MODAL_FAIL).displayAndLog();
                 return;

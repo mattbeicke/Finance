@@ -9,7 +9,7 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.stage.Stage;
-import mattb.controllers.MainController;
+import mattb.controller.MainController;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -75,7 +75,7 @@ public class Main extends Application {
                 return;
             }
 
-            URL resource = getClass().getResource("/mattb/controllers/main.fxml");
+            URL resource = getClass().getResource("/mattb/controller/main.fxml");
             if (resource == null) {
                 new FinanceException(OPEN_MAIN_FAILED).displayAndLog();
                 return;

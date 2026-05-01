@@ -4,7 +4,7 @@
 <?import javafx.scene.layout.*?>
 <AnchorPane xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
-            fx:controller="mattb.controllers.DashboardController"
+            fx:controller="mattb.controller.DashboardController"
             prefHeight="750.0" prefWidth="1500.0">
     <VBox BorderPane.alignment="CENTER">
         <HBox>

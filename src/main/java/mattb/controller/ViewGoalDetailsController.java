@@ -1,4 +1,4 @@
-package mattb.controllers;
+package mattb.controller;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;

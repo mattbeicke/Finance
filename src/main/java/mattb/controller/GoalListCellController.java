@@ -1,4 +1,4 @@
-package mattb.controllers;
+package mattb.controller;
 
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -27,7 +27,7 @@ public class GoalListCellController extends ListCell<Goal> {
      * Initializes {@link FXML} items for the {@link Goal} {@link ListView List}
      */
     public GoalListCellController() {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/mattb/controllers/goal_cell.fxml"));
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/mattb/controller/goal_cell.fxml"));
         loader.setController(this);
         try {
             root = loader.load();

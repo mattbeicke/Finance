@@ -1,4 +1,4 @@
-package mattb.controllers;
+package mattb.controller;
 
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;

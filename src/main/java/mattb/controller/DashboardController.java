@@ -1,4 +1,4 @@
-package mattb.controllers;
+package mattb.controller;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -88,7 +88,7 @@ public class DashboardController {
     @FXML
     private void createGoal() {
         try {
-            URL resource = getClass().getResource("/mattb/controllers/add_goal.fxml");
+            URL resource = getClass().getResource("/mattb/controller/add_goal.fxml");
             if (resource == null) {
                 new FinanceException(OPEN_NEW_GOAL_MODAL_FAIL).displayAndLog();
                 return;
@@ -118,7 +118,7 @@ public class DashboardController {
         if (id == -1) return;
 
         try {
-            URL resource = getClass().getResource("/mattb/controllers/view_goal_details.fxml");
+            URL resource = getClass().getResource("/mattb/controller/view_goal_details.fxml");
             if (resource == null) {
                 new FinanceException(OPEN_VIEW_GOAL_DETAILS_MODAL_FAIL).displayAndLog();
                 return;
