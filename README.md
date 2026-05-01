@@ -3,8 +3,8 @@
 ## Introduction
 
 Matt's Finance App is a JavaFX desktop application for managing personal finances.
-It allows users track their bank accounts, track transactions, categorize spending, and monitor net worth using a
-lightweight SQLite database.
+It allows users to track bank accounts, transactions, categorize spending, define financial goals, and monitor net worth
+using a lightweight SQLite database.
 
 ---
 
@@ -12,12 +12,14 @@ lightweight SQLite database.
 
 * [Features](#features)
 * [Installation](#installation)
+* [Definitions](#definitions)
 * [Usage](#usage)
 * [UI Overview](#ui-overview)
 * [Database Schema](#database-schema)
 * [Architecture](#architecture)
 * [Dependencies](#dependencies)
 * [Configuration](#configuration)
+* [Examples](#examples)
 * [Troubleshooting](#troubleshooting)
 * [Contributors](#contributors)
 * [License](#license)
@@ -28,8 +30,9 @@ lightweight SQLite database.
 ## Features
 
 * Account management (create, edit, hide)
-* Transaction tracking between accounts & external purchases
-* Category tagging (multiple per transaction)
+* Transaction tracking (internal transfers & external spending)
+    * Category tagging (multiple per transaction)
+* Track saving Goal progress toward a target amount for a specified account
 * Net worth calculation
 * Hide/unhide accounts & transactions
 * Currency formatting
@@ -59,6 +62,16 @@ javaw -jar target/Finance-1.0.0.jar
 
 ---
 
+## Definitions
+
+These represent things that you may see in the app that may not be immediately intuitive on what they mean
+
+| Term     | Definition                                                                                                             |
+|----------|------------------------------------------------------------------------------------------------------------------------|
+| External | Represents any transfer of money that is not between two of your own accounts. (i.e. you buying something from a shop) |
+
+---
+
 ## Usage
 
 ### Navigation
@@ -71,22 +84,12 @@ The app uses a sidebar (from `main.fxml`) with the following tabs:
 
 ---
 
-## Definitions
-
-These represent things that you may see in the app that may not be immediately intuitive on what they mean
-
-| Term     | Definition                                                                                                             |
-|----------|------------------------------------------------------------------------------------------------------------------------|
-| External | Represents any transfer of money that is not between two of your own accounts. (i.e. you buying something from a shop) |
-
----
-
 ## UI Overview
 
 ### Dashboard
 
-* Displays:
-    * Total net worth (excluding hidden accounts)
+* Displays total net worth (excluding hidden accounts)
+* Goals shown and managed here
 
 ---
 
@@ -127,8 +130,9 @@ These represent things that you may see in the app that may not be immediately i
 
 ### Modals
 
-* Add Account
-* Add Transaction
+* Add/Edit Account
+* Add/Edit Transaction
+* Add/Edit Goal
 * Add Account Type
 * Update Balances Confirmation
 
@@ -240,6 +244,20 @@ CREATE TABLE hidden_transactions
 );
 ```
 
+#### `goal`
+
+```sqlite
+CREATE TABLE goal
+(
+    goal_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    acc_id  INTEGER        NOT NULL,
+    target  DECIMAL(15, 2) NOT NULL,
+    initial DECIMAL(15, 2) NOT NULL,
+    name    VARCHAR(50)    NOT NULL,
+    FOREIGN KEY (acc_id) REFERENCES account
+)
+```
+
 ---
 
 ### Relationships
@@ -268,14 +286,36 @@ src/
     │       ├── controllers/             # UI logic (JavaFX controllers)
     │       │   ├── AccountController.java
     │       │   ├── AddAccountController.java
+    │       │   ├── AddGoalController.java
     │       │   ├── AddTransactionController.java
     │       │   ├── AddTypeController.java
     │       │   ├── DashboardController.java
+    │       │   ├── GoalListCellController.java
     │       │   ├── MainController.java
-    │       │   └── TransactionController.java
+    │       │   ├── TransactionController.java
+    │       │   └── ViewGoalDetailsController.java
+    │       │
+    │       ├── dao/                     # Database interactions
+    │       │   ├── AccountDAO.java
+    │       │   ├── AccountDAOImpl.java
+    │       │   ├── AddAccountDAO.java
+    │       │   ├── AddAccountDAOImpl.java
+    │       │   ├── AddGoalDAO.java
+    │       │   ├── AddGoalDAOImpl.java
+    │       │   ├── AddTransactionDAO.java
+    │       │   ├── AddTransactionDAOImpl.java
+    │       │   ├── AddTypeDAO.java
+    │       │   ├── AddTypeDAOImpl.java
+    │       │   ├── DashboardDAO.java
+    │       │   ├── DashboardDAOImpl.java
+    │       │   ├── TransactionDAO.java
+    │       │   ├── TransactionDAOImpl.java
+    │       │   ├── UpdateGoalDAO.java
+    │       │   └── UpdateGoalDAOImpl.java
     │       │
     │       └── model/                   # Data models (records)
     │           ├── Account.java
+    │           ├── Goal.java
     │           └── Transaction.java
     │
     └── resources/
@@ -283,21 +323,51 @@ src/
             └── controllers/             # FXML UI layouts
                 ├── accounts.fxml
                 ├── add_account.fxml
+                ├── add_goal.fxml
                 ├── add_transaction.fxml
                 ├── add_type.fxml
                 ├── dashboard.fxml
+                ├── goal_cell.fxml
                 ├── main.fxml
                 ├── transactions.fxml
-                └── update_balance.fxml
+                ├── update_balance.fxml
+                └── view_goal_details.fxml
 ```
+
+---
+
+### Layers
+
+#### Controllers (UI Layer)
+
+* Handle user interaction
+* Bind UI to data
+* Delegate persistence to DAO layer
+
+---
+
+#### DAO Layer
+
+The DAO (Data Access Object) layer is responsible for:
+
+* Encapsulating all SQL logic
+* Providing clean methods for CRUD operations
+* Isolating database concerns from UI logic
+
+---
+
+#### Models
+
+* Represent core domain objects (Account, Transaction, Goal)
+* Implemented as record classes
 
 ---
 
 ### Design Patterns
 
 * MVC (Model-View-Controller)
-* DAO-like direct SQL usage via controllers
-* Centralized error handling via FinanceError enum
+* DAO (Data Access Object)
+* Centralized error handling via enums + exceptions
 
 ---
 
@@ -327,22 +397,33 @@ NumberFormat.getCurrencyInstance(Locale.US)
 
 ---
 
+## Examples
+
+### Add a Transaction
+
+1. Navigate to Transactions tab
+2. Click "Add Transaction"
+3. Fill in:
+    * To and from Accounts (selecting External if it is a purchase or deposit)
+    * Amount
+    * Categories
+    * Date
+    * Memo
+4. Save
+
+---
+
 ## Troubleshooting
 
-### Database connection fails
+| Issue           | Solution                                         |
+|-----------------|--------------------------------------------------|
+| App won't start | Ensure Java 26+ is installed                     |
+| Database errors | Delete `finance.db` and restart                  |
+| UI not loading  | Check FXML paths                                 |
+| Data Missing    | Check if items are hidden (toggle “View Hidden”) |
+| Other           | Report ASAP to deleveoper                        |
 
-* Ensure `finance.db` exists
-    * Check working directory
-
-### JavaFX runtime issues
-
-* If Maven is installed correctly, running ```mvn clean install``` should install all required dependencies/libraries
-  for JavaFX
-* Make sure JavaFX is available or bundled properly
-
-### Data missing
-
-* Check if items are hidden (toggle “View Hidden”)
+Installing Java 26 and Maven, running ```mvn clean install``` should install all required dependencies
 
 ---
 
@@ -360,8 +441,10 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 
 ## Potential Future Improvements
 
-* Add a thing that celebrates you hitting a goal
+* Add something that celebrates you hitting a goal
 * Add a section to actually delete data (instead of just hiding it)
-* Add unit tests
+* Make the User Interface pretty
+* Improved goal tracking (link to accounts/categories)
+* Data visualization (charts/graphs)
 * Ability to mass import data (via CSV) and export data
-* Pretty up the UI
+* Proper testing suite
