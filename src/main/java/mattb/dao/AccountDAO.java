@@ -4,6 +4,11 @@ import mattb.model.Account;
 
 import java.util.HashMap;
 
+/**
+ * DAO Interface for the AccountController
+ *
+ * @author Matthew Beicke
+ */
 public interface AccountDAO {
     /**
      * Gets list of all unhidden {@link Account accounts} (if {@code hidden} is false) or

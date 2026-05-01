@@ -5,6 +5,11 @@ import mattb.model.Goal;
 
 import java.util.HashMap;
 
+/**
+ * DAO Interface for the DashboardController
+ *
+ * @author Matthew Beicke
+ */
 public interface DashboardDAO {
     /**
      * Sums the users non-hidden {@link Account} balances

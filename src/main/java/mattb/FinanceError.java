@@ -1,5 +1,10 @@
 package mattb;
 
+/**
+ * List of all the custom Error codes and messages. Used by {@code FinanceException}
+ *
+ * @author Matthew Beicke
+ */
 public enum FinanceError {
     /**
      * Opening Tabs/Modals
@@ -41,8 +46,6 @@ public enum FinanceError {
     LOAD_ACCOUNT_TYPES_FAIL("Error loading account types from database"),
     LOAD_ACCOUNTS_FAIL("Error loading accounts from database"),
     LOAD_TRANSACTIONS_FAIL("Error loading transactions from database"),
-    LOAD_HIDDEN_TRANSACTIONS_FAIL("Error loading hidden transactions from database"),
-    LOAD_HIDDEN_ACCOUNTS_FAIL("Error loading hidden accounts from database"),
     LOAD_GOALS_FAIL("Error loading goals from database"),
     // Finding
     GET_ACCOUNT_TYPE_ID_FAIL("Error finding account type id in database"),

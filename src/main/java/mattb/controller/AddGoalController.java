@@ -13,6 +13,11 @@ import mattb.dao.AddGoalDAOImpl;
 import mattb.model.Account;
 import mattb.model.Goal;
 
+/**
+ * Handles UI interactions on the {@code Add New Goal} modal
+ *
+ * @author Matthew Beicke
+ */
 public class AddGoalController {
     @FXML
     private TextField nameField;

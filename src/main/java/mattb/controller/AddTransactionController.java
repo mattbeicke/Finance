@@ -25,6 +25,11 @@ import java.time.ZoneId;
 
 import static mattb.FinanceError.OPEN_UPDATE_BALANCE_MODAL_FAIL;
 
+/**
+ * Handles UI interactions on the {@code Add New Transaction} modal
+ *
+ * @author Matthew Beicke
+ */
 public class AddTransactionController {
     @FXML
     private ComboBox<String> fromCombo;
@@ -46,7 +51,7 @@ public class AddTransactionController {
     private boolean update = false;
 
     /**
-     * Initializes {@link FXML} items for the {@code Add Transaction} modal and the {@link AddTransactionDAO DAO}
+     * Initializes {@link FXML} items for the {@code Add New Transaction} modal and the {@link AddTransactionDAO DAO}
      */
     @FXML
     public void initialize() {
@@ -118,7 +123,7 @@ public class AddTransactionController {
     }
 
     /**
-     * Exits the {@code Add New Transaction} or {@code Edit Account} modal
+     * Exits the {@code Add New Transaction} or {@code Edit Transaction} modal
      *
      * @param event The {@link ActionEvent} from pressing the {@code Cancel} {@link Button}
      */

@@ -12,6 +12,11 @@ import java.util.HashMap;
 import static mattb.FinanceError.LOAD_ACCOUNTS_FAIL;
 import static mattb.FinanceError.UPDATE_HIDDEN_ACCOUNT_LIST_FAIL;
 
+/**
+ * DAO Implementation for the AccountController
+ *
+ * @author Matthew Beicke
+ */
 public class AccountDAOImpl implements AccountDAO {
     private final Connection conn;
 

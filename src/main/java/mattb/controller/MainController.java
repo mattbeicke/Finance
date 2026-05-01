@@ -12,6 +12,11 @@ import java.net.URL;
 
 import static mattb.FinanceError.*;
 
+/**
+ * Handles UI interactions for tab switching
+ *
+ * @author Matthew Beicke
+ */
 public class MainController {
     @FXML
     private BorderPane mainBorderPane;
@@ -37,7 +42,10 @@ public class MainController {
         loadView("/mattb/controller/accounts.fxml", OPEN_ACCOUNTS_TAB_FAILED);
     }
 
-    public void showSettings(){
+    /**
+     * Sets current tab to {@code Settings}
+     */
+    public void showSettings() {
         loadView("/mattb/controller/settings.fxml", OPEN_SETTINGS_TAB_FAILED);
     }
 

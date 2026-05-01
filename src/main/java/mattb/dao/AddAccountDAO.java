@@ -3,6 +3,11 @@ package mattb.dao;
 import javafx.collections.ObservableList;
 import mattb.model.Account;
 
+/**
+ * DAO Interface for the AddAccountController
+ *
+ * @author Matthew Beicke
+ */
 public interface AddAccountDAO {
     /**
      * Gets a list of all (non-{@code External} Account Types)

@@ -2,6 +2,11 @@ package mattb.dao;
 
 import mattb.model.Goal;
 
+/**
+ * DAO Interface for the ViewGoalDetailsController
+ *
+ * @author Matthew Beicke
+ */
 public interface UpdateGoalDAO {
     /**
      * Updates a {@link Goal} with given {@code name} and {@code target} balance

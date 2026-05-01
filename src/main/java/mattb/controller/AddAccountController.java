@@ -12,6 +12,11 @@ import mattb.dao.AddAccountDAO;
 import mattb.dao.AddAccountDAOImpl;
 import mattb.model.Account;
 
+/**
+ * Handles UI interactions on the {@code Add New Account} modal
+ *
+ * @author Matthew Beicke
+ */
 public class AddAccountController {
     @FXML
     private ComboBox<String> typeCombo;

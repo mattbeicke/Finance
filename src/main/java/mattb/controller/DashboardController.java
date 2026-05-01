@@ -23,6 +23,11 @@ import java.util.HashMap;
 import static mattb.FinanceError.OPEN_NEW_GOAL_MODAL_FAIL;
 import static mattb.FinanceError.OPEN_VIEW_GOAL_DETAILS_MODAL_FAIL;
 
+/**
+ * Handles UI interactions on the {@code Dashboard} tab
+ *
+ * @author Matthew Beicke
+ */
 public class DashboardController {
     @FXML
     private ListView<Goal> goalList;

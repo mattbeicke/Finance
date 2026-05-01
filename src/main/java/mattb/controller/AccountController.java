@@ -24,6 +24,11 @@ import java.util.HashMap;
 
 import static mattb.FinanceError.*;
 
+/**
+ * Handles UI interactions on the {@code Account} tab
+ *
+ * @author Matthew Beicke
+ */
 public class AccountController {
     @FXML
     private TableView<Account> accountTable;
@@ -48,10 +53,6 @@ public class AccountController {
     private AccountDAO accountDAO;
 
     private boolean onHidden = false;
-
-    public void setAccountDAO(AccountDAO accountDAO) {
-        this.accountDAO = accountDAO;
-    }
 
     /**
      * Initializes {@link FXML} items for the {@code Account} tab and the {@link AccountDAO DAO}

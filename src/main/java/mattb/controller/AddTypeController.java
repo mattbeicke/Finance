@@ -9,6 +9,11 @@ import mattb.Main;
 import mattb.dao.AddTypeDAO;
 import mattb.dao.AddTypeDAOImpl;
 
+/**
+ * Handles UI interactions on the {@code Add New Account Type} modal
+ *
+ * @author Matthew Beicke
+ */
 public class AddTypeController {
     @FXML
     private TextField typeField;

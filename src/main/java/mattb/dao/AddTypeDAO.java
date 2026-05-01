@@ -1,5 +1,10 @@
 package mattb.dao;
 
+/**
+ * DAO Interface for the AddTypeController
+ *
+ * @author Matthew Beicke
+ */
 public interface AddTypeDAO {
     /**
      * Saves new {@code account type} to database

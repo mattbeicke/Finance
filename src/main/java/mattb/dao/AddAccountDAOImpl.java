@@ -11,6 +11,11 @@ import java.sql.SQLException;
 
 import static mattb.FinanceError.*;
 
+/**
+ * DAO Implementation for the AddAccountController
+ *
+ * @author Matthew Beicke
+ */
 public class AddAccountDAOImpl implements AddAccountDAO {
     private final Connection conn;
 

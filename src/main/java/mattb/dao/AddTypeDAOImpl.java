@@ -8,6 +8,11 @@ import java.sql.SQLException;
 
 import static mattb.FinanceError.SAVE_ACCOUNT_TYPE_FAIL;
 
+/**
+ * DAO Implementation for the AddTypeController
+ *
+ * @author Matthew Beicke
+ */
 public class AddTypeDAOImpl implements AddTypeDAO {
     private final Connection conn;
 

@@ -9,6 +9,11 @@ import java.sql.SQLException;
 import static mattb.FinanceError.DELETE_GOAL_FAIL;
 import static mattb.FinanceError.UPDATE_GOAL_FAIL;
 
+/**
+ * DAO Implementation for the ViewGoalDetailsController
+ *
+ * @author Matthew Beicke
+ */
 public class UpdateGoalDAOImpl implements UpdateGoalDAO {
     private final Connection conn;
 

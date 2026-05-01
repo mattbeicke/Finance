@@ -9,7 +9,17 @@ import java.io.PrintWriter;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
+/**
+ * Custom exception and handling
+ *
+ * @author Matthew Beicke
+ */
 public class FinanceException extends RuntimeException {
+    /**
+     * Sends the error to {@link RuntimeException}
+     *
+     * @param error Custom error code/message
+     */
     public FinanceException(FinanceError error) {
         super(error.getMessage());
     }

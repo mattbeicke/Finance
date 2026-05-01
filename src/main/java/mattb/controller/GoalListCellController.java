@@ -14,6 +14,11 @@ import java.io.IOException;
 
 import static mattb.FinanceError.OPEN_GOALS_LIST_FAILED;
 
+/**
+ * Handles setting up the UI for the {@code Goal} List
+ *
+ * @author Matthew Beicke
+ */
 public class GoalListCellController extends ListCell<Goal> {
     private Node root;
     @FXML

@@ -6,6 +6,11 @@ import mattb.model.Transaction;
 
 import java.time.LocalDate;
 
+/**
+ * DAO Interface for the AddTransactionController
+ *
+ * @author Matthew Beicke
+ */
 public interface AddTransactionDAO {
     /**
      * Gets list of all non-hidden {@link Account Accounts}

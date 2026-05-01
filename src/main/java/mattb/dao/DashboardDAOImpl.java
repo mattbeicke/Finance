@@ -12,6 +12,11 @@ import java.util.HashMap;
 import static mattb.FinanceError.LOAD_GOALS_FAIL;
 import static mattb.FinanceError.NET_WORTH_FAIL;
 
+/**
+ * DAO Implementation for the DashboardController
+ *
+ * @author Matthew Beicke
+ */
 public class DashboardDAOImpl implements DashboardDAO {
     private final Connection conn;
 
@@ -55,13 +60,7 @@ public class DashboardDAOImpl implements DashboardDAO {
                 """;
         try (PreparedStatement pstmt = conn.prepareStatement(sql); ResultSet rs = pstmt.executeQuery()) {
             while (rs.next()) {
-                goals.put(rs.getInt("goal_id"), new Goal(
-                        rs.getDouble("current"),
-                        rs.getDouble("initial"),
-                        rs.getDouble("target"),
-                        rs.getString("acc_name"),
-                        rs.getString("goal_name")
-                ));
+                goals.put(rs.getInt("goal_id"), new Goal(rs.getDouble("current"), rs.getDouble("initial"), rs.getDouble("target"), rs.getString("acc_name"), rs.getString("goal_name")));
             }
         } catch (SQLException ignored) {
             new FinanceException(LOAD_GOALS_FAIL).displayAndLog();

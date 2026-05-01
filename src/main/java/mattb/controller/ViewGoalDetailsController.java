@@ -11,6 +11,11 @@ import mattb.dao.UpdateGoalDAO;
 import mattb.dao.UpdateGoalDAOImpl;
 import mattb.model.Goal;
 
+/**
+ * Handles UI interactions on the {@code View Goal Details} modal
+ *
+ * @author Matthew Beicke
+ */
 public class ViewGoalDetailsController {
     @FXML
     private TextField nameField;
@@ -24,7 +29,7 @@ public class ViewGoalDetailsController {
     private int id;
 
     /**
-     * Initializes {@link FXML} items for the {@code Add New Goal} modal and the {@link UpdateGoalDAO DAO}
+     * Initializes {@link FXML} items for the {@code View Goal Details} modal and the {@link UpdateGoalDAO DAO}
      */
     @FXML
     private void initialize() {

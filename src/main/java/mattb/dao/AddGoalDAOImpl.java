@@ -12,6 +12,11 @@ import java.sql.SQLException;
 
 import static mattb.FinanceError.*;
 
+/**
+ * DAO Implementation for the AddGoalController
+ *
+ * @author Matthew Beicke
+ */
 public class AddGoalDAOImpl implements AddGoalDAO {
     private final Connection conn;
 

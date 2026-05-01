@@ -12,6 +12,11 @@ import java.util.HashMap;
 import static mattb.FinanceError.LOAD_TRANSACTIONS_FAIL;
 import static mattb.FinanceError.UPDATE_HIDDEN_TRANSACTION_LIST_FAIL;
 
+/**
+ * DAO Implementation for the TransactionController
+ *
+ * @author Matthew Beicke
+ */
 public class TransactionDAOImpl implements TransactionDAO {
     private final Connection conn;
 

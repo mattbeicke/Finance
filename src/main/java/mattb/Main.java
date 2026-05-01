@@ -25,6 +25,11 @@ import java.util.stream.Collectors;
 
 import static mattb.FinanceError.*;
 
+/**
+ * Entrypoint into the program. Does all the setup (database connection, exception handling, etc.).
+ *
+ * @author Matthew Beicke
+ */
 public class Main extends Application {
     private static Connection conn;
 

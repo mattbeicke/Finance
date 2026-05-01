@@ -4,6 +4,11 @@ import mattb.model.Transaction;
 
 import java.util.HashMap;
 
+/**
+ * DAO Interface for the TransactionController
+ *
+ * @author Matthew Beicke
+ */
 public interface TransactionDAO {
     /**
      * Gets list of all unhidden {@link Transaction transactions} (if {@code hidden} is false) or

@@ -14,6 +14,11 @@ import java.util.Collections;
 
 import static mattb.FinanceError.*;
 
+/**
+ * DAO Implementation for the AddTransactionController
+ *
+ * @author Matthew Beicke
+ */
 public class AddTransactionDAOImpl implements AddTransactionDAO {
     private final Connection conn;
 

@@ -26,6 +26,11 @@ import java.util.HashMap;
 import static mattb.FinanceError.OPEN_EDIT_TRANSACTION_MODAL_FAIL;
 import static mattb.FinanceError.OPEN_NEW_TRANSACTION_MODAL_FAIL;
 
+/**
+ * Handles UI interactions on the {@code Transaction} tab
+ *
+ * @author Matthew Beicke
+ */
 public class TransactionController {
     @FXML
     private TableView<Transaction> transactionTable;

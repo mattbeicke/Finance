@@ -4,6 +4,11 @@ import javafx.collections.ObservableList;
 import mattb.model.Account;
 import mattb.model.Goal;
 
+/**
+ * DAO Interface for the AddGoalController
+ *
+ * @author Matthew Beicke
+ */
 public interface AddGoalDAO {
     /**
      * Gets list of all {@link Account Accounts}
