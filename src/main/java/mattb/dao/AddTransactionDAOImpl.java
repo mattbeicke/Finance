@@ -192,9 +192,9 @@ public class AddTransactionDAOImpl implements AddTransactionDAO {
     }
 
     /**
-     * Creates a category if it does not exist
+     * Creates a {@code Category} if it does not exist
      *
-     * @param cat Category to add if needed
+     * @param cat Name of {@code Category} to add if needed
      */
     private void createCatIfNeeded(String cat) {
         if (cat == null || cat.isBlank()) return;

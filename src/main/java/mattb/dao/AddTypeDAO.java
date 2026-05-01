@@ -2,9 +2,9 @@ package mattb.dao;
 
 public interface AddTypeDAO {
     /**
-     * Saves new account type to database
+     * Saves new {@code account type} to database
      *
-     * @param type New type to save
+     * @param type Name of the new {@code type} to save
      */
     void saveType(String type);
 }

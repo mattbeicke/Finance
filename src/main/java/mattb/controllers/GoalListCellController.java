@@ -5,6 +5,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
+import javafx.scene.control.ListView;
 import javafx.scene.control.ProgressBar;
 import mattb.FinanceException;
 import mattb.model.Goal;
@@ -22,7 +23,9 @@ public class GoalListCellController extends ListCell<Goal> {
     @FXML
     private Label goalBalanceAndAccount;
 
-
+    /**
+     * Initializes {@link FXML} items for the {@link Goal} {@link ListView List}
+     */
     public GoalListCellController() {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/mattb/controllers/goal_cell.fxml"));
         loader.setController(this);
@@ -33,6 +36,14 @@ public class GoalListCellController extends ListCell<Goal> {
         }
     }
 
+    /**
+     * Sets up a row in the {@link ListView List} based on the supplied {@link Goal}
+     *
+     * @param goal  The new item for the cell.
+     * @param empty Whether this cell represents data from the list. If it
+     *              is empty, then it does not represent any domain data, but is a cell
+     *              being used to render an "empty" row.
+     */
     @Override
     protected void updateItem(Goal goal, boolean empty) {
         super.updateItem(goal, empty);

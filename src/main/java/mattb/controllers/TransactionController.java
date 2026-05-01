@@ -56,7 +56,7 @@ public class TransactionController {
     private boolean onHidden = false;
 
     /**
-     * Initializes all FXML items for the transaction tab
+     * Initializes {@link FXML} items for the {@code Transaction} tab and the {@link TransactionDAO DAO}
      */
     @FXML
     public void initialize() {
@@ -90,7 +90,7 @@ public class TransactionController {
     }
 
     /**
-     * Refreshes the transaction table with either not hidden or hidden transactions
+     * Refreshes the {@link Transaction} {@link TableView Table} with either hidden or non-hidden {@link Transaction Transactions}
      */
     private void refreshTable() {
         map = transactionDAO.getAllTransactions(onHidden);
@@ -98,10 +98,10 @@ public class TransactionController {
     }
 
     /**
-     * Gets the id of the inputted {@link Transaction}
+     * Gets the database id of the inputted {@link Transaction}
      *
-     * @param t {@link Transaction} to get the id of
-     * @return database id of the {@link Transaction} or -1 if it's not found
+     * @param t The {@link Transaction} to get the id of
+     * @return The database id of the {@link Transaction} or -1 if it's not found
      */
     private int getId(Transaction t) {
         if (t == null) return -1;
@@ -115,7 +115,7 @@ public class TransactionController {
     }
 
     /**
-     * Hides or unhides currently selected transaction in list
+     * Hides or unhides currently selected {@link Transaction} in the {@link TableView Table}
      */
     @FXML
     private void hideSelected() {
@@ -130,7 +130,7 @@ public class TransactionController {
     }
 
     /**
-     * Toggles transaction list between hidden and not hidden transactions
+     * Toggles {@link Transaction} list between showing the hidden and non-hidden {@link Transaction Transactions}
      */
     @FXML
     private void viewHidden() {
@@ -152,7 +152,7 @@ public class TransactionController {
     }
 
     /**
-     * Opens create new transaction modal
+     * Opens the {@code Add New Transaction} modal
      */
     @FXML
     private void addNew() {
@@ -178,7 +178,7 @@ public class TransactionController {
     }
 
     /**
-     * Opens edit transaction modal, filling all fields with current transaction information
+     * Opens the {@code Edit Transaction} modal, filling all fields with the currently selected {@link Transaction Transaction's} information
      */
     @FXML
     private void editSelected() {

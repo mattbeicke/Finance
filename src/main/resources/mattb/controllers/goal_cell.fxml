@@ -5,6 +5,8 @@
 <?import javafx.scene.layout.HBox?>
 <HBox spacing="10" alignment="CENTER_LEFT" xmlns:fx="http://javafx.com">
     <Label fx:id="goalNameAndCurrentBalance"/>
+
     <ProgressBar fx:id="progressBar" HBox.hgrow="ALWAYS" maxWidth="Infinity" progress="0.5"/>
+
     <Label fx:id="goalBalanceAndAccount"/>
 </HBox>

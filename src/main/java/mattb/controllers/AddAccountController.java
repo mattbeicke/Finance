@@ -26,7 +26,7 @@ public class AddAccountController {
     private int id;
 
     /**
-     * Initializes all FXML items for the add account modal
+     * Initializes {@link FXML} items for the {@code Add New Account} modal and the {@link AddAccountDAO DAO}
      */
     @FXML
     public void initialize() {
@@ -43,22 +43,24 @@ public class AddAccountController {
     }
 
     /**
-     * Saves new account to database
+     * Saves a new {@link Account} to the database
+     *
+     * @param event The {@link ActionEvent} from pressing the {@code Save} {@link Button}
      */
     @FXML
-    private void onAccountSave() {
+    private void onAccountSave(ActionEvent event) {
         int typeId = getTypeId();
         if (typeId == -1 || balanceField.getText().isBlank() || nameField.getText().isBlank()) return;
 
         addAccountDAO.saveAccount(typeId, Double.parseDouble(balanceField.getText()), nameField.getText(), id, editing);
 
-        ((Stage) typeCombo.getScene().getWindow()).close();
+        cancel(event);
     }
 
     /**
-     * Gets the id number of the currently selected type
+     * Gets the database id of the currently selected {@code Account Type}
      *
-     * @return id number that corresponds to the type selected in the type combo box or -1 if it cannot be found
+     * @return Database id number that corresponds to the {@code type} selected in the type {@link ComboBox} or -1 if it cannot be found
      */
     public int getTypeId() {
         if (typeCombo.getValue().isBlank()) return -1;
@@ -67,9 +69,9 @@ public class AddAccountController {
     }
 
     /**
-     * Exits either add/edit account modal
+     * Exits the {@code Add New Account} or {@code Edit Account} modal
      *
-     * @param event Button press event
+     * @param event The {@link ActionEvent} from pressing the {@code Cancel} {@link Button}
      */
     @FXML
     private void cancel(ActionEvent event) {
@@ -78,10 +80,10 @@ public class AddAccountController {
     }
 
     /**
-     * Sets fields of account edit modal
+     * Sets the fields of the {@code Edit Account} modal
      *
-     * @param a  {@link Account} who is being edited
-     * @param id Database id of {@link Account} who is being edited
+     * @param a  The {@link Account} who is being edited
+     * @param id Database id of {@code a}
      */
     public void setFields(Account a, int id) {
         if (a == null || id <= 0) return;

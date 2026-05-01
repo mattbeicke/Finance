@@ -31,13 +31,13 @@ public class DashboardController {
     @FXML
     private Label netWorth;
 
-    private DashboardDAO dashboardDAO;
-
     private final ObservableList<Goal> goals = FXCollections.observableArrayList();
     private HashMap<Integer, Goal> map;
 
+    private DashboardDAO dashboardDAO;
+
     /**
-     * Initializes all FXML items for the dashboard tab
+     * Initializes {@link FXML} items for the {@code Dashboard} tab and the {@link DashboardDAO DAO}
      */
     @FXML
     private void initialize() {
@@ -52,7 +52,7 @@ public class DashboardController {
     }
 
     /**
-     * Refreshes the goal list
+     * Refreshes the {@link Goal} {@link ListView List}
      */
     private void refreshList() {
         map = dashboardDAO.getGoals();
@@ -66,7 +66,24 @@ public class DashboardController {
     }
 
     /**
-     * Opens create new goal modal
+     * Gets the database id of the inputted {@link Goal}
+     *
+     * @param g The {@link Goal} to get the id of
+     * @return The database id of the {@link Goal} or -1 if it's not found
+     */
+    private int getId(Goal g) {
+        if (g == null) return -1;
+
+        for (Integer i : map.keySet()) {
+            if (map.get(i).equals(g)) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    /**
+     * Opens the {@code Add new Goal} modal
      */
     @FXML
     private void createGoal() {
@@ -91,6 +108,9 @@ public class DashboardController {
         }
     }
 
+    /**
+     * Opens the {@code View Goal Details} modal
+     */
     @FXML
     private void viewGoalDetails() {
         Goal selected = goalList.getSelectionModel().getSelectedItem();
@@ -120,22 +140,5 @@ public class DashboardController {
         } catch (IOException ignored) {
             new FinanceException(OPEN_VIEW_GOAL_DETAILS_MODAL_FAIL).displayAndLog();
         }
-    }
-
-    /**
-     * Gets the database id of the inputted {@link Goal}
-     *
-     * @param g {@link Goal} to get the id of
-     * @return Database id of the {@link Goal} or -1 if it's not found
-     */
-    private int getId(Goal g) {
-        if (g == null) return -1;
-
-        for (Integer i : map.keySet()) {
-            if (map.get(i).equals(g)) {
-                return i;
-            }
-        }
-        return -1;
     }
 }

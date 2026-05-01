@@ -54,7 +54,7 @@ public class AccountController {
     }
 
     /**
-     * Initializes all FXML items for the account tab
+     * Initializes {@link FXML} items for the {@code Account} tab and the {@link AccountDAO DAO}
      */
     @FXML
     public void initialize() {
@@ -81,7 +81,7 @@ public class AccountController {
     }
 
     /**
-     * Refreshes the Account table
+     * Refreshes the {@link Account} {@link TableView Table} with either hidden or non-hidden {@link Account Accounts}
      */
     private void refreshTable() {
         map = accountDAO.getAllAccounts(onHidden);
@@ -89,10 +89,10 @@ public class AccountController {
     }
 
     /**
-     * Gets the id of the inputted {@link Account}
+     * Gets the database id of the inputted {@link Account}
      *
-     * @param a {@link Account} to get the id of
-     * @return database id of the {@link Account} or -1 if it's not found
+     * @param a The {@link Account} to get the id of
+     * @return The database id of the {@link Account} or -1 if it's not found
      */
     private int getId(Account a) {
         if (a == null) return -1;
@@ -106,7 +106,7 @@ public class AccountController {
     }
 
     /**
-     * Hides or unhides currently selected account in list
+     * Hides or unhides currently selected {@link Account} in the {@link TableView Table}
      */
     @FXML
     private void hideAccount() {
@@ -122,7 +122,7 @@ public class AccountController {
     }
 
     /**
-     * Toggles account list between hidden and not hidden accounts
+     * Toggles {@link Account} list between showing the hidden and non-hidden {@link Account Accounts}
      */
     @FXML
     private void viewHidden() {
@@ -148,7 +148,7 @@ public class AccountController {
     }
 
     /**
-     * Opens create new account modal
+     * Opens the {@code Add New Account} modal
      */
     @FXML
     private void addNewAccount() {
@@ -174,7 +174,7 @@ public class AccountController {
     }
 
     /**
-     * Opens create new account type modal
+     * Opens the {@code Add New Account Type} modal
      */
     @FXML
     private void addNewType() {
@@ -198,7 +198,7 @@ public class AccountController {
     }
 
     /**
-     * Opens edit account modal, filling all fields with current account information
+     * Opens the {@code Edit Account} modal, filling all fields with the currently selected {@link Account Account's} information
      */
     @FXML
     private void editSelected() {

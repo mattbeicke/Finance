@@ -3,6 +3,7 @@ package mattb.dao;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import mattb.FinanceException;
+import mattb.model.Account;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -82,14 +83,21 @@ public class AddGoalDAOImpl implements AddGoalDAO {
         }
     }
 
+    /**
+     * Lets {@link #getInitialBalance(int)} return two things
+     *
+     * @param success If {@link #getInitialBalance(int)} was successful or not
+     * @param balance Initial balance of the {@link Account}
+     */
     private record Result(boolean success, double balance) {
     }
 
     /**
-     * Gets the current (initial) balance of account
+     * Gets the current ("initial") balance of an {@link Account}
      *
-     * @param accId Account to lookup balance for
-     * @return A {@link Result} object that contains both the success value (true for success, false for failure) and what the initial balance is (if successful)
+     * @param accId Database id of the {@link Account} to lookup balance for
+     * @return A {@link Result} object containing the success of this function ({@code true} for it being successful, {@code false} for it not)
+     * and what the "initial" balance is (if successful)
      */
     private Result getInitialBalance(int accId) {
         String sql = "select balance from account where acc_id = ?";

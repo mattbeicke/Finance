@@ -20,7 +20,6 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.text.NumberFormat;
-import java.util.HashSet;
 import java.util.Locale;
 import java.util.stream.Collectors;
 
@@ -34,9 +33,11 @@ public class Main extends Application {
     }
 
     /**
-     * Initializes Database {@link Connection}, Hidden transaction and account {@link HashSet}, and the GUI
+     * Sets up exception handling to be done via {@link FinanceException}.
+     * Initializes the Database {@link Connection}.
+     * Starts the GUI.
      *
-     * @param stage the primary stage for this application, onto which
+     * @param stage The primary stage for this application, onto which
      *              the application scene can be set.
      *              Applications may create other stages, if needed, but they will not be
      *              primary stages.
@@ -96,7 +97,7 @@ public class Main extends Application {
             alert.showAndWait();
 
             Platform.exit();
-        } catch (IOException e) {
+        } catch (IOException ignored) {
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle("Critical Startup Error");
             alert.setHeaderText("A necessary JavaFX FXML file could not be found");
@@ -118,7 +119,8 @@ public class Main extends Application {
     }
 
     /**
-     * Converts a double (that reflects a balance or amount) to a nice formatted string (dollar signs and appropriate decimals)
+     * Converts a {@link Double} (that reflects a balance or amount) to a formatted {@link String}.
+     * This includes a dollar sign and two decimal places and a point (of zeros if it is the case).
      *
      * @param input String to convert
      * @return Converted string
@@ -128,9 +130,9 @@ public class Main extends Application {
     }
 
     /**
-     * Reduces redundant code controllers by setting the Balance and Amount columns to use the currency format above
+     * Sets the {@link TableColumn Columns} {@code Balance} and {@code Amount} columns to use the currency format from {@link #formatDouble(double)}
      *
-     * @param toConvert {@link TableColumn} to convert
+     * @param toConvert The {@link TableColumn} to convert
      * @param <S>       Lets {@code toConvert} be any from any table as long as the column is of a double type
      */
     public static <S> void useCurrency(TableColumn<S, Double> toConvert) {
@@ -148,9 +150,10 @@ public class Main extends Application {
     }
 
     /**
-     * Initializes all database tables and populates them with the initial data
+     * Sets up missing database tables (if there are any).
+     * Initializes the tables with the required starting data (the {@code External} account and such)
      *
-     * @return true if something went wrong
+     * @return {@code true} if something went wrong
      */
     private boolean ensureDB() {
         try (Statement stmt = conn.createStatement()) {

@@ -17,28 +17,28 @@ public class MainController {
     private BorderPane mainBorderPane;
 
     /**
-     * Sets tab to the dashboard tab
+     * Sets current tab to {@code Dashboard}
      */
     public void showDashboard() {
         loadView("/mattb/controllers/dashboard.fxml", OPEN_DASHBOARD_TAB_FAILED);
     }
 
     /**
-     * Sets tab to the transactions tab
+     * Sets current tab to {@code Transactions}
      */
     public void showTransactions() {
         loadView("/mattb/controllers/transactions.fxml", OPEN_TRANSACTIONS_TAB_FAILED);
     }
 
     /**
-     * Sets tab to the accounts tab
+     * Sets current tab to {@code Accounts}
      */
     public void showAccounts() {
         loadView("/mattb/controllers/accounts.fxml", OPEN_ACCOUNTS_TAB_FAILED);
     }
 
     /**
-     * Private helper to validate resources before loading to prevent console spam
+     * Reduces redundant code in this class by doing the tab loading here
      */
     private void loadView(String fxmlPath, FinanceError errorContext) {
         URL resource = getClass().getResource(fxmlPath);

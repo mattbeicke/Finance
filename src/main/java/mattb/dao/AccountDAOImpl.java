@@ -46,7 +46,7 @@ public class AccountDAOImpl implements AccountDAO {
     }
 
     /**
-     * Builds the database query for the {@code getAllAccounts} method
+     * Builds the database query for the {@link #getAllAccounts(boolean)} method
      *
      * @param hidden Whether to get the hidden {@link Account Accounts} or unhidden ones
      * @return The SQL query for the requesting method

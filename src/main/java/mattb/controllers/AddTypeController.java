@@ -16,7 +16,7 @@ public class AddTypeController {
     private AddTypeDAO addTypeDAO;
 
     /**
-     * Initializes all FXML items for the add type modal
+     * Initializes {@link FXML} items for the {@code Add New Account Type} modal and the {@link AddTypeDAO DAO}
      */
     @FXML
     public void initialize() {
@@ -24,21 +24,23 @@ public class AddTypeController {
     }
 
     /**
-     * Saves a new account type to the database
+     * Saves a new {@code Account Type} to the database
+     *
+     * @param event The {@link ActionEvent} from pressing the {@code Save} {@link Button}
      */
     @FXML
-    private void onTypeSave() {
+    private void onTypeSave(ActionEvent event) {
         if (typeField.getText().isBlank()) return;
 
         addTypeDAO.saveType(typeField.getText());
 
-        ((Stage) typeField.getScene().getWindow()).close();
+        cancel(event);
     }
 
     /**
-     * Exits add type modal
+     * Exits the {@code Add New Account Type} modal
      *
-     * @param event Button press event
+     * @param event The {@link ActionEvent} from pressing the {@code Cancel} {@link Button}
      */
     @FXML
     private void cancel(ActionEvent event) {

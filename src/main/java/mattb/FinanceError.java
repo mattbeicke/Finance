@@ -61,6 +61,11 @@ public enum FinanceError {
         this.message = message;
     }
 
+    /**
+     * Simply returns the Error message associated with the Error
+     *
+     * @return The Error message that's connected to the FinanceError code
+     */
     public String getMessage() {
         return message;
     }

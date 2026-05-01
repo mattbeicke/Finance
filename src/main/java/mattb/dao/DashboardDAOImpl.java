@@ -1,7 +1,5 @@
 package mattb.dao;
 
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import mattb.FinanceException;
 import mattb.model.Goal;
 

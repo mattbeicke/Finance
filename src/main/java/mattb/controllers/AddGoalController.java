@@ -10,6 +10,8 @@ import javafx.stage.Stage;
 import mattb.Main;
 import mattb.dao.AddGoalDAO;
 import mattb.dao.AddGoalDAOImpl;
+import mattb.model.Account;
+import mattb.model.Goal;
 
 public class AddGoalController {
     @FXML
@@ -22,7 +24,7 @@ public class AddGoalController {
     private AddGoalDAO addGoalDAO;
 
     /**
-     * Initializes all FXML items for the add goal modal
+     * Initializes {@link FXML} items for the {@code Add New Goal} modal and the {@link AddGoalDAO DAO}
      */
     @FXML
     private void initialize() {
@@ -39,9 +41,9 @@ public class AddGoalController {
     }
 
     /**
-     * Saves new goal to database
+     * Saves new {@link Goal} to database
      *
-     * @param event Button press event
+     * @param event The {@link ActionEvent} from pressing the {@code Save} {@link Button}
      */
     @FXML
     private void save(ActionEvent event) {
@@ -54,9 +56,9 @@ public class AddGoalController {
     }
 
     /**
-     * Gets the id number of the currently selected account
+     * Gets the database id of the currently selected {@link Account} from the {@link ComboBox}
      *
-     * @return Database id number that corresponds to the account selected in the type combo box or -1 if it cannot be found
+     * @return Database id of the selected {@link Account} or -1 if it's not found
      */
     public int getAccId() {
         if (accountCombo.getValue().isBlank()) return -1;
@@ -65,9 +67,9 @@ public class AddGoalController {
     }
 
     /**
-     * Exits add goal modal
+     * Exits the {@code Add New Goal} modal
      *
-     * @param event Button press event
+     * @param event The {@link ActionEvent} from pressing the {@code Cancel} {@link Button}
      */
     @FXML
     private void cancel(ActionEvent event) {

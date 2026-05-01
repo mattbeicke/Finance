@@ -47,7 +47,7 @@ public class TransactionDAOImpl implements TransactionDAO {
     }
 
     /**
-     * Builds the database query for the {@code getAllTransactions} method
+     * Builds the database query for the {@link #getAllTransactions(boolean)} method
      *
      * @param hidden Whether to get the hidden {@link Transaction Transactions} or unhidden ones
      * @return The SQL query for the requesting method

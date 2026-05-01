@@ -1,19 +1,21 @@
 package mattb.dao;
 
+import mattb.model.Goal;
+
 public interface UpdateGoalDAO {
     /**
-     * Updates a goal with given goal name and target balance
+     * Updates a {@link Goal} with given {@code name} and {@code target} balance
      *
-     * @param goalName Name of goal
+     * @param goalName Name of {@link Goal}
      * @param target   Target balance
-     * @param goalId   Database id of goal to update
+     * @param goalId   Database id of {@link Goal} to update
      */
     void updateGoal(String goalName, double target, int goalId);
 
     /**
-     * Deletes goal with given goal id
+     * Deletes {@link Goal} with given {@code id}
      *
-     * @param goalId Database id of a Goal to delete
+     * @param goalId Database id of a {@link Goal} to delete
      */
     void deleteGoal(int goalId);
 }

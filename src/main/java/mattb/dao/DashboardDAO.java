@@ -1,21 +1,22 @@
 package mattb.dao;
 
+import mattb.model.Account;
 import mattb.model.Goal;
 
 import java.util.HashMap;
 
 public interface DashboardDAO {
     /**
-     * Sums the users non-hidden account balances
+     * Sums the users non-hidden {@link Account} balances
      *
      * @return Net worth of the user
      */
     double getNetWorth();
 
     /**
-     * Gets list of all goals a user has
+     * Gets list of all {@link Goal goals} a user has
      *
-     * @return Map of Goal database id to the goal object itself
+     * @return A map of all requested {@link Goal Goals}. The {@link Goal} id as key and the object itself as value
      */
     HashMap<Integer, Goal> getGoals();
 }

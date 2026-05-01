@@ -28,7 +28,7 @@ public class FinanceException extends RuntimeException {
     }
 
     /**
-     * Prints error to error.log file
+     * Prints the specified error message to the {@code error.log} file
      *
      * @param msg Error message to print
      */
@@ -44,7 +44,7 @@ public class FinanceException extends RuntimeException {
     }
 
     /**
-     * Displays the alert box with the specified message
+     * Displays the {@link Alert} message box with the specified message
      *
      * @param msg Error message to display
      */

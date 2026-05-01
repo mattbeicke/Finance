@@ -46,7 +46,7 @@ public class AddTransactionController {
     private boolean update = false;
 
     /**
-     * Initializes all FXML items for the add transaction modal
+     * Initializes {@link FXML} items for the {@code Add Transaction} modal and the {@link AddTransactionDAO DAO}
      */
     @FXML
     public void initialize() {
@@ -67,11 +67,12 @@ public class AddTransactionController {
     }
 
     /**
-     * Activates when saveTransaction button is pressed on the "create transaction" modal.
-     * Populates the transaction table with the provided data
+     * Saves a {@link Transaction} to the database
+     *
+     * @param event The {@link ActionEvent} from pressing the {@code Save} {@link Button}
      */
     @FXML
-    private void onSave() {
+    private void onSave(ActionEvent event) {
         int fromAccId = addTransactionDAO.getAccId(fromCombo.getValue());
         int toAccId = addTransactionDAO.getAccId(toCombo.getValue());
         if (fromAccId == -1 || toAccId == -1 || amountField.getText().isBlank() || fromCombo.getValue().equals("Add more via Accounts tab") || toCombo.getValue().equals("Add more via Accounts tab")) {
@@ -113,13 +114,13 @@ public class AddTransactionController {
             addTransactionDAO.updateBalances(Double.parseDouble(amountField.getText()), fromAccId, toAccId);
         }
 
-        ((Stage) amountField.getScene().getWindow()).close();
+        cancel(event);
     }
 
     /**
-     * Exits the "create new transaction" modal
+     * Exits the {@code Add New Transaction} or {@code Edit Account} modal
      *
-     * @param event Button press event
+     * @param event The {@link ActionEvent} from pressing the {@code Cancel} {@link Button}
      */
     @FXML
     private void cancel(ActionEvent event) {
@@ -128,10 +129,10 @@ public class AddTransactionController {
     }
 
     /**
-     * Sets fields of transaction edit modal
+     * Sets the fields of the {@code Edit Transaction} modal
      *
-     * @param t  {@link Transaction} who is being edited
-     * @param id Database id of {@link Transaction} who is being edited
+     * @param t  The {@link Transaction} who is being edited
+     * @param id Database id of {@code t}
      */
     public void setFields(Transaction t, int id) {
         if (t == null || id <= 0) return;
@@ -156,7 +157,7 @@ public class AddTransactionController {
     }
 
     /**
-     * Indicates a 'yes' answer to the update balances modal
+     * Indicates a {@code yes} answer to the {@code Update Balances} modal
      *
      * @param event Button press {@link ActionEvent}
      */
@@ -167,7 +168,7 @@ public class AddTransactionController {
     }
 
     /**
-     * Indicates a 'no' answer to the update balances modal
+     * Indicates a {@code no} answer to the {@code Update Balances} modal
      *
      * @param event Button press {@link ActionEvent}
      */

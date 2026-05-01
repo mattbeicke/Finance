@@ -16,10 +16,12 @@
             <Button fx:id="viewButton" onAction="#viewHidden">View Hidden</Button>
             <Button onAction="#editSelected">Edit Selected</Button>
         </HBox>
+
         <TableView prefHeight="750.0" prefWidth="1400.0" fx:id="transactionTable">
             <columnResizePolicy>
                 <TableView fx:constant="CONSTRAINED_RESIZE_POLICY"/>
             </columnResizePolicy>
+
             <columns>
                 <TableColumn text="Date" fx:id="colDate"/>
                 <TableColumn text="From Account" fx:id="colFrom"/>

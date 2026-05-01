@@ -25,7 +25,7 @@ public class UpdateGoalDAOImpl implements UpdateGoalDAO {
      * {@inheritDoc}
      */
     @Override
-    public void updateGoal(String goalName, double target,int goalId) {
+    public void updateGoal(String goalName, double target, int goalId) {
         String sql = "update goal set name = ?, target = ? where goal_id = ?";
 
         try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
