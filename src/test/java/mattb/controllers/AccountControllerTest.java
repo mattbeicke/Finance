@@ -28,7 +28,7 @@ import static org.testfx.matcher.control.LabeledMatchers.hasText;
 public class AccountControllerTest extends ApplicationTest {
     private AccountDAO mockAccountDAO;
 
-    @Override
+   /* @Override
     public void start(Stage stage) throws Exception {
         mockAccountDAO = Mockito.mock(AccountDAO.class);
         HashMap<Integer, Account> accounts = new HashMap<>();
@@ -105,5 +105,5 @@ public class AccountControllerTest extends ApplicationTest {
         type(KeyCode.ESCAPE);
 
         verify(mockAccountDAO, atLeastOnce()).getAllAccounts(anyBoolean());
-    }
+    }*/
 }

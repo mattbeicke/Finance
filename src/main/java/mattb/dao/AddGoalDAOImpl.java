@@ -44,7 +44,7 @@ public class AddGoalDAOImpl implements AddGoalDAO {
     }
 
     /**
-     * {@inheritDoc
+     * {@inheritDoc}
      */
     @Override
     public int getAccId(String accName) {
