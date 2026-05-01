@@ -9,6 +9,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.HashMap;
 
 import static mattb.FinanceError.LOAD_GOALS_FAIL;
 import static mattb.FinanceError.NET_WORTH_FAIL;
@@ -47,16 +48,16 @@ public class DashboardDAOImpl implements DashboardDAO {
      * {@inheritDoc}
      */
     @Override
-    public ObservableList<Goal> getGoals() {
-        ObservableList<Goal> goals = FXCollections.observableArrayList();
+    public HashMap<Integer, Goal> getGoals() {
+        HashMap<Integer, Goal> goals = new HashMap<>();
 
         String sql = """
-                select account.name as acc_name, target, initial, account.balance as current, goal.name as goal_name from goal
+                select goal_id, account.name as acc_name, target, initial, account.balance as current, goal.name as goal_name from goal
                 left join account on goal.acc_id = account.acc_id
                 """;
         try (PreparedStatement pstmt = conn.prepareStatement(sql); ResultSet rs = pstmt.executeQuery()) {
             while (rs.next()) {
-                goals.add(new Goal(
+                goals.put(rs.getInt("goal_id"), new Goal(
                         rs.getDouble("current"),
                         rs.getDouble("initial"),
                         rs.getDouble("target"),

@@ -1,11 +1,11 @@
 package mattb.controllers;
 
+import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.stage.Modality;
@@ -18,18 +18,23 @@ import mattb.model.Goal;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.HashMap;
 
 import static mattb.FinanceError.OPEN_NEW_GOAL_MODAL_FAIL;
+import static mattb.FinanceError.OPEN_VIEW_GOAL_DETAILS_MODAL_FAIL;
 
 public class DashboardController {
     @FXML
-    private ListView<Goal> goalsListView;
+    private ListView<Goal> goalList;
     @FXML
     private Label emptyStateLabel;
     @FXML
     private Label netWorth;
 
     private DashboardDAO dashboardDAO;
+
+    private final ObservableList<Goal> goals = FXCollections.observableArrayList();
+    private HashMap<Integer, Goal> map;
 
     /**
      * Initializes all FXML items for the dashboard tab
@@ -38,8 +43,9 @@ public class DashboardController {
     private void initialize() {
         dashboardDAO = new DashboardDAOImpl(Main.getConn());
 
-        goalsListView.setCellFactory(_ -> new GoalListCellController());
+        goalList.setCellFactory(_ -> new GoalListCellController());
 
+        goalList.setItems(goals);
         refreshList();
 
         netWorth.setText(Main.formatDouble(dashboardDAO.getNetWorth()));
@@ -49,14 +55,13 @@ public class DashboardController {
      * Refreshes the goal list
      */
     private void refreshList() {
-        ObservableList<Goal> goals = dashboardDAO.getGoals();
-        goalsListView.setItems(goals);
+        map = dashboardDAO.getGoals();
 
         boolean hasNoGoals = goals.isEmpty();
         emptyStateLabel.setVisible(hasNoGoals);
         emptyStateLabel.setManaged(hasNoGoals);
-        goalsListView.setVisible(!hasNoGoals);
-        goalsListView.setManaged(!hasNoGoals);
+        goalList.setVisible(!hasNoGoals);
+        goalList.setManaged(!hasNoGoals);
     }
 
     /**
@@ -78,7 +83,7 @@ public class DashboardController {
             stage.setTitle("Add New Goal");
             stage.setScene(new Scene(root));
             stage.showAndWait();
-            
+
             refreshList();
         } catch (IOException ignored) {
             new FinanceException(OPEN_NEW_GOAL_MODAL_FAIL).displayAndLog();
@@ -87,6 +92,49 @@ public class DashboardController {
 
     @FXML
     private void viewGoalDetails() {
+        Goal selected = goalList.getSelectionModel().getSelectedItem();
+        int id = getId(selected);
+        if (id == -1) return;
 
+        try {
+            URL resource = getClass().getResource("/mattb/controllers/view_goal_details.fxml");
+            if (resource == null) {
+                new FinanceException(OPEN_VIEW_GOAL_DETAILS_MODAL_FAIL).displayAndLog();
+                return;
+            }
+            FXMLLoader loader = new FXMLLoader(resource);
+            Parent root = loader.load();
+
+            ViewGoalDetailsController controller = loader.getController();
+
+            controller.setFields(selected, id);
+
+            Stage stage = new Stage();
+            stage.initModality(Modality.APPLICATION_MODAL);
+            stage.setTitle("View Goal Details");
+            stage.setScene(new Scene(root));
+            stage.showAndWait();
+
+            refreshList();
+        } catch (IOException ignored) {
+            new FinanceException(OPEN_VIEW_GOAL_DETAILS_MODAL_FAIL).displayAndLog();
+        }
+    }
+
+    /**
+     * Gets the database id of the inputted {@link Goal}
+     *
+     * @param g {@link Goal} to get the id of
+     * @return Database id of the {@link Goal} or -1 if it's not found
+     */
+    private int getId(Goal g) {
+        if (g == null) return -1;
+
+        for (Integer i : map.keySet()) {
+            if (map.get(i).equals(g)) {
+                return i;
+            }
+        }
+        return -1;
     }
 }

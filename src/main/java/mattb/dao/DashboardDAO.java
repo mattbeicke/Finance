@@ -1,7 +1,8 @@
 package mattb.dao;
 
-import javafx.collections.ObservableList;
 import mattb.model.Goal;
+
+import java.util.HashMap;
 
 public interface DashboardDAO {
     /**
@@ -14,7 +15,7 @@ public interface DashboardDAO {
     /**
      * Gets list of all goals a user has
      *
-     * @return List of goals
+     * @return Map of Goal database id to the goal object itself
      */
-    ObservableList<Goal> getGoals();
+    HashMap<Integer, Goal> getGoals();
 }

@@ -16,6 +16,7 @@ public enum FinanceError {
     OPEN_EDIT_TRANSACTION_MODAL_FAIL("Failed to open Edit Transaction modal"),
     OPEN_GOALS_LIST_FAILED("Failed to open Goals list"),
     OPEN_NEW_GOAL_MODAL_FAIL("Failed to open Create New Goal modal"),
+    OPEN_VIEW_GOAL_DETAILS_MODAL_FAIL("Failed to open View Goal Details modal"),
 
     /**
      * SQL

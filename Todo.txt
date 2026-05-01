@@ -1,4 +1,8 @@
 update readme
+update comments across the board:
+- add @links and such
+- fix capitalization
+- standardize what things mean (id -> database id, etc)
 
 view goal details:
 change name
