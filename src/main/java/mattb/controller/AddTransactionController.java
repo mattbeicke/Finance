@@ -62,7 +62,7 @@ public class AddTransactionController {
         accountDAO = new AccountDAOImpl(Main.getConn());
 
         if (fromCombo != null && toCombo != null) {
-            ObservableList<String> accountNames = accountDAO.loadAccountNames();
+            ObservableList<String> accountNames = accountDAO.getAccountNames();
 
             fromCombo.setItems(accountNames);
             toCombo.setItems(accountNames);

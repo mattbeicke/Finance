@@ -312,20 +312,10 @@ src/
     │       ├── dao/                     # Database interactions
     │       │   ├── AccountDAO.java
     │       │   ├── AccountDAOImpl.java
-    │       │   ├── AddAccountDAO.java
-    │       │   ├── AddAccountDAOImpl.java
-    │       │   ├── AddGoalDAO.java
-    │       │   ├── AddGoalDAOImpl.java
-    │       │   ├── AddTransactionDAO.java
-    │       │   ├── AddTransactionDAOImpl.java
-    │       │   ├── AddTypeDAO.java
-    │       │   ├── AddTypeDAOImpl.java
-    │       │   ├── DashboardDAO.java
-    │       │   ├── DashboardDAOImpl.java
+    │       │   ├── GoalDAO.java
+    │       │   ├── GoalDAOImpl.java
     │       │   ├── TransactionDAO.java
-    │       │   ├── TransactionDAOImpl.java
-    │       │   ├── UpdateGoalDAO.java
-    │       │   └── UpdateGoalDAOImpl.java
+    │       │   └── TransactionDAOImpl.java
     │       │
     │       └── model/                   # Data models (records)
     │           ├── Account.java

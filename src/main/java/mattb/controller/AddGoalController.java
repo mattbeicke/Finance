@@ -39,7 +39,7 @@ public class AddGoalController {
         goalDAO = new GoalDAOImpl(Main.getConn());
         accountDAO = new AccountDAOImpl(Main.getConn());
 
-        ObservableList<String> accounts = accountDAO.getAccounts();
+        ObservableList<String> accounts = accountDAO.getAccountNames();
         accountCombo.setItems(accounts);
 
         targetField.textProperty().addListener((_, oldVal, newVal) -> {
