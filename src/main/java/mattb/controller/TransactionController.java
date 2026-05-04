@@ -185,7 +185,9 @@ public class TransactionController {
             Stage stage = new Stage();
             stage.initModality(Modality.APPLICATION_MODAL);
             stage.setTitle("Add New Transaction");
-            stage.setScene(new Scene(root));
+            Scene scene = new Scene(root);
+            Main.darkMode(scene);
+            stage.setScene(scene);
             stage.showAndWait();
 
             updatePageInfo();
@@ -216,7 +218,9 @@ public class TransactionController {
             Stage stage = new Stage();
             stage.initModality(Modality.APPLICATION_MODAL);
             stage.setTitle("Edit Transaction");
-            stage.setScene(new Scene(root));
+            Scene scene = new Scene(root);
+            Main.darkMode(scene);
+            stage.setScene(scene);
             stage.showAndWait();
 
             refreshTable();

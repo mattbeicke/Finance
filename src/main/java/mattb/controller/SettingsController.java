@@ -1,9 +1,15 @@
 package mattb.controller;
 
 import javafx.fxml.FXML;
+import javafx.scene.Scene;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.TextField;
 import mattb.Config;
+import mattb.FinanceException;
+
+import java.net.URL;
+
+import static mattb.FinanceError.OPEN_DARK_THEME_FAIL;
 
 /**
  * Handles UI interactions on the {@code Settings} tab
@@ -48,5 +54,22 @@ public class SettingsController {
         if (numTransactions.getText().isBlank() || numAccounts.getText().isBlank()) return;
 
         Config.save(Integer.parseInt(numTransactions.getText()), Integer.parseInt(numAccounts.getText()), darkMode.isSelected());
+
+        Scene scene = darkMode.getScene();
+
+        URL themes = getClass().getResource("/mattb/dark-theme.css");
+        if (themes == null) {
+            new FinanceException(OPEN_DARK_THEME_FAIL).displayAndLog();
+            return;
+        }
+        String darkCss = themes.toExternalForm();
+
+        if (darkMode.isSelected()) {
+            if (!scene.getStylesheets().contains(darkCss)) {
+                scene.getStylesheets().add(darkCss);
+            }
+        } else {
+            scene.getStylesheets().remove(darkCss);
+        }
     }
 }

@@ -175,7 +175,9 @@ public class AccountController {
             Stage stage = new Stage();
             stage.initModality(Modality.APPLICATION_MODAL);
             stage.setTitle("Add New Account");
-            stage.setScene(new Scene(root));
+            Scene scene = new Scene(root);
+            Main.darkMode(scene);
+            stage.setScene(scene);
             stage.showAndWait();
 
             updatePageInfo();
@@ -201,7 +203,9 @@ public class AccountController {
             Stage stage = new Stage();
             stage.initModality(Modality.APPLICATION_MODAL);
             stage.setTitle("Add New Account Type");
-            stage.setScene(new Scene(root));
+            Scene scene = new Scene(root);
+            Main.darkMode(scene);
+            stage.setScene(scene);
             stage.show();
         } catch (IOException ignored) {
             new FinanceException(OPEN_NEW_TYPE_MODAL_FAIL).displayAndLog();
@@ -233,7 +237,9 @@ public class AccountController {
             Stage stage = new Stage();
             stage.initModality(Modality.APPLICATION_MODAL);
             stage.setTitle("Edit Transaction");
-            stage.setScene(new Scene(root));
+            Scene scene = new Scene(root);
+            Main.darkMode(scene);
+            stage.setScene(scene);
             stage.showAndWait();
 
             refreshTable();

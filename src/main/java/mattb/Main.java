@@ -89,7 +89,11 @@ public class Main extends Application {
             Parent root = loader.load();
 
             stage.setTitle("Matt's Finance App");
-            stage.setScene(new Scene(root));
+            Scene scene = new Scene(root);
+
+            darkMode(scene);
+
+            stage.setScene(scene);
             stage.show();
             MainController mainController = loader.getController();
             mainController.showDashboard();
@@ -152,6 +156,22 @@ public class Main extends Application {
                 }
             }
         });
+    }
+
+    /**
+     * Applies dark mode to given Scene
+     *
+     * @param scene Scene to apply dark mode to (if it is on)
+     */
+    public static void darkMode(Scene scene) {
+        URL themes = Main.class.getResource("/mattb/dark-theme.css");
+        if (themes == null) {
+            new FinanceException(OPEN_DARK_THEME_FAIL).displayAndLog();
+            return;
+        }
+        if (Config.getDarkMode()) {
+            scene.getStylesheets().add(themes.toExternalForm());
+        }
     }
 
     /**

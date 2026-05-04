@@ -59,7 +59,8 @@ public enum FinanceError {
     /**
      * Misc
      */
-    NET_WORTH_FAIL("Error calculating Net Worth");
+    NET_WORTH_FAIL("Error calculating Net Worth"),
+    OPEN_DARK_THEME_FAIL("Failed to open dark theme stylesheet"),;
 
     private final String message;
 

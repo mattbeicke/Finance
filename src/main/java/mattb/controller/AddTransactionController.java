@@ -102,7 +102,9 @@ public class AddTransactionController {
             Stage stage = new Stage();
             stage.initModality(Modality.APPLICATION_MODAL);
             stage.setTitle("Update Balances");
-            stage.setScene(new Scene(root));
+            Scene scene = new Scene(root);
+            Main.darkMode(scene);
+            stage.setScene(scene);
             stage.showAndWait();
 
             if (popupController.update) {
