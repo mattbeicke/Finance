@@ -38,6 +38,7 @@ using a lightweight SQLite database.
 * Currency formatting
 * SQLite-backed persistence
 * Centralized error handling (`FinanceError`, `FinanceException`)
+* Dark mode
 
 ---
 
@@ -317,10 +318,19 @@ src/
     │       │   ├── TransactionDAO.java
     │       │   └── TransactionDAOImpl.java
     │       │
-    │       └── model/                   # Data models (records)
-    │           ├── Account.java
-    │           ├── Goal.java
-    │           └── Transaction.java
+    │       ├── model/                   # Data models (records)
+    │       │   ├── Account.java
+    │       │   ├── Goal.java
+    │       │   ├── Transaction.java
+    │       │   └── TransactionRequest.java
+    │       │
+    │       └── service/                   # Business logic handling
+    │           ├── AccountService.java
+    │           ├── AccountServiceImpl.java
+    │           ├── GoalService.java
+    │           ├── GoalServiceImpl.java
+    │           ├── TransactionService.java
+    │           └── TransactionServiceImpl.java
     │
     └── resources/
         └── mattb/
@@ -348,6 +358,12 @@ src/
 
 * Handle user interaction
 * Bind UI to data
+* Delegate business logic to service layer
+
+---
+
+#### Service Layer
+
 * Delegate persistence to DAO layer
 
 ---
@@ -362,7 +378,7 @@ The DAO (Data Access Object) layer is responsible for:
 
 ---
 
-#### Models
+#### Model Layer
 
 * Represent core domain objects (Account, Transaction, Goal)
 * Implemented as record classes
@@ -373,6 +389,7 @@ The DAO (Data Access Object) layer is responsible for:
 
 * MVC (Model-View-Controller)
 * DAO (Data Access Object)
+* Service Classes
 * Centralized error handling via enums + exceptions
 
 ---
