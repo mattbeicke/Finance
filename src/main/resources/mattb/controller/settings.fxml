@@ -1,9 +1,30 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
 <AnchorPane xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
             fx:controller="mattb.controller.SettingsController"
             prefHeight="750.0" prefWidth="1500.0">
+    <VBox BorderPane.alignment="CENTER">
+        <HBox>
+            <Button onAction="#save">Save Settings</Button>
+        </HBox>
 
+        <GridPane hgap="10.0" vgap="15.0">
+            <columnConstraints>
+                <ColumnConstraints halignment="RIGHT"/>
+                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="200.0"/>
+            </columnConstraints>
+
+            <Label text="Transactions per page:" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
+            <TextField fx:id="numTransactions" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
+
+            <Label text="Accounts per page:" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
+            <TextField fx:id="numAccounts" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+
+            <Label text="Dark mode:" GridPane.columnIndex="0" GridPane.rowIndex="2"/>
+            <CheckBox fx:id="darkMode" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
+        </GridPane>
+    </VBox>
 </AnchorPane>

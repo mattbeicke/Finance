@@ -1,1 +1,3 @@
-add ability to delete things permanently
+pages for transaction and account
+have a settings option for how many per page for both
+have a settings option for dark mode
