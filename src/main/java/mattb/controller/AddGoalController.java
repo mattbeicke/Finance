@@ -1,6 +1,5 @@
 package mattb.controller;
 
-import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -8,12 +7,9 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 import mattb.Main;
-import mattb.dao.AccountDAO;
-import mattb.dao.AccountDAOImpl;
-import mattb.dao.GoalDAO;
-import mattb.dao.GoalDAOImpl;
-import mattb.model.Account;
 import mattb.model.Goal;
+import mattb.service.AccountService;
+import mattb.service.GoalService;
 
 /**
  * Handles UI interactions on the {@code Add New Goal} modal
@@ -28,19 +24,18 @@ public class AddGoalController {
     @FXML
     private TextField targetField;
 
-    private GoalDAO goalDAO;
-    private AccountDAO accountDAO;
+    private GoalService goalService;
+    private AccountService accountService;
 
     /**
-     * Initializes {@link FXML} items for the {@code Add New Goal} modal and the {@code DAOs}
+     * Initializes {@link FXML} items for the {@code Add New Goal} modal
      */
     @FXML
     private void initialize() {
-        goalDAO = new GoalDAOImpl(Main.getConn());
-        accountDAO = new AccountDAOImpl(Main.getConn());
+        goalService = Main.getGoalService();
+        accountService = Main.getAccountService();
 
-        ObservableList<String> accounts = accountDAO.getAccountNames();
-        accountCombo.setItems(accounts);
+        accountCombo.setItems(accountService.getAccountNames());
 
         targetField.textProperty().addListener((_, oldVal, newVal) -> {
             if (!newVal.matches("\\d*(\\.\\d*)?")) {
@@ -56,23 +51,12 @@ public class AddGoalController {
      */
     @FXML
     private void save(ActionEvent event) {
-        int accId = getAccId();
+        int accId = accountService.getAccId(accountCombo.getValue());
         if (accId == -1 || nameField.getText().isBlank() || targetField.getText().isBlank()) return;
 
-        goalDAO.saveGoal(accId, nameField.getText(), Double.parseDouble(targetField.getText()));
+        goalService.saveGoal(accId, nameField.getText(), Double.parseDouble(targetField.getText()));
 
         cancel(event);
-    }
-
-    /**
-     * Gets the database id of the currently selected {@link Account} from the {@link ComboBox}
-     *
-     * @return Database id of the selected {@link Account} or -1 if it's not found
-     */
-    public int getAccId() {
-        if (accountCombo.getValue().isBlank()) return -1;
-
-        return accountDAO.getAccId(accountCombo.getValue());
     }
 
     /**

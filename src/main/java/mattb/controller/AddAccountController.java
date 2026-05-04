@@ -1,6 +1,5 @@
 package mattb.controller;
 
-import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -9,8 +8,8 @@ import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 import mattb.Main;
 import mattb.dao.AccountDAO;
-import mattb.dao.AccountDAOImpl;
 import mattb.model.Account;
+import mattb.service.AccountService;
 
 /**
  * Handles UI interactions on the {@code Add New Account} modal
@@ -25,20 +24,19 @@ public class AddAccountController {
     @FXML
     private TextField balanceField;
 
-    private AccountDAO accountDAO;
+    private AccountService accountService;
 
     private boolean editing;
     private int id;
 
     /**
-     * Initializes {@link FXML} items for the {@code Add New Account} modal and the {@link AccountDAO DAO}
+     * Initializes {@link FXML} items for the {@code Add New Account} modal
      */
     @FXML
     public void initialize() {
-        accountDAO = new AccountDAOImpl(Main.getConn());
+        accountService = Main.getAccountService();
 
-        ObservableList<String> types = accountDAO.getAllTypes();
-        typeCombo.setItems(types);
+        typeCombo.setItems(accountService.getAccountTypes());
 
         balanceField.textProperty().addListener((_, oldVal, newVal) -> {
             if (!newVal.matches("\\d*(\\.\\d*)?")) {
@@ -54,23 +52,12 @@ public class AddAccountController {
      */
     @FXML
     private void onAccountSave(ActionEvent event) {
-        int typeId = getTypeId();
+        int typeId = accountService.getTypeIdByName(typeCombo.getValue());
+
         if (typeId == -1 || balanceField.getText().isBlank() || nameField.getText().isBlank()) return;
 
-        accountDAO.saveAccount(typeId, Double.parseDouble(balanceField.getText()), nameField.getText(), id, editing);
-
+        accountService.saveAccount(typeId, Double.parseDouble(balanceField.getText()), nameField.getText(), id, editing);
         cancel(event);
-    }
-
-    /**
-     * Gets the database id of the currently selected {@code Account Type}
-     *
-     * @return Database id number that corresponds to the {@code type} selected in the type {@link ComboBox} or -1 if it cannot be found
-     */
-    public int getTypeId() {
-        if (typeCombo.getValue().isBlank()) return -1;
-
-        return accountDAO.getTypeId(typeCombo.getValue());
     }
 
     /**

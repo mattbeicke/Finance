@@ -14,11 +14,9 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import mattb.FinanceException;
 import mattb.Main;
-import mattb.dao.AccountDAO;
-import mattb.dao.AccountDAOImpl;
-import mattb.dao.TransactionDAO;
-import mattb.dao.TransactionDAOImpl;
 import mattb.model.Transaction;
+import mattb.service.AccountService;
+import mattb.service.TransactionService;
 
 import java.io.IOException;
 import java.net.URL;
@@ -46,33 +44,30 @@ public class AddTransactionController {
     @FXML
     private DatePicker datePicker;
 
-    private TransactionDAO transactionDAO;
-    private AccountDAO accountDAO;
+    private TransactionService transactionService;
+    private AccountService accountService;
 
     private boolean editing;
     private int id;
     private boolean update = false;
 
     /**
-     * Initializes {@link FXML} items for the {@code Add New Transaction} modal and the {@link TransactionDAO DAO}
+     * Initializes {@link FXML} items for the {@code Add New Transaction} modal
      */
     @FXML
     public void initialize() {
-        transactionDAO = new TransactionDAOImpl(Main.getConn());
-        accountDAO = new AccountDAOImpl(Main.getConn());
+        transactionService = Main.getTransactionService();
+        accountService = Main.getAccountService();
 
-        if (fromCombo != null && toCombo != null) {
-            ObservableList<String> accountNames = accountDAO.getAccountNames();
+        ObservableList<String> accountNames = accountService.getAccountNames();
+        fromCombo.setItems(accountNames);
+        toCombo.setItems(accountNames);
 
-            fromCombo.setItems(accountNames);
-            toCombo.setItems(accountNames);
-
-            amountField.textProperty().addListener((_, oldVal, newVal) -> {
-                if (!newVal.matches("\\d*(\\.\\d*)?")) {
-                    amountField.setText(oldVal);
-                }
-            });
-        }
+        amountField.textProperty().addListener((_, oldVal, newVal) -> {
+            if (!newVal.matches("\\d*(\\.\\d*)?")) {
+                amountField.setText(oldVal);
+            }
+        });
     }
 
     /**
@@ -82,15 +77,15 @@ public class AddTransactionController {
      */
     @FXML
     private void onSave(ActionEvent event) {
-        int fromAccId = accountDAO.getAccId(fromCombo.getValue());
-        int toAccId = accountDAO.getAccId(toCombo.getValue());
+        int fromAccId = accountService.getAccId(fromCombo.getValue());
+        int toAccId = accountService.getAccId(toCombo.getValue());
         if (fromAccId == -1 || toAccId == -1 || amountField.getText().isBlank() || fromCombo.getValue().equals("Add more via Accounts tab") || toCombo.getValue().equals("Add more via Accounts tab")) {
             return;
         }
 
-        transactionDAO.saveTransaction(datePicker.getValue(), fromAccId, toAccId, Double.parseDouble(amountField.getText()), memoField.getText(), id, editing);
+        transactionService.saveTransaction(datePicker.getValue(), fromAccId, toAccId, Double.parseDouble(amountField.getText()), memoField.getText(), id, editing);
 
-        transactionDAO.saveCategories(categoryField.getText());
+        transactionService.saveCategories(categoryField.getText());
 
         try {
             URL resource = getClass().getResource("/mattb/controller/update_balance.fxml");
@@ -122,7 +117,7 @@ public class AddTransactionController {
             if (amountField.getText().isBlank() || fromCombo.getValue().isBlank() || toCombo.getValue().isBlank())
                 return;
 
-            accountDAO.updateBalances(Double.parseDouble(amountField.getText()), fromAccId, toAccId);
+            accountService.updateBalances(Double.parseDouble(amountField.getText()), fromAccId, toAccId);
         }
 
         cancel(event);

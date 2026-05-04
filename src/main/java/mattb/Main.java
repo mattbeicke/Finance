@@ -10,6 +10,10 @@ import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.stage.Stage;
 import mattb.controller.MainController;
+import mattb.dao.AccountDAOImpl;
+import mattb.dao.GoalDAOImpl;
+import mattb.dao.TransactionDAOImpl;
+import mattb.service.*;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -32,6 +36,10 @@ import static mattb.FinanceError.*;
  */
 public class Main extends Application {
     private static Connection conn;
+
+    private static AccountService accountService;
+    private static GoalService goalService;
+    private static TransactionService transactionService;
 
     static void main() {
         launch();
@@ -75,6 +83,10 @@ public class Main extends Application {
             } catch (SQLException ignored) {
                 new FinanceException(DATABASE_CONNECTION_FAIL).displayAndLog();
             }
+
+            accountService = new AccountServiceImpl(new AccountDAOImpl(conn));
+            goalService = new GoalServiceImpl(new GoalDAOImpl(conn));
+            transactionService = new TransactionServiceImpl(new TransactionDAOImpl(conn));
 
             if (ensureDB()) {
                 return;
@@ -203,5 +215,17 @@ public class Main extends Application {
             new FinanceException(DATABASE_CREATION_FAIL).displayAndLog();
         }
         return true;
+    }
+
+    public static AccountService getAccountService() {
+        return accountService;
+    }
+
+    public static GoalService getGoalService() {
+        return goalService;
+    }
+
+    public static TransactionService getTransactionService() {
+        return transactionService;
     }
 }

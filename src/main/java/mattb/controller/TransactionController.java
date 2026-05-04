@@ -16,9 +16,8 @@ import javafx.stage.Stage;
 import mattb.Config;
 import mattb.FinanceException;
 import mattb.Main;
-import mattb.dao.TransactionDAO;
-import mattb.dao.TransactionDAOImpl;
 import mattb.model.Transaction;
+import mattb.service.TransactionService;
 
 import java.io.IOException;
 import java.net.URL;
@@ -64,18 +63,18 @@ public class TransactionController {
     private final ObservableList<Transaction> masterData = FXCollections.observableArrayList();
     private HashMap<Integer, Transaction> map;
 
-    private TransactionDAO transactionDAO;
+    private TransactionService transactionService;
 
     private boolean onHidden = false;
     private int page;
     private int perPage;
 
     /**
-     * Initializes {@link FXML} items for the {@code Transaction} tab and the {@link TransactionDAO DAO}
+     * Initializes {@link FXML} items for the {@code Transaction} tab
      */
     @FXML
     public void initialize() {
-        transactionDAO = new TransactionDAOImpl(Main.getConn());
+        transactionService = Main.getTransactionService();
 
         colDate.setCellValueFactory(cellData ->
                 new ReadOnlyObjectWrapper<>(cellData.getValue().date())
@@ -109,25 +108,8 @@ public class TransactionController {
      * Refreshes the {@link Transaction} {@link TableView Table} with either hidden or non-hidden {@link Transaction Transactions}
      */
     private void refreshTable() {
-        map = transactionDAO.getAllTransactions(onHidden, perPage, page);
+        map = (HashMap<Integer, Transaction>) transactionService.getPagedTransactions(onHidden, perPage, page);
         masterData.setAll(map.values());
-    }
-
-    /**
-     * Gets the database id of the inputted {@link Transaction}
-     *
-     * @param t The {@link Transaction} to get the id of
-     * @return The database id of the {@link Transaction} or -1 if it's not found
-     */
-    private int getId(Transaction t) {
-        if (t == null) return -1;
-
-        for (Integer i : map.keySet()) {
-            if (map.get(i).equals(t)) {
-                return i;
-            }
-        }
-        return -1;
     }
 
     /**
@@ -136,13 +118,10 @@ public class TransactionController {
     @FXML
     private void hideSelected() {
         Transaction selected = transactionTable.getSelectionModel().getSelectedItem();
-        if (selected == null) return;
-        int transactionId = getId(selected);
-        if (transactionId == -1) return;
-
-        transactionDAO.updateTransactionVisibility(transactionId, onHidden);
-
-        updatePageInfo();
+        if (selected != null) {
+            transactionService.toggleVisibility(selected, map, onHidden);
+            updatePageInfo();
+        }
     }
 
     /**
@@ -202,7 +181,9 @@ public class TransactionController {
     @FXML
     private void editSelected() {
         Transaction selected = transactionTable.getSelectionModel().getSelectedItem();
-        int id = getId(selected);
+        int id = transactionService.getTransactionIdFromMap(selected, map);
+        if (id == -1) return;
+
         try {
             URL resource = getClass().getResource("/mattb/controller/add_transaction.fxml");
             if (resource == null) {
@@ -245,7 +226,7 @@ public class TransactionController {
      * Refreshes the page information then refreshes the table
      */
     private void updatePageInfo() {
-        int maxPage = (int) Math.ceil(transactionDAO.getTransactionCount(onHidden) / ((double) perPage));
+        int maxPage = transactionService.getMaxPage(onHidden, perPage);
 
         if (page > maxPage) page = maxPage;
 

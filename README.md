@@ -454,3 +454,4 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 * Data visualization (charts/graphs)
 * Ability to mass import data (via CSV) and export data
 * Proper testing suite
+* Alert messages saying things worked, missing fields, etc

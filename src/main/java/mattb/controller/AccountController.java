@@ -16,9 +16,8 @@ import javafx.stage.Stage;
 import mattb.Config;
 import mattb.FinanceException;
 import mattb.Main;
-import mattb.dao.AccountDAO;
-import mattb.dao.AccountDAOImpl;
 import mattb.model.Account;
+import mattb.service.AccountService;
 
 import java.io.IOException;
 import java.net.URL;
@@ -58,18 +57,18 @@ public class AccountController {
     private final ObservableList<Account> masterData = FXCollections.observableArrayList();
     private HashMap<Integer, Account> map;
 
-    private AccountDAO accountDAO;
+    private AccountService accountService;
 
     private boolean onHidden = false;
     private int page;
     private int perPage;
 
     /**
-     * Initializes {@link FXML} items for the {@code Account} tab and the {@link AccountDAO DAO}
+     * Initializes {@link FXML} items for the {@code Account} tab
      */
     @FXML
     public void initialize() {
-        accountDAO = new AccountDAOImpl(Main.getConn());
+        accountService = Main.getAccountService();
 
         colName.setCellValueFactory(cellData ->
                 new ReadOnlyObjectWrapper<>(cellData.getValue().name())
@@ -94,25 +93,8 @@ public class AccountController {
      * Refreshes the {@link Account} {@link TableView Table} with either hidden or non-hidden {@link Account Accounts}
      */
     private void refreshTable() {
-        map = accountDAO.getAllAccounts(onHidden, perPage, page);
+        map = (HashMap<Integer, Account>) accountService.getPagedAccounts(onHidden, perPage, page);
         masterData.setAll(map.values());
-    }
-
-    /**
-     * Gets the database id of the inputted {@link Account}
-     *
-     * @param a The {@link Account} to get the id of
-     * @return The database id of the {@link Account} or -1 if it's not found
-     */
-    private int getId(Account a) {
-        if (a == null) return -1;
-
-        for (Integer i : map.keySet()) {
-            if (map.get(i).equals(a)) {
-                return i;
-            }
-        }
-        return -1;
     }
 
     /**
@@ -121,14 +103,10 @@ public class AccountController {
     @FXML
     private void hideAccount() {
         Account selected = accountTable.getSelectionModel().getSelectedItem();
-        if (selected == null) return;
-
-        int accountId = getId(selected);
-        if (accountId == -1) return;
-
-        accountDAO.updateAccountVisibility(accountId, onHidden);
-
-        updatePageInfo();
+        if (selected != null) {
+            accountService.toggleVisibility(selected, map, onHidden);
+            updatePageInfo();
+        }
     }
 
     /**
@@ -218,7 +196,7 @@ public class AccountController {
     @FXML
     private void editSelected() {
         Account selected = accountTable.getSelectionModel().getSelectedItem();
-        int id = getId(selected);
+        int id = accountService.getAccountIdFromMap(selected, map);
         if (id == -1) return;
 
         try {
@@ -270,7 +248,7 @@ public class AccountController {
      * Refreshes the page information then refreshes the table
      */
     private void updatePageInfo() {
-        int maxPage = (int) Math.ceil(accountDAO.getAccountCount(onHidden) / ((double) perPage));
+        int maxPage = accountService.getMaxPage(onHidden, perPage);
 
         if (page > maxPage) page = maxPage;
 

@@ -12,11 +12,9 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import mattb.FinanceException;
 import mattb.Main;
-import mattb.dao.AccountDAO;
-import mattb.dao.AccountDAOImpl;
-import mattb.dao.GoalDAO;
-import mattb.dao.GoalDAOImpl;
 import mattb.model.Goal;
+import mattb.service.AccountService;
+import mattb.service.GoalService;
 
 import java.io.IOException;
 import java.net.URL;
@@ -41,30 +39,30 @@ public class DashboardController {
     private final ObservableList<Goal> goals = FXCollections.observableArrayList();
     private HashMap<Integer, Goal> map;
 
-    private AccountDAO accountDAO;
-    private GoalDAO goalDAO;
+    private AccountService accountService;
+    private GoalService goalService;
 
     /**
-     * Initializes {@link FXML} items for the {@code Dashboard} tab and the {@code DAOs}
+     * Initializes {@link FXML} items for the {@code Dashboard} tab
      */
     @FXML
     private void initialize() {
-        accountDAO = new AccountDAOImpl(Main.getConn());
-        goalDAO = new GoalDAOImpl(Main.getConn());
+        accountService = Main.getAccountService();
+        goalService = Main.getGoalService();
 
         goalList.setCellFactory(_ -> new GoalListCellController());
 
         goalList.setItems(goals);
         refreshList();
 
-        netWorth.setText(Main.formatDouble(accountDAO.getNetWorth()));
+        netWorth.setText(Main.formatDouble(accountService.getNetWorth()));
     }
 
     /**
      * Refreshes the {@link Goal} {@link ListView List}
      */
     private void refreshList() {
-        map = goalDAO.getGoals();
+        map = (HashMap<Integer, Goal>) goalService.getGoals();
         goals.setAll(map.values());
 
         boolean hasNoGoals = goals.isEmpty();
@@ -72,23 +70,6 @@ public class DashboardController {
         emptyStateLabel.setManaged(hasNoGoals);
         goalList.setVisible(!hasNoGoals);
         goalList.setManaged(!hasNoGoals);
-    }
-
-    /**
-     * Gets the database id of the inputted {@link Goal}
-     *
-     * @param g The {@link Goal} to get the id of
-     * @return The database id of the {@link Goal} or -1 if it's not found
-     */
-    private int getId(Goal g) {
-        if (g == null) return -1;
-
-        for (Integer i : map.keySet()) {
-            if (map.get(i).equals(g)) {
-                return i;
-            }
-        }
-        return -1;
     }
 
     /**
@@ -125,7 +106,7 @@ public class DashboardController {
     @FXML
     private void viewGoalDetails() {
         Goal selected = goalList.getSelectionModel().getSelectedItem();
-        int id = getId(selected);
+        int id = goalService.getGoalIdFromMap(selected, map);
         if (id == -1) return;
 
         try {

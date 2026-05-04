@@ -7,7 +7,7 @@ import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 import mattb.Main;
 import mattb.dao.AccountDAO;
-import mattb.dao.AccountDAOImpl;
+import mattb.service.AccountService;
 
 /**
  * Handles UI interactions on the {@code Add New Account Type} modal
@@ -18,14 +18,14 @@ public class AddTypeController {
     @FXML
     private TextField typeField;
 
-    private AccountDAO accountDAO;
+    private AccountService accountService;
 
     /**
-     * Initializes {@link FXML} items for the {@code Add New Account Type} modal and the {@link AccountDAO DAO}
+     * Initializes {@link FXML} items for the {@code Add New Account Type} modal
      */
     @FXML
     public void initialize() {
-        accountDAO = new AccountDAOImpl(Main.getConn());
+        accountService = Main.getAccountService();
     }
 
     /**
@@ -35,9 +35,7 @@ public class AddTypeController {
      */
     @FXML
     private void onTypeSave(ActionEvent event) {
-        if (typeField.getText().isBlank()) return;
-
-        accountDAO.saveAccountType(typeField.getText());
+        accountService.saveAccountType(typeField.getText());
 
         cancel(event);
     }
