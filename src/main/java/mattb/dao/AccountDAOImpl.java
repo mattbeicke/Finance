@@ -33,10 +33,10 @@ public class AccountDAOImpl implements AccountDAO {
      * {@inheritDoc}
      */
     @Override
-    public HashMap<Integer, Account> getAllAccounts(boolean hidden) {
+    public HashMap<Integer, Account> getAllAccounts(boolean hidden, int perPage, int page) {
         HashMap<Integer, Account> map = new HashMap<>();
 
-        try (PreparedStatement pstmt = conn.prepareStatement(getTableQuery(hidden)); ResultSet rs = pstmt.executeQuery()) {
+        try (PreparedStatement pstmt = conn.prepareStatement(getTableQuery(hidden, perPage, page)); ResultSet rs = pstmt.executeQuery()) {
             while (rs.next()) {
                 map.put(rs.getInt("acc_id"), new Account(
                         rs.getDouble("balance"),
@@ -51,18 +51,21 @@ public class AccountDAOImpl implements AccountDAO {
     }
 
     /**
-     * Builds the database query for the {@link #getAllAccounts(boolean)} method
+     * Builds the database query for the {@link #getAllAccounts(boolean, int, int)} method
      *
-     * @param hidden Whether to get the hidden {@link Account Accounts} or unhidden ones
+     * @param hidden  Whether to get the hidden {@link Account Accounts} or non-hidden ones
+     * @param perPage Number of {@link Account Accounts} to get
+     * @param page    Offset of {@link Account Accounts} request
      * @return The SQL query for the requesting method
      */
-    private String getTableQuery(boolean hidden) {
+    private String getTableQuery(boolean hidden, int perPage, int page) {
         String sql = """
                 select acc_id, name, balance, type from account
                 left join account_type on acc_type = type_id
                 where acc_id
                 """;
-        return sql + (hidden ? " in (select acc_id from hidden_accounts)" : " not in (select acc_id from hidden_accounts union select 0)");
+        sql = sql + (hidden ? " in (select acc_id from hidden_accounts)" : " not in (select acc_id from hidden_accounts union select 0)");
+        return sql + " limit " + perPage + " offset " + ((page - 1) * perPage);
     }
 
     /**
@@ -79,5 +82,27 @@ public class AccountDAOImpl implements AccountDAO {
         } catch (SQLException ignored) {
             new FinanceException(UPDATE_HIDDEN_ACCOUNT_LIST_FAIL).displayAndLog();
         }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public int getNumAccounts(boolean hidden) {
+        String sql = """
+                select count(acc_id) as num from account
+                left join account_type on acc_type = type_id
+                where acc_id
+                """;
+        sql = sql + (hidden ? " in (select acc_id from hidden_accounts)" : " not in (select acc_id from hidden_accounts union select 0)");
+
+        try (PreparedStatement pstmt = conn.prepareStatement(sql); ResultSet rs = pstmt.executeQuery()) {
+            if (rs.next()) {
+                return rs.getInt("num");
+            }
+        } catch (SQLException ignored) {
+            new FinanceException(UPDATE_HIDDEN_ACCOUNT_LIST_FAIL).displayAndLog();
+        }
+        return -1;
     }
 }

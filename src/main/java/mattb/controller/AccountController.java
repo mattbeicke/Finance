@@ -8,10 +8,12 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import mattb.Config;
 import mattb.FinanceException;
 import mattb.Main;
 import mattb.dao.AccountDAO;
@@ -50,6 +52,8 @@ public class AccountController {
     private Button left;
     @FXML
     private Button right;
+    @FXML
+    private Label pageLabel;
 
     private final ObservableList<Account> masterData = FXCollections.observableArrayList();
     private HashMap<Integer, Account> map;
@@ -57,41 +61,40 @@ public class AccountController {
     private AccountDAO accountDAO;
 
     private boolean onHidden = false;
-    private int maxPage;
     private int page;
+    private int perPage;
 
     /**
      * Initializes {@link FXML} items for the {@code Account} tab and the {@link AccountDAO DAO}
      */
     @FXML
     public void initialize() {
-        if (accountDAO == null) {
-            accountDAO = new AccountDAOImpl(Main.getConn());
-        }
+        accountDAO = new AccountDAOImpl(Main.getConn());
 
-        if (colName != null) {
-            colName.setCellValueFactory(cellData ->
-                    new ReadOnlyObjectWrapper<>(cellData.getValue().name())
-            );
-            colBalance.setCellValueFactory(cellData ->
-                    new ReadOnlyObjectWrapper<>(cellData.getValue().balance())
-            );
-            colType.setCellValueFactory(cellData ->
-                    new ReadOnlyObjectWrapper<>(cellData.getValue().type())
-            );
+        colName.setCellValueFactory(cellData ->
+                new ReadOnlyObjectWrapper<>(cellData.getValue().name())
+        );
+        colBalance.setCellValueFactory(cellData ->
+                new ReadOnlyObjectWrapper<>(cellData.getValue().balance())
+        );
+        colType.setCellValueFactory(cellData ->
+                new ReadOnlyObjectWrapper<>(cellData.getValue().type())
+        );
 
-            Main.useCurrency(colBalance);
+        Main.useCurrency(colBalance);
 
-            accountTable.setItems(masterData);
-            refreshTable();
-        }
+        accountTable.setItems(masterData);
+
+        perPage = Config.getNumAccounts();
+        page = 1;
+        updatePageInfo();
     }
 
     /**
      * Refreshes the {@link Account} {@link TableView Table} with either hidden or non-hidden {@link Account Accounts}
      */
     private void refreshTable() {
-        map = accountDAO.getAllAccounts(onHidden);
+        map = accountDAO.getAllAccounts(onHidden, perPage, page);
         masterData.setAll(map.values());
     }
 
@@ -125,7 +128,7 @@ public class AccountController {
 
         accountDAO.updateAccountVisibility(accountId, onHidden);
 
-        refreshTable();
+        updatePageInfo();
     }
 
     /**
@@ -151,7 +154,8 @@ public class AccountController {
             viewHidden.setText("View Hidden");
         }
 
-        refreshTable();
+        page = 1;
+        updatePageInfo();
     }
 
     /**
@@ -174,7 +178,7 @@ public class AccountController {
             stage.setScene(new Scene(root));
             stage.showAndWait();
 
-            refreshTable();
+            updatePageInfo();
         } catch (IOException ignored) {
             new FinanceException(OPEN_NEW_ACCOUNT_MODAL_FAIL).displayAndLog();
         }
@@ -238,13 +242,35 @@ public class AccountController {
         }
     }
 
+    /**
+     * Sets page to previous
+     */
     @FXML
     private void leftPage() {
-
+        page--;
+        updatePageInfo();
     }
 
+    /**
+     * Sets page to next
+     */
     @FXML
     private void rightPage() {
+        page++;
+        updatePageInfo();
+    }
 
+    /**
+     * Refreshes the page information then refreshes the table
+     */
+    private void updatePageInfo() {
+        int maxPage = (int) Math.ceil(accountDAO.getNumAccounts(onHidden) / ((double) perPage));
+
+        if (page > maxPage) page = maxPage;
+
+        pageLabel.setText("Page " + page + " of " + maxPage);
+        left.setDisable(page <= 1);
+        right.setDisable(page >= maxPage);
+        refreshTable();
     }
 }

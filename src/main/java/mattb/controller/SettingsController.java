@@ -28,13 +28,13 @@ public class SettingsController {
         darkMode.setSelected(Config.getDarkMode());
 
         numTransactions.textProperty().addListener((_, oldVal, newVal) -> {
-            if (!newVal.matches("^[1-9]\\d*$")) {
+            if (!newVal.matches("^(\\s*[1-9]\\d*)?$")) {
                 numTransactions.setText(oldVal);
             }
         });
 
         numAccounts.textProperty().addListener((_, oldVal, newVal) -> {
-            if (!newVal.matches("^[1-9]\\d*$")) {
+            if (!newVal.matches("^(\\s*[1-9]\\d*)?$")) {
                 numAccounts.setText(oldVal);
             }
         });
