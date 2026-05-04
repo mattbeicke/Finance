@@ -270,7 +270,7 @@ public class AccountController {
      * Refreshes the page information then refreshes the table
      */
     private void updatePageInfo() {
-        int maxPage = (int) Math.ceil(accountDAO.getNumAccounts(onHidden) / ((double) perPage));
+        int maxPage = (int) Math.ceil(accountDAO.getAccountCount(onHidden) / ((double) perPage));
 
         if (page > maxPage) page = maxPage;
 

@@ -1,11 +1,12 @@
 package mattb.dao;
 
+import javafx.collections.ObservableList;
 import mattb.model.Account;
 
 import java.util.HashMap;
 
 /**
- * DAO Interface for the AccountController
+ * DAO Interface for {@link Account Accounts}
  *
  * @author Matthew Beicke
  */
@@ -35,5 +36,76 @@ public interface AccountDAO {
      * @param hidden Whether to get the hidden or unhidden {@link Account accounts}
      * @return Number of hidden or unhidden {@link Account accounts} in the database or -1 if none found
      */
-    int getNumAccounts(boolean hidden);
+    int getAccountCount(boolean hidden);
+
+    /**
+     * Gets a list of all (non-{@code External} Account Types)
+     *
+     * @return A list of all Account Types plus a message that tells the user to add more in the {@link Account accounts} tab
+     */
+    ObservableList<String> getAllTypes();
+
+    /**
+     * Looks up the database id of the provided {@code type}
+     *
+     * @param type The {@code Account Type's} value
+     * @return The database id of the {@code Account Type} or -1 if not found
+     */
+    int getTypeId(String type);
+
+    /**
+     * Saves new {@code account type} to database
+     *
+     * @param type Name of the new {@code type} to save
+     */
+    void saveAccountType(String type);
+
+    /**
+     * Saves an {@link Account} to the database or updates one that is there already
+     *
+     * @param typeId  Database id of the {@link Account account's} {@code type}
+     * @param balance Balance of {@link Account}
+     * @param name    Name of {@link Account}
+     * @param id      Database id of account (only used if {@code editing})
+     * @param editing Whether we are editing ({@code true}) or saving new ({@code false})
+     */
+    void saveAccount(int typeId, double balance, String name, int id, boolean editing);
+
+    /**
+     * Sums the users non-hidden {@link Account} balances
+     *
+     * @return Net worth of the user
+     */
+    double getNetWorth();
+
+    /**
+     * Gets list of all {@link Account Accounts}
+     *
+     * @return A list of all {@link Account Accounts} (both hidden and non-hidden)
+     */
+    ObservableList<String> getAccounts();
+
+    /**
+     * Gets list of all non-hidden {@link Account Accounts}
+     *
+     * @return List of non-hidden {@link Account Accounts}
+     */
+    ObservableList<String> loadAccountNames();
+
+    /**
+     * Gets an {@link Account} id from its {@code name}
+     *
+     * @param accName {@link Account} name
+     * @return Database id associated with the {@link Account} name or -1 if no account was found
+     */
+    int getAccId(String accName);
+
+    /**
+     * Updates {@link Account} balances (if they are not {@code External})
+     *
+     * @param amount    Amount of money transferred
+     * @param fromAccId Database id of the {@link Account} money came from
+     * @param toAccId   Database id of the {@link Account} money went to
+     */
+    void updateBalances(double amount, int fromAccId, int toAccId);
 }

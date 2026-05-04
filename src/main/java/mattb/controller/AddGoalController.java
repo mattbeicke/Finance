@@ -8,8 +8,10 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 import mattb.Main;
-import mattb.dao.AddGoalDAO;
-import mattb.dao.AddGoalDAOImpl;
+import mattb.dao.AccountDAO;
+import mattb.dao.AccountDAOImpl;
+import mattb.dao.GoalDAO;
+import mattb.dao.GoalDAOImpl;
 import mattb.model.Account;
 import mattb.model.Goal;
 
@@ -26,16 +28,18 @@ public class AddGoalController {
     @FXML
     private TextField targetField;
 
-    private AddGoalDAO addGoalDAO;
+    private GoalDAO goalDAO;
+    private AccountDAO accountDAO;
 
     /**
-     * Initializes {@link FXML} items for the {@code Add New Goal} modal and the {@link AddGoalDAO DAO}
+     * Initializes {@link FXML} items for the {@code Add New Goal} modal and the {@code DAOs}
      */
     @FXML
     private void initialize() {
-        addGoalDAO = new AddGoalDAOImpl(Main.getConn());
+        goalDAO = new GoalDAOImpl(Main.getConn());
+        accountDAO = new AccountDAOImpl(Main.getConn());
 
-        ObservableList<String> accounts = addGoalDAO.getAccounts();
+        ObservableList<String> accounts = accountDAO.getAccounts();
         accountCombo.setItems(accounts);
 
         targetField.textProperty().addListener((_, oldVal, newVal) -> {
@@ -55,7 +59,7 @@ public class AddGoalController {
         int accId = getAccId();
         if (accId == -1 || nameField.getText().isBlank() || targetField.getText().isBlank()) return;
 
-        addGoalDAO.saveGoal(accId, nameField.getText(), Double.parseDouble(targetField.getText()));
+        goalDAO.saveGoal(accId, nameField.getText(), Double.parseDouble(targetField.getText()));
 
         cancel(event);
     }
@@ -68,7 +72,7 @@ public class AddGoalController {
     public int getAccId() {
         if (accountCombo.getValue().isBlank()) return -1;
 
-        return addGoalDAO.getAccId(accountCombo.getValue());
+        return accountDAO.getAccId(accountCombo.getValue());
     }
 
     /**

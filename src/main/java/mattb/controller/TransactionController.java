@@ -245,7 +245,7 @@ public class TransactionController {
      * Refreshes the page information then refreshes the table
      */
     private void updatePageInfo() {
-        int maxPage = (int) Math.ceil(transactionDAO.getNumTransactions(onHidden) / ((double) perPage));
+        int maxPage = (int) Math.ceil(transactionDAO.getTransactionCount(onHidden) / ((double) perPage));
 
         if (page > maxPage) page = maxPage;
 

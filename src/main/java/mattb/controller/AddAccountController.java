@@ -8,8 +8,8 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 import mattb.Main;
-import mattb.dao.AddAccountDAO;
-import mattb.dao.AddAccountDAOImpl;
+import mattb.dao.AccountDAO;
+import mattb.dao.AccountDAOImpl;
 import mattb.model.Account;
 
 /**
@@ -25,19 +25,19 @@ public class AddAccountController {
     @FXML
     private TextField balanceField;
 
-    private AddAccountDAO addAccountDAO;
+    private AccountDAO accountDAO;
 
     private boolean editing;
     private int id;
 
     /**
-     * Initializes {@link FXML} items for the {@code Add New Account} modal and the {@link AddAccountDAO DAO}
+     * Initializes {@link FXML} items for the {@code Add New Account} modal and the {@link AccountDAO DAO}
      */
     @FXML
     public void initialize() {
-        addAccountDAO = new AddAccountDAOImpl(Main.getConn());
+        accountDAO = new AccountDAOImpl(Main.getConn());
 
-        ObservableList<String> types = addAccountDAO.getAllTypes();
+        ObservableList<String> types = accountDAO.getAllTypes();
         typeCombo.setItems(types);
 
         balanceField.textProperty().addListener((_, oldVal, newVal) -> {
@@ -57,7 +57,7 @@ public class AddAccountController {
         int typeId = getTypeId();
         if (typeId == -1 || balanceField.getText().isBlank() || nameField.getText().isBlank()) return;
 
-        addAccountDAO.saveAccount(typeId, Double.parseDouble(balanceField.getText()), nameField.getText(), id, editing);
+        accountDAO.saveAccount(typeId, Double.parseDouble(balanceField.getText()), nameField.getText(), id, editing);
 
         cancel(event);
     }
@@ -70,7 +70,7 @@ public class AddAccountController {
     public int getTypeId() {
         if (typeCombo.getValue().isBlank()) return -1;
 
-        return addAccountDAO.getTypeId(typeCombo.getValue());
+        return accountDAO.getTypeId(typeCombo.getValue());
     }
 
     /**

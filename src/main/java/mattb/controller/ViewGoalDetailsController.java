@@ -7,8 +7,8 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 import mattb.Main;
-import mattb.dao.UpdateGoalDAO;
-import mattb.dao.UpdateGoalDAOImpl;
+import mattb.dao.GoalDAO;
+import mattb.dao.GoalDAOImpl;
 import mattb.model.Goal;
 
 /**
@@ -24,16 +24,16 @@ public class ViewGoalDetailsController {
     @FXML
     private TextField targetField;
 
-    private UpdateGoalDAO updateGoalDAO;
+    private GoalDAO goalDAO;
 
     private int id;
 
     /**
-     * Initializes {@link FXML} items for the {@code View Goal Details} modal and the {@link UpdateGoalDAO DAO}
+     * Initializes {@link FXML} items for the {@code View Goal Details} modal and the {@link GoalDAO DAO}
      */
     @FXML
     private void initialize() {
-        updateGoalDAO = new UpdateGoalDAOImpl(Main.getConn());
+        goalDAO = new GoalDAOImpl(Main.getConn());
 
         targetField.textProperty().addListener((_, oldVal, newVal) -> {
             if (!newVal.matches("\\d*(\\.\\d*)?")) {
@@ -49,7 +49,7 @@ public class ViewGoalDetailsController {
      */
     @FXML
     private void delete(ActionEvent event) {
-        updateGoalDAO.deleteGoal(id);
+        goalDAO.deleteGoal(id);
 
         cancel(event);
     }
@@ -63,7 +63,7 @@ public class ViewGoalDetailsController {
     private void update(ActionEvent event) {
         if (nameField.getText().isBlank() || targetField.getText().isBlank()) return;
 
-        updateGoalDAO.updateGoal(nameField.getText(), Double.parseDouble(targetField.getText()), id);
+        goalDAO.updateGoal(nameField.getText(), Double.parseDouble(targetField.getText()), id);
 
         cancel(event);
     }

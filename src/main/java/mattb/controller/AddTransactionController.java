@@ -14,8 +14,10 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import mattb.FinanceException;
 import mattb.Main;
-import mattb.dao.AddTransactionDAO;
-import mattb.dao.AddTransactionDAOImpl;
+import mattb.dao.AccountDAO;
+import mattb.dao.AccountDAOImpl;
+import mattb.dao.TransactionDAO;
+import mattb.dao.TransactionDAOImpl;
 import mattb.model.Transaction;
 
 import java.io.IOException;
@@ -44,21 +46,23 @@ public class AddTransactionController {
     @FXML
     private DatePicker datePicker;
 
-    private AddTransactionDAO addTransactionDAO;
+    private TransactionDAO transactionDAO;
+    private AccountDAO accountDAO;
 
     private boolean editing;
     private int id;
     private boolean update = false;
 
     /**
-     * Initializes {@link FXML} items for the {@code Add New Transaction} modal and the {@link AddTransactionDAO DAO}
+     * Initializes {@link FXML} items for the {@code Add New Transaction} modal and the {@link TransactionDAO DAO}
      */
     @FXML
     public void initialize() {
-        addTransactionDAO = new AddTransactionDAOImpl(Main.getConn());
+        transactionDAO = new TransactionDAOImpl(Main.getConn());
+        accountDAO = new AccountDAOImpl(Main.getConn());
 
         if (fromCombo != null && toCombo != null) {
-            ObservableList<String> accountNames = addTransactionDAO.loadAccountNames();
+            ObservableList<String> accountNames = accountDAO.loadAccountNames();
 
             fromCombo.setItems(accountNames);
             toCombo.setItems(accountNames);
@@ -78,15 +82,15 @@ public class AddTransactionController {
      */
     @FXML
     private void onSave(ActionEvent event) {
-        int fromAccId = addTransactionDAO.getAccId(fromCombo.getValue());
-        int toAccId = addTransactionDAO.getAccId(toCombo.getValue());
+        int fromAccId = accountDAO.getAccId(fromCombo.getValue());
+        int toAccId = accountDAO.getAccId(toCombo.getValue());
         if (fromAccId == -1 || toAccId == -1 || amountField.getText().isBlank() || fromCombo.getValue().equals("Add more via Accounts tab") || toCombo.getValue().equals("Add more via Accounts tab")) {
             return;
         }
 
-        addTransactionDAO.saveTransaction(datePicker.getValue(), fromAccId, toAccId, Double.parseDouble(amountField.getText()), memoField.getText(), id, editing);
+        transactionDAO.saveTransaction(datePicker.getValue(), fromAccId, toAccId, Double.parseDouble(amountField.getText()), memoField.getText(), id, editing);
 
-        addTransactionDAO.saveCategories(categoryField.getText());
+        transactionDAO.saveCategories(categoryField.getText());
 
         try {
             URL resource = getClass().getResource("/mattb/controller/update_balance.fxml");
@@ -118,7 +122,7 @@ public class AddTransactionController {
             if (amountField.getText().isBlank() || fromCombo.getValue().isBlank() || toCombo.getValue().isBlank())
                 return;
 
-            addTransactionDAO.updateBalances(Double.parseDouble(amountField.getText()), fromAccId, toAccId);
+            accountDAO.updateBalances(Double.parseDouble(amountField.getText()), fromAccId, toAccId);
         }
 
         cancel(event);

@@ -12,8 +12,10 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import mattb.FinanceException;
 import mattb.Main;
-import mattb.dao.DashboardDAO;
-import mattb.dao.DashboardDAOImpl;
+import mattb.dao.AccountDAO;
+import mattb.dao.AccountDAOImpl;
+import mattb.dao.GoalDAO;
+import mattb.dao.GoalDAOImpl;
 import mattb.model.Goal;
 
 import java.io.IOException;
@@ -39,28 +41,30 @@ public class DashboardController {
     private final ObservableList<Goal> goals = FXCollections.observableArrayList();
     private HashMap<Integer, Goal> map;
 
-    private DashboardDAO dashboardDAO;
+    private AccountDAO accountDAO;
+    private GoalDAO goalDAO;
 
     /**
-     * Initializes {@link FXML} items for the {@code Dashboard} tab and the {@link DashboardDAO DAO}
+     * Initializes {@link FXML} items for the {@code Dashboard} tab and the {@code DAOs}
      */
     @FXML
     private void initialize() {
-        dashboardDAO = new DashboardDAOImpl(Main.getConn());
+        accountDAO = new AccountDAOImpl(Main.getConn());
+        goalDAO = new GoalDAOImpl(Main.getConn());
 
         goalList.setCellFactory(_ -> new GoalListCellController());
 
         goalList.setItems(goals);
         refreshList();
 
-        netWorth.setText(Main.formatDouble(dashboardDAO.getNetWorth()));
+        netWorth.setText(Main.formatDouble(accountDAO.getNetWorth()));
     }
 
     /**
      * Refreshes the {@link Goal} {@link ListView List}
      */
     private void refreshList() {
-        map = dashboardDAO.getGoals();
+        map = goalDAO.getGoals();
         goals.setAll(map.values());
 
         boolean hasNoGoals = goals.isEmpty();
