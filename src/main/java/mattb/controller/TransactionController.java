@@ -52,6 +52,10 @@ public class TransactionController {
     private Button hideButton;
     @FXML
     private Button viewButton;
+    @FXML
+    private Button left;
+    @FXML
+    private Button right;
 
     private final ObservableList<Transaction> masterData = FXCollections.observableArrayList();
     private HashMap<Integer, Transaction> map;
@@ -59,6 +63,8 @@ public class TransactionController {
     private TransactionDAO transactionDAO;
 
     private boolean onHidden = false;
+    private int maxPage;
+    private int page;
 
     /**
      * Initializes {@link FXML} items for the {@code Transaction} tab and the {@link TransactionDAO DAO}
@@ -211,5 +217,15 @@ public class TransactionController {
         } catch (IOException ignored) {
             new FinanceException(OPEN_EDIT_TRANSACTION_MODAL_FAIL).displayAndLog();
         }
+    }
+
+    @FXML
+    private void leftPage() {
+
+    }
+
+    @FXML
+    private void rightPage() {
+
     }
 }

@@ -18,6 +18,9 @@ public class SettingsController {
     @FXML
     private CheckBox darkMode;
 
+    /**
+     * Initializes {@link FXML} items for the {@code Settings} tab
+     */
     @FXML
     private void initialize() {
         numTransactions.setText(String.valueOf(Config.getNumTransactions()));
@@ -37,6 +40,9 @@ public class SettingsController {
         });
     }
 
+    /**
+     * Saves all settings via the {@link Config} class
+     */
     @FXML
     private void save() {
         if (numTransactions.getText().isBlank() || numAccounts.getText().isBlank()) return;

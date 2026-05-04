@@ -46,6 +46,10 @@ public class AccountController {
     private Button hideAccount;
     @FXML
     private Button viewHidden;
+    @FXML
+    private Button left;
+    @FXML
+    private Button right;
 
     private final ObservableList<Account> masterData = FXCollections.observableArrayList();
     private HashMap<Integer, Account> map;
@@ -53,6 +57,8 @@ public class AccountController {
     private AccountDAO accountDAO;
 
     private boolean onHidden = false;
+    private int maxPage;
+    private int page;
 
     /**
      * Initializes {@link FXML} items for the {@code Account} tab and the {@link AccountDAO DAO}
@@ -230,5 +236,15 @@ public class AccountController {
         } catch (IOException ignored) {
             new FinanceException(OPEN_EDIT_ACCOUNT_MODAL_FAIL).displayAndLog();
         }
+    }
+
+    @FXML
+    private void leftPage() {
+
+    }
+
+    @FXML
+    private void rightPage() {
+
     }
 }
