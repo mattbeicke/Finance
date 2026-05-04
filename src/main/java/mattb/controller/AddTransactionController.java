@@ -14,7 +14,9 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import mattb.FinanceException;
 import mattb.Main;
+import mattb.model.Account;
 import mattb.model.Transaction;
+import mattb.model.TransactionRequest;
 import mattb.service.AccountService;
 import mattb.service.TransactionService;
 
@@ -79,19 +81,49 @@ public class AddTransactionController {
     private void onSave(ActionEvent event) {
         int fromAccId = accountService.getAccId(fromCombo.getValue());
         int toAccId = accountService.getAccId(toCombo.getValue());
-        if (fromAccId == -1 || toAccId == -1 || amountField.getText().isBlank() || fromCombo.getValue().equals("Add more via Accounts tab") || toCombo.getValue().equals("Add more via Accounts tab")) {
-            return;
-        }
 
-        transactionService.saveTransaction(datePicker.getValue(), fromAccId, toAccId, Double.parseDouble(amountField.getText()), memoField.getText(), id, editing);
+        if (isInvalid(fromAccId, toAccId)) return;
 
-        transactionService.saveCategories(categoryField.getText());
+        transactionService.processFullTransaction(new TransactionRequest(
+                datePicker.getValue(),
+                fromAccId,
+                toAccId,
+                Double.parseDouble(amountField.getText()),
+                categoryField.getText(),
+                memoField.getText(),
+                id,
+                editing
+        ), promptForBalanceUpdate());
 
+        cancel(event);
+    }
+
+    /**
+     * Validates user's inputs before proceeding
+     *
+     * @param fromAccId From {@link Account Account's} database id
+     * @param toAccId   To {@link Account Account's} database id
+     * @return {@code true} if invalid, {@code false} if not
+     */
+    private boolean isInvalid(int fromAccId, int toAccId) {
+        return fromAccId == -1 ||
+                toAccId == -1 ||
+                amountField.getText().isBlank() ||
+                fromCombo.getValue().contains("Add more") ||
+                toCombo.getValue().contains("Add more");
+    }
+
+    /**
+     * Starts the {@code Update Balances} modal
+     *
+     * @return {@code true} if we are updating {@link Account} balances, {@code false} if not
+     */
+    private boolean promptForBalanceUpdate() {
         try {
             URL resource = getClass().getResource("/mattb/controller/update_balance.fxml");
             if (resource == null) {
                 new FinanceException(OPEN_UPDATE_BALANCE_MODAL_FAIL).displayAndLog();
-                return;
+                return false;
             }
             FXMLLoader loader = new FXMLLoader(resource);
             Parent root = loader.load();
@@ -106,21 +138,11 @@ public class AddTransactionController {
             stage.setScene(scene);
             stage.showAndWait();
 
-            if (popupController.update) {
-                update = true;
-            }
+            return popupController.update;
         } catch (IOException ignored) {
             new FinanceException(OPEN_UPDATE_BALANCE_MODAL_FAIL).displayAndLog();
+            return false;
         }
-
-        if (update) {
-            if (amountField.getText().isBlank() || fromCombo.getValue().isBlank() || toCombo.getValue().isBlank())
-                return;
-
-            accountService.updateBalances(Double.parseDouble(amountField.getText()), fromAccId, toAccId);
-        }
-
-        cancel(event);
     }
 
     /**

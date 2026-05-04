@@ -70,7 +70,7 @@ public class TransactionController {
     private int perPage;
 
     /**
-     * Initializes {@link FXML} items for the {@code Transaction} tab
+     * Initializes {@link FXML} items for the {@code Transaction} tab and the {@link TransactionService}
      */
     @FXML
     public void initialize() {
@@ -210,12 +210,18 @@ public class TransactionController {
         }
     }
 
+    /**
+     * Sets page to previous
+     */
     @FXML
     private void leftPage() {
         page--;
         updatePageInfo();
     }
 
+    /**
+     * Sets page to next
+     */
     @FXML
     private void rightPage() {
         page++;

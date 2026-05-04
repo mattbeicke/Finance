@@ -6,24 +6,43 @@ import mattb.model.Account;
 
 import java.util.Map;
 
+/**
+ * Service Implementation for {@link Account Accounts}
+ *
+ * @author Matthew Beicke
+ */
 public class AccountServiceImpl implements AccountService {
     private final AccountDAO accountDAO;
 
+    /**
+     * Sets up DAO connection
+     *
+     * @param accountDAO Connection to the {@link AccountDAO}
+     */
     public AccountServiceImpl(AccountDAO accountDAO) {
         this.accountDAO = accountDAO;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Map<Integer, Account> getPagedAccounts(boolean onHidden, int perPage, int page) {
         return accountDAO.getAllAccounts(onHidden, perPage, page);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public int getMaxPage(boolean onHidden, int perPage) {
         int count = accountDAO.getAccountCount(onHidden);
         return (int) Math.ceil(count / (double) perPage);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public int getAccountIdFromMap(Account account, Map<Integer, Account> map) {
         if (account == null || map == null) return -1;
@@ -35,6 +54,9 @@ public class AccountServiceImpl implements AccountService {
         return -1;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void toggleVisibility(Account account, Map<Integer, Account> currentMap, boolean currentState) {
         int id = getAccountIdFromMap(account, currentMap);
@@ -43,22 +65,34 @@ public class AccountServiceImpl implements AccountService {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public ObservableList<String> getAccountTypes() {
         return accountDAO.getAllTypes();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public int getTypeIdByName(String typeName) {
         if (typeName == null || typeName.isBlank()) return -1;
         return accountDAO.getTypeId(typeName);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void saveAccount(int typeId, double balance, String name, int id, boolean isEditing) {
         accountDAO.saveAccount(typeId, balance, name, id, isEditing);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void saveAccountType(String type) {
         if (type.isBlank()) return;
@@ -66,16 +100,25 @@ public class AccountServiceImpl implements AccountService {
         accountDAO.saveAccountType(type);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public double getNetWorth() {
         return accountDAO.getNetWorth();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public ObservableList<String> getAccountNames(){
+    public ObservableList<String> getAccountNames() {
         return accountDAO.getAccountNames();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public int getAccId(String name) {
         if (name.isBlank()) return -1;
@@ -83,8 +126,11 @@ public class AccountServiceImpl implements AccountService {
         return accountDAO.getAccId(name);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public void updateBalances(double amount, int fromAccId, int toAccId){
+    public void updateBalances(double amount, int fromAccId, int toAccId) {
         accountDAO.updateBalances(amount, fromAccId, toAccId);
     }
 }

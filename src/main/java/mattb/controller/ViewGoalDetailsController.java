@@ -28,7 +28,7 @@ public class ViewGoalDetailsController {
     private int id;
 
     /**
-     * Initializes {@link FXML} items for the {@code View Goal Details} modal
+     * Initializes {@link FXML} items for the {@code View Goal Details} modal and the {@link GoalService}
      */
     @FXML
     private void initialize() {

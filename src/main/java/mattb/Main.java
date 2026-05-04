@@ -86,7 +86,7 @@ public class Main extends Application {
 
             accountService = new AccountServiceImpl(new AccountDAOImpl(conn));
             goalService = new GoalServiceImpl(new GoalDAOImpl(conn));
-            transactionService = new TransactionServiceImpl(new TransactionDAOImpl(conn));
+            transactionService = new TransactionServiceImpl(new TransactionDAOImpl(conn), accountService);
 
             if (ensureDB()) {
                 return;
@@ -128,15 +128,6 @@ public class Main extends Application {
 
             Platform.exit();
         }
-    }
-
-    /**
-     * Gets the database {@link Connection}
-     *
-     * @return Database {@link Connection}
-     */
-    public static Connection getConn() {
-        return conn;
     }
 
     /**
@@ -217,14 +208,29 @@ public class Main extends Application {
         return true;
     }
 
+    /**
+     * Gets the {@link AccountService}
+     *
+     * @return The {@link AccountService} created in {@link #start(Stage)}
+     */
     public static AccountService getAccountService() {
         return accountService;
     }
 
+    /**
+     * Gets the {@link GoalService}
+     *
+     * @return The {@link GoalService} created in {@link #start(Stage)}
+     */
     public static GoalService getGoalService() {
         return goalService;
     }
 
+    /**
+     * Gets the {@link TransactionService}
+     *
+     * @return The {@link TransactionService} created in {@link #start(Stage)}
+     */
     public static TransactionService getTransactionService() {
         return transactionService;
     }

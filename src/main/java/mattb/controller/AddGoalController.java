@@ -28,7 +28,7 @@ public class AddGoalController {
     private AccountService accountService;
 
     /**
-     * Initializes {@link FXML} items for the {@code Add New Goal} modal
+     * Initializes {@link FXML} items for the {@code Add New Goal} modal and the {@link GoalService} and {@link AccountService}
      */
     @FXML
     private void initialize() {

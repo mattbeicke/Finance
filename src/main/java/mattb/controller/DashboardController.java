@@ -43,7 +43,7 @@ public class DashboardController {
     private GoalService goalService;
 
     /**
-     * Initializes {@link FXML} items for the {@code Dashboard} tab
+     * Initializes {@link FXML} items for the {@code Dashboard} tab and the {@link AccountService} and {@link GoalService}
      */
     @FXML
     private void initialize() {

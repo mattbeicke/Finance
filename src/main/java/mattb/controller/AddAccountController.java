@@ -7,7 +7,6 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 import mattb.Main;
-import mattb.dao.AccountDAO;
 import mattb.model.Account;
 import mattb.service.AccountService;
 
@@ -30,7 +29,7 @@ public class AddAccountController {
     private int id;
 
     /**
-     * Initializes {@link FXML} items for the {@code Add New Account} modal
+     * Initializes {@link FXML} items for the {@code Add New Account} modal and the {@link AccountService}
      */
     @FXML
     public void initialize() {

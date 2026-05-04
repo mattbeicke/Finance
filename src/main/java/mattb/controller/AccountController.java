@@ -64,7 +64,7 @@ public class AccountController {
     private int perPage;
 
     /**
-     * Initializes {@link FXML} items for the {@code Account} tab
+     * Initializes {@link FXML} items for the {@code Account} tab and the {@link AccountService}
      */
     @FXML
     public void initialize() {
