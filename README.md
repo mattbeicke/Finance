@@ -81,6 +81,11 @@ The app uses a sidebar (from `main.fxml`) with the following tabs:
 * Dashboard
 * Transactions
 * Accounts
+* Settings (bottom left)
+
+The Account and Transaction tabs have pages for their tables<br>
+Use the provided navigation buttons to go between pages<br>
+Set page size in settings
 
 ---
 
@@ -125,6 +130,14 @@ The app uses a sidebar (from `main.fxml`) with the following tabs:
 * Category
 * Amount
 * Memo
+
+---
+
+### Settings Tab
+
+* Set Account table page size
+* Set Transaction table page size
+* Set Dark Mode
 
 ---
 
@@ -278,6 +291,7 @@ src/
 └── main/
     ├── java/
     │   └── mattb/
+    │       ├── Config.java              # Connection point to Preferences API
     │       ├── FinanceError.java        # Centralized error messages
     │       ├── FinanceException.java    # Custom runtime exception
     │       ├── Launcher.java            # JAR entry point
@@ -320,6 +334,8 @@ src/
     │
     └── resources/
         └── mattb/
+            ├── dark-theme.css           # CSS containing dark theme
+            ├── schema.sql               # SQL file containing the neccessary table setup and initial population
             └── controllers/             # FXML UI layouts
                 ├── accounts.fxml
                 ├── add_account.fxml
