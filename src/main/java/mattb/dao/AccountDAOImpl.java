@@ -9,8 +9,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.HashMap;
 
-import static mattb.FinanceError.LOAD_ACCOUNTS_FAIL;
-import static mattb.FinanceError.UPDATE_HIDDEN_ACCOUNT_LIST_FAIL;
+import static mattb.FinanceError.*;
 
 /**
  * DAO Implementation for the AccountController
@@ -73,7 +72,7 @@ public class AccountDAOImpl implements AccountDAO {
      */
     @Override
     public void updateAccountVisibility(int accountId, boolean hidden) {
-        String sql = hidden ? "delete from hidden_accounts where acc_id=?" : "insert or ignore into hidden_accounts (acc_id) values (?)";
+        String sql = hidden ? "delete from hidden_accounts where acc_id = ?" : "insert or ignore into hidden_accounts (acc_id) values (?)";
 
         try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setInt(1, accountId);
@@ -89,19 +88,14 @@ public class AccountDAOImpl implements AccountDAO {
      */
     @Override
     public int getNumAccounts(boolean hidden) {
-        String sql = """
-                select count(acc_id) as num from account
-                left join account_type on acc_type = type_id
-                where acc_id
-                """;
-        sql = sql + (hidden ? " in (select acc_id from hidden_accounts)" : " not in (select acc_id from hidden_accounts union select 0)");
+        String sql = "select count(acc_id) as num from account where acc_id" + (hidden ? " in (select acc_id from hidden_accounts)" : " not in (select acc_id from hidden_accounts union select 0)");
 
         try (PreparedStatement pstmt = conn.prepareStatement(sql); ResultSet rs = pstmt.executeQuery()) {
             if (rs.next()) {
                 return rs.getInt("num");
             }
         } catch (SQLException ignored) {
-            new FinanceException(UPDATE_HIDDEN_ACCOUNT_LIST_FAIL).displayAndLog();
+            new FinanceException(GET_ACCOUNT_COUNT_FAIL).displayAndLog();
         }
         return -1;
     }

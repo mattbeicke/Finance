@@ -33,7 +33,7 @@ public interface AccountDAO {
      * Gets the number of {@link Account accounts} in the database
      *
      * @param hidden Whether to get the hidden or unhidden {@link Account accounts}
-     * @return Number of hidden or unhidden {@link Account accounts} in the database
+     * @return Number of hidden or unhidden {@link Account accounts} in the database or -1 if none found
      */
     int getNumAccounts(boolean hidden);
 }

@@ -53,6 +53,8 @@ public enum FinanceError {
     GET_TRANSACTION_ID_FAIL("Error finding transaction id in database"),
     GET_CATEGORY_ID_FAIL("Error finding category id in database"),
     GET_ACCOUNT_BALANCE_FAIL("Error finding account balance in database"),
+    GET_ACCOUNT_COUNT_FAIL("Error in finding account count in database"),
+    GET_TRANSACTION_COUNT_FAIL("Error in finding transaction count in database"),
 
     /**
      * Misc

@@ -8,10 +8,12 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import mattb.Config;
 import mattb.FinanceException;
 import mattb.Main;
 import mattb.dao.TransactionDAO;
@@ -56,6 +58,8 @@ public class TransactionController {
     private Button left;
     @FXML
     private Button right;
+    @FXML
+    private Label pageLabel;
 
     private final ObservableList<Transaction> masterData = FXCollections.observableArrayList();
     private HashMap<Integer, Transaction> map;
@@ -63,8 +67,8 @@ public class TransactionController {
     private TransactionDAO transactionDAO;
 
     private boolean onHidden = false;
-    private int maxPage;
     private int page;
+    private int perPage;
 
     /**
      * Initializes {@link FXML} items for the {@code Transaction} tab and the {@link TransactionDAO DAO}
@@ -73,38 +77,39 @@ public class TransactionController {
     public void initialize() {
         transactionDAO = new TransactionDAOImpl(Main.getConn());
 
-        if (colDate != null) {
-            colDate.setCellValueFactory(cellData ->
-                    new ReadOnlyObjectWrapper<>(cellData.getValue().date())
-            );
-            colFrom.setCellValueFactory(cellData ->
-                    new ReadOnlyObjectWrapper<>(cellData.getValue().fromAccountName())
-            );
-            colTo.setCellValueFactory(cellData ->
-                    new ReadOnlyObjectWrapper<>(cellData.getValue().toAccountName())
-            );
-            colCategory.setCellValueFactory(cellData ->
-                    new ReadOnlyObjectWrapper<>(cellData.getValue().category())
-            );
-            colAmount.setCellValueFactory(cellData ->
-                    new ReadOnlyObjectWrapper<>(cellData.getValue().amount())
-            );
-            colMemo.setCellValueFactory(cellData ->
-                    new ReadOnlyObjectWrapper<>(cellData.getValue().memo())
-            );
+        colDate.setCellValueFactory(cellData ->
+                new ReadOnlyObjectWrapper<>(cellData.getValue().date())
+        );
+        colFrom.setCellValueFactory(cellData ->
+                new ReadOnlyObjectWrapper<>(cellData.getValue().fromAccountName())
+        );
+        colTo.setCellValueFactory(cellData ->
+                new ReadOnlyObjectWrapper<>(cellData.getValue().toAccountName())
+        );
+        colCategory.setCellValueFactory(cellData ->
+                new ReadOnlyObjectWrapper<>(cellData.getValue().category())
+        );
+        colAmount.setCellValueFactory(cellData ->
+                new ReadOnlyObjectWrapper<>(cellData.getValue().amount())
+        );
+        colMemo.setCellValueFactory(cellData ->
+                new ReadOnlyObjectWrapper<>(cellData.getValue().memo())
+        );
 
-            Main.useCurrency(colAmount);
+        Main.useCurrency(colAmount);
 
-            transactionTable.setItems(masterData);
-            refreshTable();
-        }
+        transactionTable.setItems(masterData);
+
+        perPage = Config.getNumTransactions();
+        page = 1;
+        updatePageInfo();
     }
 
     /**
      * Refreshes the {@link Transaction} {@link TableView Table} with either hidden or non-hidden {@link Transaction Transactions}
      */
     private void refreshTable() {
-        map = transactionDAO.getAllTransactions(onHidden);
+        map = transactionDAO.getAllTransactions(onHidden, perPage, page);
         masterData.setAll(map.values());
     }
 
@@ -137,7 +142,7 @@ public class TransactionController {
 
         transactionDAO.updateTransactionVisibility(transactionId, onHidden);
 
-        refreshTable();
+        updatePageInfo();
     }
 
     /**
@@ -159,7 +164,8 @@ public class TransactionController {
             viewButton.setText("View Hidden");
         }
 
-        refreshTable();
+        page = 1;
+        updatePageInfo();
     }
 
     /**
@@ -182,7 +188,7 @@ public class TransactionController {
             stage.setScene(new Scene(root));
             stage.showAndWait();
 
-            refreshTable();
+            updatePageInfo();
         } catch (IOException ignored) {
             new FinanceException(OPEN_NEW_TRANSACTION_MODAL_FAIL).displayAndLog();
         }
@@ -221,11 +227,27 @@ public class TransactionController {
 
     @FXML
     private void leftPage() {
-
+        page--;
+        updatePageInfo();
     }
 
     @FXML
     private void rightPage() {
+        page++;
+        updatePageInfo();
+    }
 
+    /**
+     * Refreshes the page information then refreshes the table
+     */
+    private void updatePageInfo() {
+        int maxPage = (int) Math.ceil(transactionDAO.getNumTransactions(onHidden) / ((double) perPage));
+
+        if (page > maxPage) page = maxPage;
+
+        pageLabel.setText("Page " + page + " of " + maxPage);
+        left.setDisable(page <= 1);
+        right.setDisable(page >= maxPage);
+        refreshTable();
     }
 }

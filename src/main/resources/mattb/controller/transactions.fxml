@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 <AnchorPane xmlns="http://javafx.com/javafx"
@@ -14,7 +15,7 @@
             <Button onAction="#editSelected">Edit Selected</Button>
         </HBox>
 
-        <TableView prefHeight="750.0" prefWidth="1400.0" fx:id="transactionTable">
+        <TableView prefHeight="650.0" prefWidth="1300.0" fx:id="transactionTable">
             <columnResizePolicy>
                 <TableView fx:constant="CONSTRAINED_RESIZE_POLICY"/>
             </columnResizePolicy>
@@ -29,9 +30,14 @@
             </columns>
         </TableView>
 
-        <HBox>
-            <Button fx:id="left" text="<" onAction="#leftPage"/>
-            <Button fx:id="right" text=">" onAction="#rightPage"/>
+        <HBox spacing="15.0" alignment="CENTER_LEFT">
+            <padding>
+                <Insets top="10" right="10" bottom="10" left="10"/>
+            </padding>
+            <Button fx:id="left" text="Prev" onAction="#leftPage"/>
+            <Label fx:id="pageLabel"/>
+            <Button fx:id="right" text="Next" onAction="#rightPage"/>
+            <Pane HBox.hgrow="ALWAYS"/>
         </HBox>
     </VBox>
 </AnchorPane>
