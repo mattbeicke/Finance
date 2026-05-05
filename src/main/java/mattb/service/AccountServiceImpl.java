@@ -125,8 +125,16 @@ public class AccountServiceImpl implements AccountService {
      * {@inheritDoc}
      */
     @Override
+    public ObservableList<String> getAccountNamesExternal() {
+        return accountDAO.getAccountNamesExternal();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public int getAccId(String name) {
-        if (name == null || name.isBlank()) return -1;
+        if (name == null || name.isBlank() || name.equals("Add more via Accounts tab")) return -1;
 
         return accountDAO.getAccId(name);
     }

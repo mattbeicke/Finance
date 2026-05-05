@@ -55,12 +55,14 @@ public enum FinanceError {
     GET_ACCOUNT_BALANCE_FAIL("Error finding account balance in database"),
     GET_ACCOUNT_COUNT_FAIL("Error in finding account count in database"),
     GET_TRANSACTION_COUNT_FAIL("Error in finding transaction count in database"),
+    // Deleting
+    CLEAR_CATEGORIES_FAIL("Error clearing categories"),
 
     /**
      * Misc
      */
     NET_WORTH_FAIL("Error calculating Net Worth"),
-    OPEN_DARK_THEME_FAIL("Failed to open dark theme stylesheet"),;
+    OPEN_DARK_THEME_FAIL("Failed to open dark theme stylesheet");
 
     private final String message;
 

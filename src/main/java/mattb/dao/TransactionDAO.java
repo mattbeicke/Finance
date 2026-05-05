@@ -13,7 +13,19 @@ import java.util.HashMap;
  */
 public interface TransactionDAO {
     /**
-     * Saves an {@link Transaction} to the database or updates one that is there already
+     * Saves a {@link Transaction} to the database
+     *
+     * @param date      Date {@link Transaction} occurred on
+     * @param fromAccId Database id of the {@link Account} money came from
+     * @param toAccId   Database id of the {@link Account} money went to
+     * @param amount    Amount of money transferred
+     * @param memo      Memo associated with {@link Transaction}
+     * @return The database id of the {@link Transaction} Added
+     */
+    int insertTransaction(LocalDate date, int fromAccId, int toAccId, double amount, String memo);
+
+    /**
+     * Updates a {@link Transaction} that is in the database
      *
      * @param date      Date {@link Transaction} occurred on
      * @param fromAccId Database id of the {@link Account} money came from
@@ -21,9 +33,8 @@ public interface TransactionDAO {
      * @param amount    Amount of money transferred
      * @param memo      Memo associated with {@link Transaction}
      * @param id        Database id of {@link Transaction} (only used if {@code editing})
-     * @param editing   Whether we are editing ({@code true}) or saving new ({@code false})
      */
-    void saveTransaction(LocalDate date, int fromAccId, int toAccId, double amount, String memo, int id, boolean editing);
+    void updateTransaction(LocalDate date, int fromAccId, int toAccId, double amount, String memo, int id);
 
     /**
      * Changes {@link Transaction} with given {@code transactionId} to the status of {@code hidden}
@@ -36,9 +47,25 @@ public interface TransactionDAO {
     /**
      * Populates the {@code tcat} table for the {@link Transaction}
      *
-     * @param input User input into the Add Transaction Modal's "Category" field
+     * @param t_id   Database id of the {@link Transaction}
+     * @param cat_id Database id of the {@code Category}
      */
-    void saveCategories(String input);
+    void linkTransactionCategory(int t_id, int cat_id);
+
+    /**
+     * Gets the database id of the {@code Category}, creating it if necessary
+     *
+     * @param cat Category to find or create
+     * @return Database id of {@code cat}
+     */
+    int findOrCreateCategory(String cat);
+
+    /**
+     * Clears all of a {@link Transaction Transactions} categories
+     *
+     * @param t_id Database id of the {@link Transaction} to clear
+     */
+    void clearCategoriesForTransaction(int t_id);
 
     /**
      * Gets list of all unhidden {@link Transaction transactions} (if {@code hidden} is false) or

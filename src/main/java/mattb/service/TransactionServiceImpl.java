@@ -1,10 +1,14 @@
 package mattb.service;
 
+import mattb.FinanceException;
 import mattb.dao.TransactionDAO;
 import mattb.model.Transaction;
 import mattb.model.TransactionRequest;
+import mattb.model.TransactionResponse;
 
 import java.util.Map;
+
+import static mattb.FinanceError.GET_TRANSACTION_ID_FAIL;
 
 /**
  * Service Implementation for {@link Transaction Transactions}
@@ -30,14 +34,61 @@ public class TransactionServiceImpl implements TransactionService {
      * {@inheritDoc}
      */
     @Override
-    public void processFullTransaction(TransactionRequest request, boolean shouldUpdateBalances) {
-        transactionDAO.saveTransaction(request.date(), request.fromId(), request.toId(), request.amount(), request.memo(), request.id(), request.isEditing());
+    public TransactionResponse processTransaction(TransactionRequest request) {
+        int fromAccId = accountService.getAccId(request.fromAcc());
+        int toAccId = accountService.getAccId(request.toAcc());
 
-        transactionDAO.saveCategories(request.category());
-
-        if (shouldUpdateBalances) {
-            accountService.updateBalances(request.amount(), request.fromId(), request.toId());
+        if (fromAccId == -1 || toAccId == -1 || request.amount() == null || request.amount().isBlank()) {
+            return new TransactionResponse(false, "Please fill all required fields", false);
         }
+
+        double amount = Double.parseDouble(request.amount());
+
+        String memo = (request.memo() == null || request.memo().isBlank()) ? "" : request.memo();
+
+        int t_id;
+        if (request.isEditing()) {
+            transactionDAO.updateTransaction(request.date(), fromAccId, toAccId, amount, memo, request.id());
+            t_id = request.id();
+        } else {
+            t_id = transactionDAO.insertTransaction(request.date(), fromAccId, toAccId, amount, memo);
+        }
+
+        if (t_id <= 0) {
+            new FinanceException(GET_TRANSACTION_ID_FAIL).displayAndLog();
+            return new TransactionResponse(false, "Please try again later", false);
+        }
+
+        if (request.isEditing()) {
+            transactionDAO.clearCategoriesForTransaction(t_id);
+        }
+
+        if (request.category() != null && !request.category().isBlank()) {
+            String[] categories = request.category().split(",\\s*");
+            for (String cat : categories) {
+                int catId = transactionDAO.findOrCreateCategory(cat);
+                if (catId == -1) continue;
+                transactionDAO.linkTransactionCategory(t_id, catId);
+            }
+        }
+        return new TransactionResponse(true, "", !request.isEditing());
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean updateBalances(String fromAcc, String toAcc, String amount) {
+        int fromAccId = accountService.getAccId(fromAcc);
+        int toAccId = accountService.getAccId(toAcc);
+
+        if (fromAccId == -1 || toAccId == -1 || amount == null) {
+            return false;
+        }
+
+        accountService.updateBalances(Double.parseDouble(amount), fromAccId, toAccId);
+
+        return true;
     }
 
     /**

@@ -58,11 +58,18 @@ public interface AccountDAO {
     HashMap<Integer, Account> getAllAccounts(boolean hidden, int perPage, int page);
 
     /**
-     * Gets list of all non-hidden {@link Account Accounts}
+     * Gets list of all non-hidden {@link Account Accounts} not including External
      *
      * @return List of non-hidden {@link Account Accounts}
      */
     ObservableList<String> getAccountNames();
+
+    /**
+     * Gets list of all non-hidden {@link Account Accounts} including External and a message on how to add more
+     *
+     * @return List of {@link Account Accounts}
+     */
+    ObservableList<String> getAccountNamesExternal();
 
     /**
      * Gets the number of {@link Account accounts} in the database

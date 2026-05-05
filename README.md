@@ -144,6 +144,8 @@ Set page size in settings
 
 ### Modals
 
+Required fields are indicated
+
 * Add/Edit Account
 * Add/Edit Transaction
 * Add/Edit Goal
@@ -323,6 +325,7 @@ src/
     │       │   ├── Account.java
     │       │   ├── Goal.java
     │       │   ├── Transaction.java
+    │       │   ├── TransactionResponse.java
     │       │   └── TransactionRequest.java
     │       │
     │       └── service/                   # Business logic handling

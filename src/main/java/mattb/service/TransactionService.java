@@ -3,9 +3,9 @@ package mattb.service;
 import mattb.model.Account;
 import mattb.model.Transaction;
 import mattb.model.TransactionRequest;
+import mattb.model.TransactionResponse;
 
 import java.util.Map;
-
 
 /**
  * Service Interface for {@link Transaction Transactions}
@@ -16,10 +16,20 @@ public interface TransactionService {
     /**
      * Saves an {@link Transaction} to the database or updates one that is there already
      *
-     * @param request              A {@link TransactionRequest} object containing all data needed for the {@link Transaction}
-     * @param shouldUpdateBalances Whether to update {@link Account} balances or not
+     * @param request A {@link TransactionRequest} object containing all data needed for the {@link Transaction}
+     * @return A {@link TransactionResponse} object containing data based on if the transaction processed correctly or not
      */
-    void processFullTransaction(TransactionRequest request, boolean shouldUpdateBalances);
+    TransactionResponse processTransaction(TransactionRequest request);
+
+    /**
+     * Updates {@link Account} balances
+     *
+     * @param fromAcc {@link Account} to remove money from
+     * @param toAcc   {@link Account} to add money to
+     * @param amount  Amount of money to add/remove
+     * @return {@code false} if something went wrong, {@code true} if not
+     */
+    boolean updateBalances(String fromAcc, String toAcc, String amount);
 
     /**
      * Changes a {@link Transaction Transaction's} visibility

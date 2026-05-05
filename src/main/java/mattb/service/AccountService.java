@@ -67,6 +67,13 @@ public interface AccountService {
     ObservableList<String> getAccountNames();
 
     /**
+     * Gets list of all non-hidden {@link Account Accounts} including External and a message on how to add more
+     *
+     * @return List of {@link Account Accounts}
+     */
+    ObservableList<String> getAccountNamesExternal();
+
+    /**
      * Gets an {@link Account} id from its {@code name}
      *
      * @param name {@link Account} name

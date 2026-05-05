@@ -154,6 +154,25 @@ public class AccountDAOImpl implements AccountDAO {
             while (rs.next()) {
                 accountNames.add(rs.getString("name"));
             }
+        } catch (SQLException ignored) {
+            new FinanceException(LOAD_ACCOUNTS_FAIL).displayAndLog();
+        }
+
+        return accountNames;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public ObservableList<String> getAccountNamesExternal() {
+        ObservableList<String> accountNames = FXCollections.observableArrayList();
+
+        String sql = "select name from account where acc_id not in (select acc_id from hidden_accounts)";
+        try (PreparedStatement pstmt = conn.prepareStatement(sql); ResultSet rs = pstmt.executeQuery()) {
+            while (rs.next()) {
+                accountNames.add(rs.getString("name"));
+            }
 
             accountNames.add("Add more via Accounts tab");
         } catch (SQLException ignored) {
@@ -187,16 +206,15 @@ public class AccountDAOImpl implements AccountDAO {
     public int getAccId(String accName) {
         if (accName == null || accName.isBlank()) return -1;
 
-        String sql = "select acc_id from account where name=?";
+        String sql = "select acc_id from account where name = ?";
         try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setString(1, accName);
 
             ResultSet rs = pstmt.executeQuery();
             if (rs.next()) {
                 return rs.getInt("acc_id");
-            } else {
-                return -1;
             }
+            return -1;
         } catch (SQLException ignored) {
             new FinanceException(GET_ACCOUNT_ID_FAIL).displayAndLog();
         }

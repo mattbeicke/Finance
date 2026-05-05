@@ -17,6 +17,7 @@ import mattb.Main;
 import mattb.model.Account;
 import mattb.model.Transaction;
 import mattb.model.TransactionRequest;
+import mattb.model.TransactionResponse;
 import mattb.service.AccountService;
 import mattb.service.TransactionService;
 
@@ -61,7 +62,7 @@ public class AddTransactionController {
         transactionService = Main.getTransactionService();
         accountService = Main.getAccountService();
 
-        ObservableList<String> accountNames = accountService.getAccountNames();
+        ObservableList<String> accountNames = accountService.getAccountNamesExternal();
         fromCombo.setItems(accountNames);
         toCombo.setItems(accountNames);
 
@@ -79,43 +80,32 @@ public class AddTransactionController {
      */
     @FXML
     private void onSave(ActionEvent event) {
-        int fromAccId = accountService.getAccId(fromCombo.getValue());
-        int toAccId = accountService.getAccId(toCombo.getValue());
-
-        if (isInvalid(fromAccId, toAccId)) {
-            Main.showNotification(false, "Please fill all required fields");
-            return;
-        }
-
-        transactionService.processFullTransaction(new TransactionRequest(
+        TransactionResponse response = transactionService.processTransaction(new TransactionRequest(
                 datePicker.getValue(),
-                fromAccId,
-                toAccId,
-                Double.parseDouble(amountField.getText()),
+                fromCombo.getValue(),
+                toCombo.getValue(),
+                amountField.getText(),
                 categoryField.getText(),
                 memoField.getText(),
                 id,
                 editing
-        ), !editing && promptForBalanceUpdate());
+        ));
+
+        if (!response.success()) {
+            Main.showNotification(false, response.message());
+            return;
+        }
+
+        if (response.requiresBalanceConfirmation() && promptForBalanceUpdate()) {
+            if (!transactionService.updateBalances(fromCombo.getValue(), toCombo.getValue(), amountField.getText())) {
+                Main.showNotification(false, "Balances failed to update");
+            }
+        }
 
         saveClicked = true;
         cancel(event);
     }
 
-    /**
-     * Validates user's inputs before proceeding
-     *
-     * @param fromAccId From {@link Account Account's} database id
-     * @param toAccId   To {@link Account Account's} database id
-     * @return {@code true} if invalid, {@code false} if not
-     */
-    private boolean isInvalid(int fromAccId, int toAccId) {
-        return fromAccId == -1 ||
-                toAccId == -1 ||
-                amountField.getText().isBlank() ||
-                fromCombo.getValue().contains("Add more") ||
-                toCombo.getValue().contains("Add more");
-    }
 
     /**
      * Starts the {@code Update Balances} modal
