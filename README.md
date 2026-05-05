@@ -444,7 +444,7 @@ NumberFormat.getCurrencyInstance(Locale.US)
 | Database errors | Delete `finance.db` and restart                  |
 | UI not loading  | Check FXML paths                                 |
 | Data Missing    | Check if items are hidden (toggle “View Hidden”) |
-| Other           | Report ASAP to deleveoper                        |
+| Other           | Report ASAP to developer                         |
 
 Installing Java 26 and Maven, running ```mvn clean install``` should install all required dependencies
 

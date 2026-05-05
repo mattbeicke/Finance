@@ -3,6 +3,8 @@ package mattb.controller;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
+import javafx.scene.control.ToggleButton;
+import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.BorderPane;
 import mattb.FinanceError;
 import mattb.FinanceException;
@@ -20,6 +22,27 @@ import static mattb.FinanceError.*;
 public class MainController {
     @FXML
     private BorderPane mainBorderPane;
+    @FXML
+    private ToggleButton dashboard;
+    @FXML
+    private ToggleButton transactions;
+    @FXML
+    private ToggleButton accounts;
+    @FXML
+    private ToggleButton settings;
+
+    private ToggleGroup sidebarGroup;
+
+    @FXML
+    private void initialize() {
+        sidebarGroup = new ToggleGroup();
+        dashboard.setToggleGroup(sidebarGroup);
+        transactions.setToggleGroup(sidebarGroup);
+        accounts.setToggleGroup(sidebarGroup);
+        settings.setToggleGroup(sidebarGroup);
+
+        dashboard.setSelected(true);
+    }
 
     /**
      * Sets current tab to {@code Dashboard}
