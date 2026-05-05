@@ -3,9 +3,9 @@ package mattb.service;
 import mattb.FinanceException;
 import mattb.dao.TransactionDAO;
 import mattb.model.Transaction;
-import mattb.model.TransactionRequest;
 import mattb.model.TransactionResponse;
 
+import java.time.LocalDate;
 import java.util.Map;
 
 import static mattb.FinanceError.GET_TRANSACTION_ID_FAIL;
@@ -34,24 +34,23 @@ public class TransactionServiceImpl implements TransactionService {
      * {@inheritDoc}
      */
     @Override
-    public TransactionResponse processTransaction(TransactionRequest request) {
-        int fromAccId = accountService.getAccId(request.fromAcc());
-        int toAccId = accountService.getAccId(request.toAcc());
+    public TransactionResponse processTransaction(LocalDate date, String fromAcc, String toAcc, String amount, String category, String memo, int id, boolean editing) {
+        int fromAccId = accountService.getAccId(fromAcc);
+        int toAccId = accountService.getAccId(toAcc);
 
-        if (fromAccId == -1 || toAccId == -1 || request.amount() == null || request.amount().isBlank()) {
+        if (fromAccId == -1 || toAccId == -1 || amount == null || amount.isBlank()) {
             return new TransactionResponse(false, "Please fill all required fields", false);
         }
 
-        double amount = Double.parseDouble(request.amount());
+        double amountParsed = Double.parseDouble(amount);
 
-        String memo = (request.memo() == null || request.memo().isBlank()) ? "" : request.memo();
+        String memoParsed = (memo == null || memo.isBlank()) ? "" : memo;
 
-        int t_id;
-        if (request.isEditing()) {
-            transactionDAO.updateTransaction(request.date(), fromAccId, toAccId, amount, memo, request.id());
-            t_id = request.id();
+        int t_id = id;
+        if (editing) {
+            transactionDAO.updateTransaction(date, fromAccId, toAccId, amountParsed, memoParsed, id);
         } else {
-            t_id = transactionDAO.insertTransaction(request.date(), fromAccId, toAccId, amount, memo);
+            t_id = transactionDAO.insertTransaction(date, fromAccId, toAccId, amountParsed, memoParsed);
         }
 
         if (t_id <= 0) {
@@ -59,20 +58,20 @@ public class TransactionServiceImpl implements TransactionService {
             return new TransactionResponse(false, "Please try again later", false);
         }
 
-        if (request.isEditing()) {
+        if (editing) {
             transactionDAO.clearCategoriesForTransaction(t_id);
         }
 
-        if (request.category() != null && !request.category().isBlank()) {
-            String[] categories = request.category().split(",\\s*");
+        if (category != null && !category.isBlank()) {
+            String[] categories = category.split(",\\s*");
             for (String cat : categories) {
-                if(cat == null || cat.isBlank()) continue;
+                if (cat == null || cat.isBlank()) continue;
                 int catId = transactionDAO.findOrCreateCategory(cat);
                 if (catId == -1) continue;
                 transactionDAO.linkTransactionCategory(t_id, catId);
             }
         }
-        return new TransactionResponse(true, "", !request.isEditing());
+        return new TransactionResponse(true, "", !editing);
     }
 
     /**
@@ -97,11 +96,15 @@ public class TransactionServiceImpl implements TransactionService {
      */
     @Override
     public boolean toggleVisibility(Transaction transaction, Map<Integer, Transaction> currentMap, boolean currentState) {
+        if (transaction == null || currentMap == null) return false;
+
         int id = getTransactionIdFromMap(transaction, currentMap);
+
         if (id != -1) {
             transactionDAO.updateTransactionVisibility(id, currentState);
             return true;
         }
+
         return false;
     }
 

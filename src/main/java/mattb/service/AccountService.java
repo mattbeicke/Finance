@@ -2,6 +2,7 @@ package mattb.service;
 
 import javafx.collections.ObservableList;
 import mattb.model.Account;
+import mattb.model.AccountResponse;
 
 import java.util.Map;
 
@@ -14,13 +15,14 @@ public interface AccountService {
     /**
      * Saves an {@link Account} to the database or updates one that is there already
      *
-     * @param typeId    Database id of the {@link Account account's} {@code type}
+     * @param type      The {@link Account account's} {@code type}
      * @param balance   Balance of {@link Account}
      * @param name      Name of {@link Account}
      * @param id        Database id of account (only used if {@code editing})
      * @param isEditing Whether we are editing ({@code true}) or saving new ({@code false})
+     * @return An {@link AccountResponse} object containing data based on if the {@link Account} processed correctly or not
      */
-    void saveAccount(int typeId, double balance, String name, int id, boolean isEditing);
+    AccountResponse processAccount(String type, String balance, String name, int id, boolean isEditing);
 
     /**
      * Changes a {@link Account Account's} visibility
@@ -103,7 +105,7 @@ public interface AccountService {
      * Saves new {@code account type} to database
      *
      * @param type Name of the new {@code type} to save
-     * @return {@code true} if something went wrong, {@code false} if something did not
+     * @return {@code false} if something went wrong, {@code true} if something did not
      */
     boolean saveAccountType(String type);
 
@@ -113,12 +115,4 @@ public interface AccountService {
      * @return A list of all Account Types plus a message that tells the user to add more in the {@link Account accounts} tab
      */
     ObservableList<String> getAccountTypes();
-
-    /**
-     * Looks up the database id of the provided {@code type}
-     *
-     * @param typeName The {@code Account Type's} value
-     * @return The database id of the {@code Account Type} or -1 if not found
-     */
-    int getTypeIdByName(String typeName);
 }

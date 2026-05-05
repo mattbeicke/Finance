@@ -2,6 +2,7 @@ package mattb.service;
 
 import mattb.model.Account;
 import mattb.model.Goal;
+import mattb.model.GoalResponse;
 
 import java.util.Map;
 
@@ -14,11 +15,12 @@ public interface GoalService {
     /**
      * Saves {@link Goal} to database
      *
-     * @param accId    Database id of the {@link Account} the {@link Goal} is tracking
+     * @param accName  Database id of the {@link Account} the {@link Goal} is tracking
      * @param goalName Name of {@link Goal}
      * @param target   Target {@link Account} balance
+     * @return A {@link GoalResponse} object containing data based on if the {@link Goal} processed correctly or not
      */
-    void saveGoal(int accId, String goalName, double target);
+    GoalResponse saveGoal(String accName, String goalName, String target);
 
     /**
      * Updates a {@link Goal} with given {@code name} and {@code target} balance

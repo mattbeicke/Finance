@@ -8,6 +8,7 @@ import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 import mattb.Main;
 import mattb.model.Account;
+import mattb.model.AccountResponse;
 import mattb.service.AccountService;
 
 /**
@@ -52,14 +53,12 @@ public class AddAccountController {
      */
     @FXML
     private void onAccountSave(ActionEvent event) {
-        int typeId = accountService.getTypeIdByName(typeCombo.getValue());
+        AccountResponse response = accountService.processAccount(typeCombo.getValue(), balanceField.getText(), nameField.getText(), id, editing);
 
-        if (typeId == -1 || balanceField.getText().isBlank() || nameField.getText().isBlank()) {
-            Main.showNotification(false, "Please fill all required fields");
+        if (!response.success()) {
+            Main.showNotification(false, response.message());
             return;
         }
-
-        accountService.saveAccount(typeId, Double.parseDouble(balanceField.getText()), nameField.getText(), id, editing);
 
         saveClicked = true;
         cancel(event);

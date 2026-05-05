@@ -104,21 +104,13 @@ public class AccountController {
     private void hideAccount() {
         Account selected = accountTable.getSelectionModel().getSelectedItem();
 
-        if (selected != null) {
-            if (accountService.toggleVisibility(selected, map, onHidden)) {
-                if (onHidden) {
-                    Main.showNotification(true, "Account no longer hidden");
-                } else {
-                    Main.showNotification(true, "Account hidden");
-                }
-                updatePageInfo();
+        if (accountService.toggleVisibility(selected, map, onHidden)) {
+            if (onHidden) {
+                Main.showNotification(true, "Account no longer hidden");
             } else {
-                if (onHidden) {
-                    Main.showNotification(false, "Failed to unhide account");
-                } else {
-                    Main.showNotification(false, "Failed to hide account");
-                }
+                Main.showNotification(true, "Account hidden");
             }
+            updatePageInfo();
         } else {
             Main.showNotification(false, "No account selected");
         }

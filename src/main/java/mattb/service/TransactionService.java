@@ -2,9 +2,9 @@ package mattb.service;
 
 import mattb.model.Account;
 import mattb.model.Transaction;
-import mattb.model.TransactionRequest;
 import mattb.model.TransactionResponse;
 
+import java.time.LocalDate;
 import java.util.Map;
 
 /**
@@ -16,10 +16,17 @@ public interface TransactionService {
     /**
      * Saves an {@link Transaction} to the database or updates one that is there already
      *
-     * @param request A {@link TransactionRequest} object containing all data needed for the {@link Transaction}
-     * @return A {@link TransactionResponse} object containing data based on if the transaction processed correctly or not
+     * @param date     {@link Transaction} date
+     * @param fromAcc  Name of the {@link Account} where money came from
+     * @param toAcc    Name of the {@link Account} id where money went
+     * @param amount   Amount of money transferred
+     * @param category Categories of the transaction (comma separated)
+     * @param memo     Memo of the transaction
+     * @param id       Database id of the transaction (if editing)
+     * @param editing  {@code true} if this request will update a transaction, {@code false} if saving new
+     * @return A {@link TransactionResponse} object containing data based on if the {@link Transaction} processed correctly or not
      */
-    TransactionResponse processTransaction(TransactionRequest request);
+    TransactionResponse processTransaction(LocalDate date, String fromAcc, String toAcc, String amount, String category, String memo, int id, boolean editing);
 
     /**
      * Updates {@link Account} balances

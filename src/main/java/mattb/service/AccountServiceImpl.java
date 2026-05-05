@@ -3,6 +3,7 @@ package mattb.service;
 import javafx.collections.ObservableList;
 import mattb.dao.AccountDAO;
 import mattb.model.Account;
+import mattb.model.AccountResponse;
 
 import java.util.Map;
 
@@ -27,31 +28,24 @@ public class AccountServiceImpl implements AccountService {
      * {@inheritDoc}
      */
     @Override
-    public Map<Integer, Account> getPagedAccounts(boolean onHidden, int perPage, int page) {
-        return accountDAO.getAllAccounts(onHidden, perPage, page);
-    }
+    public AccountResponse processAccount(String type, String balance, String name, int id, boolean isEditing) {
+        if (type == null || type.isBlank()) return new AccountResponse(false, "Please fill all required fields");
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public int getMaxPage(boolean onHidden, int perPage) {
-        int count = accountDAO.getAccountCount(onHidden);
-        return (int) Math.ceil(count / (double) perPage);
-    }
+        int typeId = accountDAO.getTypeId(type);
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public int getAccountIdFromMap(Account account, Map<Integer, Account> map) {
-        if (account == null || map == null) return -1;
-        for (Map.Entry<Integer, Account> entry : map.entrySet()) {
-            if (entry.getValue().equals(account)) {
-                return entry.getKey();
-            }
+        if (typeId == -1 || balance.isBlank() || name.isBlank()) {
+            return new AccountResponse(false, "Please fill all required fields");
         }
-        return -1;
+
+        double balanceValue = Double.parseDouble(balance);
+
+        if (isEditing) {
+            accountDAO.updateAccount(typeId, balanceValue, name, id);
+        } else {
+            accountDAO.insertAccount(typeId, balanceValue, name);
+        }
+
+        return new AccountResponse(true, "");
     }
 
     /**
@@ -59,6 +53,8 @@ public class AccountServiceImpl implements AccountService {
      */
     @Override
     public boolean toggleVisibility(Account account, Map<Integer, Account> currentMap, boolean currentState) {
+        if (account == null || currentMap == null) return false;
+
         int id = getAccountIdFromMap(account, currentMap);
 
         if (id != -1) {
@@ -73,41 +69,8 @@ public class AccountServiceImpl implements AccountService {
      * {@inheritDoc}
      */
     @Override
-    public ObservableList<String> getAccountTypes() {
-        return accountDAO.getAllTypes();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public int getTypeIdByName(String typeName) {
-        if (typeName == null || typeName.isBlank()) return -1;
-
-        return accountDAO.getTypeId(typeName);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void saveAccount(int typeId, double balance, String name, int id, boolean isEditing) {
-        if (isEditing) {
-            accountDAO.updateAccount(typeId, balance, name, id);
-        } else {
-            accountDAO.insertAccount(typeId, balance, name);
-        }
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public boolean saveAccountType(String type) {
-        if (type.isBlank()) return true;
-
-        accountDAO.saveAccountType(type);
-        return false;
+    public void updateBalances(double amount, int fromAccId, int toAccId) {
+        accountDAO.updateBalances(amount, fromAccId, toAccId);
     }
 
     /**
@@ -116,6 +79,14 @@ public class AccountServiceImpl implements AccountService {
     @Override
     public double getNetWorth() {
         return accountDAO.getNetWorth();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Map<Integer, Account> getPagedAccounts(boolean onHidden, int perPage, int page) {
+        return accountDAO.getAllAccounts(onHidden, perPage, page);
     }
 
     /**
@@ -148,7 +119,45 @@ public class AccountServiceImpl implements AccountService {
      * {@inheritDoc}
      */
     @Override
-    public void updateBalances(double amount, int fromAccId, int toAccId) {
-        accountDAO.updateBalances(amount, fromAccId, toAccId);
+    public int getAccountIdFromMap(Account account, Map<Integer, Account> map) {
+        if (account == null || map == null) return -1;
+
+        for (Map.Entry<Integer, Account> entry : map.entrySet()) {
+            if (entry.getValue().equals(account)) {
+                return entry.getKey();
+            }
+        }
+
+        return -1;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public int getMaxPage(boolean onHidden, int perPage) {
+        int count = accountDAO.getAccountCount(onHidden);
+
+        return (int) Math.ceil(count / (double) perPage);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean saveAccountType(String type) {
+        if (type.isBlank()) return false;
+
+        accountDAO.saveAccountType(type);
+
+        return true;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public ObservableList<String> getAccountTypes() {
+        return accountDAO.getAllTypes();
     }
 }

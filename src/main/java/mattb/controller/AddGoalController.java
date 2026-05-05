@@ -8,6 +8,7 @@ import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 import mattb.Main;
 import mattb.model.Goal;
+import mattb.model.GoalResponse;
 import mattb.service.AccountService;
 import mattb.service.GoalService;
 
@@ -53,13 +54,12 @@ public class AddGoalController {
      */
     @FXML
     private void save(ActionEvent event) {
-        int accId = accountService.getAccId(accountCombo.getValue());
-        if (accId == -1 || nameField.getText().isBlank() || targetField.getText().isBlank()) {
-            Main.showNotification(false, "Please fill all required fields");
+        GoalResponse response = goalService.saveGoal(accountCombo.getValue(), nameField.getText(), targetField.getText());
+
+        if (!response.success()) {
+            Main.showNotification(false, response.message());
             return;
         }
-
-        goalService.saveGoal(accId, nameField.getText(), Double.parseDouble(targetField.getText()));
 
         saveClicked = true;
         cancel(event);

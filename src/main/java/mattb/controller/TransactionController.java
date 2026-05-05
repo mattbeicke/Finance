@@ -122,21 +122,14 @@ public class TransactionController {
     @FXML
     private void hideSelected() {
         Transaction selected = transactionTable.getSelectionModel().getSelectedItem();
-        if (selected != null) {
-            if (transactionService.toggleVisibility(selected, map, onHidden)) {
-                if (onHidden) {
-                    Main.showNotification(true, "Transaction no longer hidden");
-                } else {
-                    Main.showNotification(true, "Transaction hidden");
-                }
-                updatePageInfo();
+
+        if (transactionService.toggleVisibility(selected, map, onHidden)) {
+            if (onHidden) {
+                Main.showNotification(true, "Transaction no longer hidden");
             } else {
-                if (onHidden) {
-                    Main.showNotification(false, "Failed to unhide transaction");
-                } else {
-                    Main.showNotification(false, "Failed to hide transaction");
-                }
+                Main.showNotification(true, "Transaction hidden");
             }
+            updatePageInfo();
         } else {
             Main.showNotification(false, "No transaction selected");
         }

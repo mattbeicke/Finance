@@ -87,7 +87,7 @@ public class Main extends Application {
             }
 
             accountService = new AccountServiceImpl(new AccountDAOImpl(conn));
-            goalService = new GoalServiceImpl(new GoalDAOImpl(conn));
+            goalService = new GoalServiceImpl(new GoalDAOImpl(conn), accountService);
             transactionService = new TransactionServiceImpl(new TransactionDAOImpl(conn), accountService);
 
             if (ensureDB()) {

@@ -16,7 +16,6 @@ import mattb.FinanceException;
 import mattb.Main;
 import mattb.model.Account;
 import mattb.model.Transaction;
-import mattb.model.TransactionRequest;
 import mattb.model.TransactionResponse;
 import mattb.service.AccountService;
 import mattb.service.TransactionService;
@@ -80,7 +79,7 @@ public class AddTransactionController {
      */
     @FXML
     private void onSave(ActionEvent event) {
-        TransactionResponse response = transactionService.processTransaction(new TransactionRequest(
+        TransactionResponse response = transactionService.processTransaction(
                 datePicker.getValue(),
                 fromCombo.getValue(),
                 toCombo.getValue(),
@@ -89,7 +88,7 @@ public class AddTransactionController {
                 memoField.getText(),
                 id,
                 editing
-        ));
+        );
 
         if (!response.success()) {
             Main.showNotification(false, response.message());

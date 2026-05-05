@@ -36,7 +36,7 @@ public class AddTypeController {
      */
     @FXML
     private void onTypeSave(ActionEvent event) {
-        if(accountService.saveAccountType(typeField.getText())){
+        if(!accountService.saveAccountType(typeField.getText())){
             Main.showNotification(false,"Type field must not be blank");
             return;
         }
