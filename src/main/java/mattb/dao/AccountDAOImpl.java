@@ -141,8 +141,7 @@ public class AccountDAOImpl implements AccountDAO {
         String sql = """
                 select acc_id, name, balance, type from account left join account_type on acc_type = type_id
                 where acc_id %s limit ? offset ?
-                """;
-        sql = sql.formatted(hidden ? "in (select acc_id from hidden_accounts)" : "not in (select acc_id from hidden_accounts union select 0)");
+                """.formatted(hidden ? "in (select acc_id from hidden_accounts)" : "not in (select acc_id from hidden_accounts union select 0)");
 
         try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setInt(1, perPage);

@@ -160,10 +160,6 @@ public enum FinanceError {
      */
     GET_CATEGORY_ID_FAIL("Error finding category id in database"),
     /**
-     * Error code for a failure to find an account balance in the database
-     */
-    GET_ACCOUNT_BALANCE_FAIL("Error finding account balance in database"),
-    /**
      * Error code for a failure to find account count from the database
      */
     GET_ACCOUNT_COUNT_FAIL("Error in finding account count in database"),

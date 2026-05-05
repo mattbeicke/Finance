@@ -23,14 +23,19 @@ import static mattb.FinanceError.OPEN_GOALS_LIST_FAILED;
 public class GoalListCellController extends ListCell<Goal> {
     private Node root;
     @FXML
+    @SuppressWarnings("unused")
     private Label goalName;
     @FXML
+    @SuppressWarnings("unused")
     private Label currentBalance;
     @FXML
+    @SuppressWarnings("unused")
     private ProgressBar progressBar;
     @FXML
+    @SuppressWarnings("unused")
     private Label goalTarget;
     @FXML
+    @SuppressWarnings("unused")
     private Label goalAccount;
 
     /**

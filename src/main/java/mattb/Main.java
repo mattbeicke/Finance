@@ -12,6 +12,7 @@ import mattb.controller.MainController;
 import java.io.IOException;
 import java.net.URL;
 import java.sql.Connection;
+import java.util.Arrays;
 
 import static mattb.FinanceError.OPEN_MAIN_FAILED;
 import static mattb.Utilities.darkMode;
@@ -55,7 +56,9 @@ public class Main extends Application {
                 }
                 cause = cause.getCause();
             }
-            throwable.printStackTrace();
+            if (throwable != null) {
+                System.err.println("Something went wrong" + Arrays.toString(throwable.getStackTrace()));
+            }
         });
 
         try {

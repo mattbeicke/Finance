@@ -29,7 +29,7 @@ public class ServiceFactory {
     private static TransactionService transactionService;
 
     /**
-     * Initializes database connection. Sets up service classes and DAO classes).
+     * Initializes database connection. Sets up service classes and DAO classes.
      * Sets up missing database tables (if there are any).
      * Initializes the tables with the required starting data (the {@code External} account and such)
      */
