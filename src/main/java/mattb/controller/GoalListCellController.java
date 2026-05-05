@@ -23,11 +23,15 @@ import static mattb.FinanceError.OPEN_GOALS_LIST_FAILED;
 public class GoalListCellController extends ListCell<Goal> {
     private Node root;
     @FXML
-    private Label goalNameAndCurrentBalance;
+    private Label goalName;
+    @FXML
+    private Label currentBalance;
     @FXML
     private ProgressBar progressBar;
     @FXML
-    private Label goalBalanceAndAccount;
+    private Label goalTarget;
+    @FXML
+    private Label goalAccount;
 
     /**
      * Initializes {@link FXML} items for the {@link Goal} {@link ListView List}
@@ -57,8 +61,11 @@ public class GoalListCellController extends ListCell<Goal> {
         if (empty || goal == null) {
             setGraphic(null);
         } else {
-            goalNameAndCurrentBalance.setText(goal.name() + " " + Main.formatDouble(goal.current()));
-            goalBalanceAndAccount.setText(Main.formatDouble(goal.target()));
+            goalName.setText(goal.name());
+            currentBalance.setText(Main.formatDouble(goal.current()));
+            goalTarget.setText(Main.formatDouble(goal.target()));
+            goalAccount.setText(goal.account());
+
             if (goal.current() <= goal.initial()) {
                 progressBar.setProgress(0);
             } else {

@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.control.ProgressBar?>
+<?import javafx.scene.control.*?>
 <?import javafx.scene.layout.HBox?>
 <HBox spacing="10" alignment="CENTER_LEFT" xmlns:fx="http://javafx.com">
-    <Label fx:id="goalNameAndCurrentBalance"/>
+    <Label fx:id="goalName" minWidth="200" prefWidth="200"/>
+    <Label fx:id="currentBalance" minWidth="100" prefWidth="100"/>
 
     <ProgressBar fx:id="progressBar" HBox.hgrow="ALWAYS" maxWidth="Infinity" progress="0.5"/>
 
-    <Label fx:id="goalBalanceAndAccount"/>
+    <Label fx:id="goalTarget" minWidth="100" prefWidth="100"/>
+    <Label fx:id="goalAccount" minWidth="200" prefWidth="200"/>
 </HBox>

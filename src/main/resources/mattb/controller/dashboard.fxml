@@ -6,7 +6,10 @@
             xmlns:fx="http://javafx.com/fxml"
             fx:controller="mattb.controller.DashboardController"
             prefHeight="750.0" prefWidth="1500.0">
-    <VBox BorderPane.alignment="CENTER">
+    <VBox AnchorPane.topAnchor="10.0"
+          AnchorPane.bottomAnchor="10.0"
+          AnchorPane.leftAnchor="10.0"
+          AnchorPane.rightAnchor="10.0">
         <HBox>
             <Button onAction="#createGoal">Create Goal</Button>
             <Button onAction="#viewGoalDetails">View Details</Button>
