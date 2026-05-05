@@ -1,7 +1,6 @@
 package mattb.dao;
 
 import mattb.FinanceException;
-import mattb.model.Account;
 import mattb.model.Goal;
 
 import java.sql.Connection;
@@ -34,50 +33,17 @@ public class GoalDAOImpl implements GoalDAO {
      */
     @Override
     public void saveGoal(int accId, String goalName, double target) {
-        Result r = getInitialBalance(accId);
-        if (!r.success()) return;
+        String sql = "insert into goal (acc_id, target, initial, name) select acc_id, ?, balance, ? from account where acc_id = ?";
 
-        String sql = "insert into goal (acc_id, target, initial, name) values (?, ?, ?, ?)";
         try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setInt(1, accId);
-            pstmt.setDouble(2, target);
-            pstmt.setDouble(3, r.balance());
-            pstmt.setString(4, goalName);
+            pstmt.setDouble(1, target);
+            pstmt.setString(2, goalName);
+            pstmt.setInt(3, accId);
+
             pstmt.executeUpdate();
-        } catch (SQLException ignored) {
+        } catch (SQLException e) {
             new FinanceException(SAVE_GOAL_FAIL).displayAndLog();
         }
-    }
-
-    /**
-     * Lets {@link #getInitialBalance(int)} return two things
-     *
-     * @param success If {@link #getInitialBalance(int)} was successful or not
-     * @param balance Initial balance of the {@link Account}
-     */
-    private record Result(boolean success, double balance) {
-    }
-
-    /**
-     * Gets the current ("initial") balance of an {@link Account}
-     *
-     * @param accId Database id of the {@link Account} to lookup balance for
-     * @return A {@link Result} object containing the success of this function ({@code true} for it being successful, {@code false} for it not)
-     * and what the "initial" balance is (if successful)
-     */
-    private Result getInitialBalance(int accId) {
-        String sql = "select balance from account where acc_id = ?";
-        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setInt(1, accId);
-            ResultSet rs = pstmt.executeQuery();
-
-            if (rs.next()) {
-                return new Result(true, rs.getInt("balance"));
-            }
-        } catch (SQLException ignored) {
-            new FinanceException(GET_ACCOUNT_BALANCE_FAIL).displayAndLog();
-        }
-        return new Result(false, 0);
     }
 
     /**

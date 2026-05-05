@@ -34,20 +34,30 @@ public class AccountDAOImpl implements AccountDAO {
      * {@inheritDoc}
      */
     @Override
-    public void saveAccount(int typeId, double balance, String name, int id, boolean editing) {
-        String sql;
-        if (editing) {
-            sql = "update account set acc_type = ?, balance = ?, name = ? where acc_id = ?";
-        } else {
-            sql = "insert or ignore into account (acc_type, balance, name) VALUES (?, ?, ?)";
-        }
+    public void insertAccount(int typeId, double balance, String name) {
+        String sql = "insert or ignore into account (acc_type, balance, name) VALUES (?, ?, ?)";
         try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setInt(1, typeId);
             pstmt.setDouble(2, balance);
             pstmt.setString(3, name);
-            if (editing) {
-                pstmt.setInt(4, id);
-            }
+
+            pstmt.executeUpdate();
+        } catch (SQLException ignored) {
+            new FinanceException(SAVE_ACCOUNT_FAIL).displayAndLog();
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void updateAccount(int typeId, double balance, String name, int id) {
+        String sql = "update account set acc_type = ?, balance = ?, name = ? where acc_id = ?";
+        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setInt(1, typeId);
+            pstmt.setDouble(2, balance);
+            pstmt.setString(3, name);
+            pstmt.setInt(4, id);
 
             pstmt.executeUpdate();
         } catch (SQLException ignored) {
@@ -128,13 +138,19 @@ public class AccountDAOImpl implements AccountDAO {
     public HashMap<Integer, Account> getAllAccounts(boolean hidden, int perPage, int page) {
         HashMap<Integer, Account> map = new HashMap<>();
 
-        try (PreparedStatement pstmt = conn.prepareStatement(getTableQuery(hidden, perPage, page)); ResultSet rs = pstmt.executeQuery()) {
+        String sql = """
+                select acc_id, name, balance, type from account left join account_type on acc_type = type_id
+                where acc_id %s limit ? offset ?
+                """;
+        sql = sql.formatted(hidden ? "in (select acc_id from hidden_accounts)" : "not in (select acc_id from hidden_accounts union select 0)");
+
+        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setInt(1, perPage);
+            pstmt.setInt(2, ((page - 1) * perPage));
+
+            ResultSet rs = pstmt.executeQuery();
             while (rs.next()) {
-                map.put(rs.getInt("acc_id"), new Account(
-                        rs.getDouble("balance"),
-                        rs.getString("type"),
-                        rs.getString("name")
-                ));
+                map.put(rs.getInt("acc_id"), new Account(rs.getDouble("balance"), rs.getString("type"), rs.getString("name")));
             }
         } catch (SQLException ignored) {
             new FinanceException(LOAD_ACCOUNTS_FAIL).displayAndLog();
@@ -204,8 +220,6 @@ public class AccountDAOImpl implements AccountDAO {
      */
     @Override
     public int getAccId(String accName) {
-        if (accName == null || accName.isBlank()) return -1;
-
         String sql = "select acc_id from account where name = ?";
         try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setString(1, accName);
@@ -275,23 +289,5 @@ public class AccountDAOImpl implements AccountDAO {
             new FinanceException(GET_ACCOUNT_TYPE_ID_FAIL).displayAndLog();
         }
         return -1;
-    }
-
-    /**
-     * Builds the database query for the {@link #getAllAccounts(boolean, int, int)} method
-     *
-     * @param hidden  Whether to get the hidden {@link Account Accounts} or non-hidden ones
-     * @param perPage Number of {@link Account Accounts} to get
-     * @param page    Offset of {@link Account Accounts} request
-     * @return The SQL query for the requesting method
-     */
-    private String getTableQuery(boolean hidden, int perPage, int page) {
-        String sql = """
-                select acc_id, name, balance, type from account
-                left join account_type on acc_type = type_id
-                where acc_id
-                """;
-        sql = sql + (hidden ? " in (select acc_id from hidden_accounts)" : " not in (select acc_id from hidden_accounts union select 0)");
-        return sql + " limit " + perPage + " offset " + ((page - 1) * perPage);
     }
 }

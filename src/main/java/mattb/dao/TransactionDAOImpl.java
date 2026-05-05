@@ -114,8 +114,6 @@ public class TransactionDAOImpl implements TransactionDAO {
      * {@inheritDoc}
      */
     public int findOrCreateCategory(String cat) {
-        if (cat == null || cat.isBlank()) return -1;
-
         String sql = "select cat_id from category where cat_name = ?";
         try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setString(1, cat);
@@ -200,9 +198,9 @@ public class TransactionDAOImpl implements TransactionDAO {
      */
     @Override
     public int getTransactionCount(boolean hidden) {
-        String sql = "select count(t_id) as num from \"transaction\" where t_id" + (hidden ? " in (select t_id from hidden_transactions)" : " not in (select t_id from hidden_transactions)");
+        String sql = "select count(t_id) as num from \"transaction\" where t_id %s (select t_id from hidden_transactions)";
 
-        try (PreparedStatement pstmt = conn.prepareStatement(sql); ResultSet rs = pstmt.executeQuery()) {
+        try (PreparedStatement pstmt = conn.prepareStatement(sql.formatted(hidden ? "in" : "not in")); ResultSet rs = pstmt.executeQuery()) {
             if (rs.next()) {
                 return rs.getInt("num");
             }

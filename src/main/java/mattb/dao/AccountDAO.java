@@ -12,15 +12,23 @@ import java.util.HashMap;
  */
 public interface AccountDAO {
     /**
-     * Saves an {@link Account} to the database or updates one that is there already
+     * Saves an {@link Account} to the database
+     *
+     * @param typeId  Database id of the {@link Account account's} {@code type}
+     * @param balance Balance of {@link Account}
+     * @param name    Name of {@link Account}
+     */
+    void insertAccount(int typeId, double balance, String name);
+
+    /**
+     * Update an {@link Account} that is in the database
      *
      * @param typeId  Database id of the {@link Account account's} {@code type}
      * @param balance Balance of {@link Account}
      * @param name    Name of {@link Account}
      * @param id      Database id of account (only used if {@code editing})
-     * @param editing Whether we are editing ({@code true}) or saving new ({@code false})
      */
-    void saveAccount(int typeId, double balance, String name, int id, boolean editing);
+    void updateAccount(int typeId, double balance, String name, int id);
 
     /**
      * Changes {@link Account} with given {@code accountId} to the status of {@code hidden}

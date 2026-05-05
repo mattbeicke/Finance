@@ -32,6 +32,7 @@ import static mattb.FinanceError.*;
 
 /**
  * Entrypoint into the program. Does all the setup (database connection, exception handling, etc.).
+ * Additionally, it has a bunch of widely used helper functions.
  *
  * @author Matthew Beicke
  */

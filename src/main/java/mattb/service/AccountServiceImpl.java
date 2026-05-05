@@ -83,6 +83,7 @@ public class AccountServiceImpl implements AccountService {
     @Override
     public int getTypeIdByName(String typeName) {
         if (typeName == null || typeName.isBlank()) return -1;
+
         return accountDAO.getTypeId(typeName);
     }
 
@@ -91,7 +92,11 @@ public class AccountServiceImpl implements AccountService {
      */
     @Override
     public void saveAccount(int typeId, double balance, String name, int id, boolean isEditing) {
-        accountDAO.saveAccount(typeId, balance, name, id, isEditing);
+        if (isEditing) {
+            accountDAO.updateAccount(typeId, balance, name, id);
+        } else {
+            accountDAO.insertAccount(typeId, balance, name);
+        }
     }
 
     /**

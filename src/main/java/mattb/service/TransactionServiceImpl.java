@@ -66,6 +66,7 @@ public class TransactionServiceImpl implements TransactionService {
         if (request.category() != null && !request.category().isBlank()) {
             String[] categories = request.category().split(",\\s*");
             for (String cat : categories) {
+                if(cat == null || cat.isBlank()) continue;
                 int catId = transactionDAO.findOrCreateCategory(cat);
                 if (catId == -1) continue;
                 transactionDAO.linkTransactionCategory(t_id, catId);
