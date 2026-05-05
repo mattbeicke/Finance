@@ -40,7 +40,7 @@ public interface TransactionDAO {
      * Changes {@link Transaction} with given {@code transactionId} to the status of {@code hidden}
      *
      * @param transactionId Database id of {@link Transaction} to update
-     * @param hidden        Whether to set {@link Transaction} to hidden (if true) or unhidden (if false)
+     * @param hidden        Whether to set {@link Transaction} to hidden (if true) or non-hidden (if false)
      */
     void updateTransactionVisibility(int transactionId, boolean hidden);
 
@@ -68,10 +68,10 @@ public interface TransactionDAO {
     void clearCategoriesForTransaction(int t_id);
 
     /**
-     * Gets list of all unhidden {@link Transaction transactions} (if {@code hidden} is false) or
+     * Gets list of all non-hidden {@link Transaction transactions} (if {@code hidden} is false) or
      * gets list of all hidden {@link Transaction transactions} (if {@code hidden} is true)
      *
-     * @param hidden  Whether to get the hidden or unhidden {@link Transaction transactions}
+     * @param hidden  Whether to get the hidden or non-hidden {@link Transaction transactions}
      * @param perPage Number of {@link Transaction transactions} to get
      * @param page    Offset of {@link Transaction transactions} request
      * @return A map of all requested {@link Transaction Transactions}. The {@link Transaction} id as key and the object itself as value
@@ -81,8 +81,8 @@ public interface TransactionDAO {
     /**
      * Gets the number of {@link Transaction transactions} in the database
      *
-     * @param hidden Whether to get the hidden or unhidden {@link Transaction transactions}
-     * @return Number of hidden or unhidden {@link Transaction transactions} in the database or -1 if none found
+     * @param hidden Whether to get the hidden or non-hidden {@link Transaction transactions}
+     * @return Number of hidden or non-hidden {@link Transaction transactions} in the database or -1 if none found
      */
     int getTransactionCount(boolean hidden);
 }

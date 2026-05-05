@@ -125,7 +125,7 @@ public class TransactionController {
         if (selected != null) {
             if (transactionService.toggleVisibility(selected, map, onHidden)) {
                 if (onHidden) {
-                    Main.showNotification(true, "Transaction unhidden");
+                    Main.showNotification(true, "Transaction no longer hidden");
                 } else {
                     Main.showNotification(true, "Transaction hidden");
                 }

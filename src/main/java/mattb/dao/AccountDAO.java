@@ -26,7 +26,7 @@ public interface AccountDAO {
      * Changes {@link Account} with given {@code accountId} to the status of {@code hidden}
      *
      * @param accountId Database id of {@link Account} to update
-     * @param hidden    Whether to set {@link Account} to hidden (if true) or unhidden (if false)
+     * @param hidden    Whether to set {@link Account} to hidden (if true) or non-hidden (if false)
      */
     void updateAccountVisibility(int accountId, boolean hidden);
 
@@ -47,10 +47,10 @@ public interface AccountDAO {
     double getNetWorth();
 
     /**
-     * Gets list of all unhidden {@link Account accounts} (if {@code hidden} is false) or
+     * Gets list of all non-hidden {@link Account accounts} (if {@code hidden} is false) or
      * gets list of all hidden {@link Account accounts} (if {@code hidden} is true)
      *
-     * @param hidden  Whether to get the hidden or unhidden {@link Account accounts}
+     * @param hidden  Whether to get the hidden or non-hidden {@link Account accounts}
      * @param perPage Number of {@link Account accounts} to get
      * @param page    Offset of {@link Account} request
      * @return A map of all requested {@link Account Accounts}. The {@link Account} id as key and the object itself as value
@@ -74,8 +74,8 @@ public interface AccountDAO {
     /**
      * Gets the number of {@link Account accounts} in the database
      *
-     * @param hidden Whether to get the hidden or unhidden {@link Account accounts}
-     * @return Number of hidden or unhidden {@link Account accounts} in the database or -1 if none found
+     * @param hidden Whether to get the hidden or non-hidden {@link Account accounts}
+     * @return Number of hidden or non-hidden {@link Account accounts} in the database or -1 if none found
      */
     int getAccountCount(boolean hidden);
 

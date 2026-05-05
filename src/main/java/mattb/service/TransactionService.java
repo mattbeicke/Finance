@@ -42,10 +42,10 @@ public interface TransactionService {
     boolean toggleVisibility(Transaction transaction, Map<Integer, Transaction> currentMap, boolean currentState);
 
     /**
-     * Gets list of all unhidden {@link Transaction transactions} (if {@code hidden} is false) or
+     * Gets list of all non-hidden {@link Transaction transactions} (if {@code hidden} is false) or
      * gets list of all hidden {@link Transaction transactions} (if {@code hidden} is true)
      *
-     * @param onHidden Whether to get the hidden or unhidden {@link Transaction transactions}
+     * @param onHidden Whether to get the hidden or non-hidden {@link Transaction transactions}
      * @param perPage  Number of {@link Transaction transactions} to get
      * @param page     Offset of {@link Transaction transactions} request
      * @return A map of all requested {@link Transaction Transactions}. The {@link Transaction} id as key and the object itself as value
@@ -64,7 +64,7 @@ public interface TransactionService {
     /**
      * Computes the max page of the {@link Transaction} table
      *
-     * @param onHidden Whether we are currently looking at hidden or unhidden {@link Transaction Transactions}
+     * @param onHidden Whether we are currently looking at hidden or non-hidden {@link Transaction Transactions}
      * @param perPage  How many {@link Transaction Transactions} should be displayed per page
      * @return The max page number of the {@link Transaction} table
      */

@@ -49,10 +49,10 @@ public interface AccountService {
     double getNetWorth();
 
     /**
-     * Gets list of all unhidden {@link Account accounts} (if {@code hidden} is false) or
+     * Gets list of all non-hidden {@link Account accounts} (if {@code hidden} is false) or
      * gets list of all hidden {@link Account accounts} (if {@code hidden} is true)
      *
-     * @param onHidden Whether to get the hidden or unhidden {@link Account accounts}
+     * @param onHidden Whether to get the hidden or non-hidden {@link Account accounts}
      * @param perPage  Number of {@link Account accounts} to get
      * @param page     Offset of {@link Account} request
      * @return A map of all requested {@link Account Accounts}. The {@link Account} id as key and the object itself as value
@@ -93,7 +93,7 @@ public interface AccountService {
     /**
      * Computes the max page of the {@link Account} table
      *
-     * @param onHidden Whether we are currently looking at hidden or unhidden {@link Account Accounts}
+     * @param onHidden Whether we are currently looking at hidden or non-hidden {@link Account Accounts}
      * @param perPage  How many {@link Account Accounts} should be displayed per page
      * @return The max page number of the {@link Account} table
      */
