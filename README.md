@@ -323,10 +323,11 @@ src/
     │       │
     │       ├── model/                   # Data models (records)
     │       │   ├── Account.java
+    │       │   ├── AccountResponse.java
     │       │   ├── Goal.java
+    │       │   ├── GoalResponse.java
     │       │   ├── Transaction.java
-    │       │   ├── TransactionResponse.java
-    │       │   └── TransactionRequest.java
+    │       │   └── TransactionResponse.java
     │       │
     │       └── service/                   # Business logic handling
     │           ├── AccountService.java
