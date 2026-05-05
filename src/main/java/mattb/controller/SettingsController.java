@@ -6,7 +6,7 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.TextField;
 import mattb.Config;
 import mattb.FinanceException;
-import mattb.Main;
+import mattb.Utilities;
 
 import java.net.URL;
 
@@ -53,13 +53,13 @@ public class SettingsController {
     @FXML
     private void save() {
         if (numTransactions.getText().isBlank() || numAccounts.getText().isBlank()) {
-            Main.showNotification(false, "Please fill all settings before saving");
+            Utilities.showNotification(false, "Please fill all settings before saving");
             return;
         }
 
         Config.save(Integer.parseInt(numTransactions.getText()), Integer.parseInt(numAccounts.getText()), darkMode.isSelected());
 
-        Main.showNotification(true, "Settings saved");
+        Utilities.showNotification(true, "Settings saved");
 
         Scene scene = darkMode.getScene();
 

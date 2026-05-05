@@ -6,7 +6,8 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
-import mattb.Main;
+import mattb.ServiceFactory;
+import mattb.Utilities;
 import mattb.model.Goal;
 import mattb.service.GoalService;
 
@@ -35,7 +36,7 @@ public class ViewGoalDetailsController {
      */
     @FXML
     private void initialize() {
-        goalService = Main.getGoalService();
+        goalService = ServiceFactory.getGoalService();
 
         targetField.textProperty().addListener((_, oldVal, newVal) -> {
             if (!newVal.matches("\\d*(\\.\\d*)?")) {
@@ -68,7 +69,7 @@ public class ViewGoalDetailsController {
             saveClicked = true;
             cancel(event);
         } else {
-            Main.showNotification(false, "Please fill all required fields");
+            Utilities.showNotification(false, "Please fill all required fields");
         }
     }
 

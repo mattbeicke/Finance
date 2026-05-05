@@ -15,7 +15,8 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import mattb.Config;
 import mattb.FinanceException;
-import mattb.Main;
+import mattb.ServiceFactory;
+import mattb.Utilities;
 import mattb.model.Account;
 import mattb.service.AccountService;
 
@@ -68,7 +69,7 @@ public class AccountController {
      */
     @FXML
     public void initialize() {
-        accountService = Main.getAccountService();
+        accountService = ServiceFactory.getAccountService();
 
         colName.setCellValueFactory(cellData ->
                 new ReadOnlyObjectWrapper<>(cellData.getValue().name())
@@ -80,7 +81,7 @@ public class AccountController {
                 new ReadOnlyObjectWrapper<>(cellData.getValue().type())
         );
 
-        Main.useCurrency(colBalance);
+        Utilities.useCurrency(colBalance);
 
         accountTable.setItems(masterData);
 
@@ -106,13 +107,13 @@ public class AccountController {
 
         if (accountService.toggleVisibility(selected, map, onHidden)) {
             if (onHidden) {
-                Main.showNotification(true, "Account no longer hidden");
+                Utilities.showNotification(true, "Account no longer hidden");
             } else {
-                Main.showNotification(true, "Account hidden");
+                Utilities.showNotification(true, "Account hidden");
             }
             updatePageInfo();
         } else {
-            Main.showNotification(false, "No account selected");
+            Utilities.showNotification(false, "No account selected");
         }
     }
 
@@ -159,12 +160,12 @@ public class AccountController {
             stage.initModality(Modality.APPLICATION_MODAL);
             stage.setTitle("Add New Account");
             Scene scene = new Scene(root);
-            Main.darkMode(scene);
+            Utilities.darkMode(scene);
             stage.setScene(scene);
             stage.showAndWait();
 
             if (controller.isSaveClicked()) {
-                Main.showNotification(true, "Account Created");
+                Utilities.showNotification(true, "Account Created");
             }
 
             updatePageInfo();
@@ -193,12 +194,12 @@ public class AccountController {
             stage.initModality(Modality.APPLICATION_MODAL);
             stage.setTitle("Add New Account Type");
             Scene scene = new Scene(root);
-            Main.darkMode(scene);
+            Utilities.darkMode(scene);
             stage.setScene(scene);
             stage.showAndWait();
 
             if (controller.isSaveClicked()) {
-                Main.showNotification(true, "Account Type Created");
+                Utilities.showNotification(true, "Account Type Created");
             }
         } catch (IOException ignored) {
             new FinanceException(OPEN_NEW_TYPE_MODAL_FAIL).displayAndLog();
@@ -213,7 +214,7 @@ public class AccountController {
         Account selected = accountTable.getSelectionModel().getSelectedItem();
         int id = accountService.getAccountIdFromMap(selected, map);
         if (id == -1) {
-            Main.showNotification(false, "No account selected");
+            Utilities.showNotification(false, "No account selected");
             return;
         }
 
@@ -234,12 +235,12 @@ public class AccountController {
             stage.initModality(Modality.APPLICATION_MODAL);
             stage.setTitle("Edit Transaction");
             Scene scene = new Scene(root);
-            Main.darkMode(scene);
+            Utilities.darkMode(scene);
             stage.setScene(scene);
             stage.showAndWait();
 
             if (controller.isSaveClicked()) {
-                Main.showNotification(true, "Account Updated");
+                Utilities.showNotification(true, "Account Updated");
             }
 
             refreshTable();

@@ -15,7 +15,8 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import mattb.Config;
 import mattb.FinanceException;
-import mattb.Main;
+import mattb.ServiceFactory;
+import mattb.Utilities;
 import mattb.model.Transaction;
 import mattb.service.TransactionService;
 
@@ -74,7 +75,7 @@ public class TransactionController {
      */
     @FXML
     public void initialize() {
-        transactionService = Main.getTransactionService();
+        transactionService = ServiceFactory.getTransactionService();
 
         colDate.setCellValueFactory(cellData ->
                 new ReadOnlyObjectWrapper<>(cellData.getValue().date())
@@ -95,7 +96,7 @@ public class TransactionController {
                 new ReadOnlyObjectWrapper<>(cellData.getValue().memo())
         );
 
-        Main.useCurrency(colAmount);
+        Utilities.useCurrency(colAmount);
 
         transactionTable.setItems(masterData);
         colDate.setSortType(TableColumn.SortType.DESCENDING);
@@ -125,13 +126,13 @@ public class TransactionController {
 
         if (transactionService.toggleVisibility(selected, map, onHidden)) {
             if (onHidden) {
-                Main.showNotification(true, "Transaction no longer hidden");
+                Utilities.showNotification(true, "Transaction no longer hidden");
             } else {
-                Main.showNotification(true, "Transaction hidden");
+                Utilities.showNotification(true, "Transaction hidden");
             }
             updatePageInfo();
         } else {
-            Main.showNotification(false, "No transaction selected");
+            Utilities.showNotification(false, "No transaction selected");
         }
     }
 
@@ -178,12 +179,12 @@ public class TransactionController {
             stage.initModality(Modality.APPLICATION_MODAL);
             stage.setTitle("Add New Transaction");
             Scene scene = new Scene(root);
-            Main.darkMode(scene);
+            Utilities.darkMode(scene);
             stage.setScene(scene);
             stage.showAndWait();
 
             if (controller.isSaveClicked()) {
-                Main.showNotification(true, "Transaction Created");
+                Utilities.showNotification(true, "Transaction Created");
             }
 
             updatePageInfo();
@@ -200,7 +201,7 @@ public class TransactionController {
         Transaction selected = transactionTable.getSelectionModel().getSelectedItem();
         int id = transactionService.getTransactionIdFromMap(selected, map);
         if (id == -1) {
-            Main.showNotification(false, "No transaction selected");
+            Utilities.showNotification(false, "No transaction selected");
             return;
         }
 
@@ -220,12 +221,12 @@ public class TransactionController {
             stage.initModality(Modality.APPLICATION_MODAL);
             stage.setTitle("Edit Transaction");
             Scene scene = new Scene(root);
-            Main.darkMode(scene);
+            Utilities.darkMode(scene);
             stage.setScene(scene);
             stage.showAndWait();
 
             if (controller.isSaveClicked()) {
-                Main.showNotification(true, "Transaction Updated");
+                Utilities.showNotification(true, "Transaction Updated");
             }
 
             refreshTable();

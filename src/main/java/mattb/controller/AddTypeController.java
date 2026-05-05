@@ -5,7 +5,8 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
-import mattb.Main;
+import mattb.ServiceFactory;
+import mattb.Utilities;
 import mattb.service.AccountService;
 
 /**
@@ -26,7 +27,7 @@ public class AddTypeController {
      */
     @FXML
     public void initialize() {
-        accountService = Main.getAccountService();
+        accountService = ServiceFactory.getAccountService();
     }
 
     /**
@@ -36,8 +37,8 @@ public class AddTypeController {
      */
     @FXML
     private void onTypeSave(ActionEvent event) {
-        if(!accountService.saveAccountType(typeField.getText())){
-            Main.showNotification(false,"Type field must not be blank");
+        if (!accountService.saveAccountType(typeField.getText())) {
+            Utilities.showNotification(false, "Type field must not be blank");
             return;
         }
 

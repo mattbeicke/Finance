@@ -8,7 +8,7 @@ import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.control.ProgressBar;
 import mattb.FinanceException;
-import mattb.Main;
+import mattb.Utilities;
 import mattb.model.Goal;
 
 import java.io.IOException;
@@ -62,8 +62,8 @@ public class GoalListCellController extends ListCell<Goal> {
             setGraphic(null);
         } else {
             goalName.setText(goal.name());
-            currentBalance.setText(Main.formatDouble(goal.current()));
-            goalTarget.setText(Main.formatDouble(goal.target()));
+            currentBalance.setText(Utilities.formatDouble(goal.current()));
+            goalTarget.setText(Utilities.formatDouble(goal.target()));
             goalAccount.setText(goal.account());
 
             if (goal.current() <= goal.initial()) {

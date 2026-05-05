@@ -299,6 +299,8 @@ src/
     │       ├── FinanceException.java    # Custom runtime exception
     │       ├── Launcher.java            # JAR entry point
     │       ├── Main.java                # JavaFX application entry
+    │       ├── ServiceFactory.java      # Set up of the Connection, the Services, and the DAOs
+    │       ├── Utilities.java           # Commonly used functions
     │       │
     │       ├── controllers/             # UI logic (JavaFX controllers)
     │       │   ├── AccountController.java

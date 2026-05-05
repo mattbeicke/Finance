@@ -6,7 +6,8 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
-import mattb.Main;
+import mattb.ServiceFactory;
+import mattb.Utilities;
 import mattb.model.Account;
 import mattb.model.AccountResponse;
 import mattb.service.AccountService;
@@ -35,7 +36,7 @@ public class AddAccountController {
      */
     @FXML
     public void initialize() {
-        accountService = Main.getAccountService();
+        accountService = ServiceFactory.getAccountService();
 
         typeCombo.setItems(accountService.getAccountTypes());
 
@@ -56,7 +57,7 @@ public class AddAccountController {
         AccountResponse response = accountService.processAccount(typeCombo.getValue(), balanceField.getText(), nameField.getText(), id, editing);
 
         if (!response.success()) {
-            Main.showNotification(false, response.message());
+            Utilities.showNotification(false, response.message());
             return;
         }
 

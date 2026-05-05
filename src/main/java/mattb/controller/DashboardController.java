@@ -11,7 +11,8 @@ import javafx.scene.control.ListView;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import mattb.FinanceException;
-import mattb.Main;
+import mattb.ServiceFactory;
+import mattb.Utilities;
 import mattb.model.Goal;
 import mattb.service.AccountService;
 import mattb.service.GoalService;
@@ -47,15 +48,15 @@ public class DashboardController {
      */
     @FXML
     private void initialize() {
-        accountService = Main.getAccountService();
-        goalService = Main.getGoalService();
+        accountService = ServiceFactory.getAccountService();
+        goalService = ServiceFactory.getGoalService();
 
         goalList.setCellFactory(_ -> new GoalListCellController());
 
         goalList.setItems(goals);
         refreshList();
 
-        netWorth.setText(Main.formatDouble(accountService.getNetWorth()));
+        netWorth.setText(Utilities.formatDouble(accountService.getNetWorth()));
     }
 
     /**
@@ -92,12 +93,12 @@ public class DashboardController {
             stage.initModality(Modality.APPLICATION_MODAL);
             stage.setTitle("Add New Goal");
             Scene scene = new Scene(root);
-            Main.darkMode(scene);
+            Utilities.darkMode(scene);
             stage.setScene(scene);
             stage.showAndWait();
 
             if (controller.isSaveClicked()) {
-                Main.showNotification(true, "Goal Created");
+                Utilities.showNotification(true, "Goal Created");
             }
 
             refreshList();
@@ -114,7 +115,7 @@ public class DashboardController {
         Goal selected = goalList.getSelectionModel().getSelectedItem();
         int id = goalService.getGoalIdFromMap(selected, map);
         if (id == -1) {
-            Main.showNotification(false,"No goal selected");
+            Utilities.showNotification(false, "No goal selected");
             return;
         }
 
@@ -135,14 +136,14 @@ public class DashboardController {
             stage.initModality(Modality.APPLICATION_MODAL);
             stage.setTitle("View Goal Details");
             Scene scene = new Scene(root);
-            Main.darkMode(scene);
+            Utilities.darkMode(scene);
             stage.setScene(scene);
             stage.showAndWait();
 
             if (controller.isSaveClicked()) {
-                Main.showNotification(true, "Goal Updated");
+                Utilities.showNotification(true, "Goal Updated");
             } else if (controller.isDeleteClicked()) {
-                Main.showNotification(true, "Goal Deleted");
+                Utilities.showNotification(true, "Goal Deleted");
             }
 
             refreshList();

@@ -6,7 +6,8 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
-import mattb.Main;
+import mattb.ServiceFactory;
+import mattb.Utilities;
 import mattb.model.Goal;
 import mattb.model.GoalResponse;
 import mattb.service.AccountService;
@@ -35,8 +36,8 @@ public class AddGoalController {
      */
     @FXML
     private void initialize() {
-        goalService = Main.getGoalService();
-        accountService = Main.getAccountService();
+        goalService = ServiceFactory.getGoalService();
+        accountService = ServiceFactory.getAccountService();
 
         accountCombo.setItems(accountService.getAccountNames());
 
@@ -57,7 +58,7 @@ public class AddGoalController {
         GoalResponse response = goalService.saveGoal(accountCombo.getValue(), nameField.getText(), targetField.getText());
 
         if (!response.success()) {
-            Main.showNotification(false, response.message());
+            Utilities.showNotification(false, response.message());
             return;
         }
 

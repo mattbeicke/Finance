@@ -13,7 +13,8 @@ import javafx.scene.control.TextField;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import mattb.FinanceException;
-import mattb.Main;
+import mattb.ServiceFactory;
+import mattb.Utilities;
 import mattb.model.Account;
 import mattb.model.Transaction;
 import mattb.model.TransactionResponse;
@@ -58,8 +59,8 @@ public class AddTransactionController {
      */
     @FXML
     public void initialize() {
-        transactionService = Main.getTransactionService();
-        accountService = Main.getAccountService();
+        transactionService = ServiceFactory.getTransactionService();
+        accountService = ServiceFactory.getAccountService();
 
         ObservableList<String> accountNames = accountService.getAccountNamesExternal();
         fromCombo.setItems(accountNames);
@@ -91,13 +92,13 @@ public class AddTransactionController {
         );
 
         if (!response.success()) {
-            Main.showNotification(false, response.message());
+            Utilities.showNotification(false, response.message());
             return;
         }
 
         if (response.requiresBalanceConfirmation() && promptForBalanceUpdate()) {
             if (!transactionService.updateBalances(fromCombo.getValue(), toCombo.getValue(), amountField.getText())) {
-                Main.showNotification(false, "Balances failed to update");
+                Utilities.showNotification(false, "Balances failed to update");
             }
         }
 
@@ -127,7 +128,7 @@ public class AddTransactionController {
             stage.initModality(Modality.APPLICATION_MODAL);
             stage.setTitle("Update Balances");
             Scene scene = new Scene(root);
-            Main.darkMode(scene);
+            Utilities.darkMode(scene);
             stage.setScene(scene);
             stage.showAndWait();
 
