@@ -27,8 +27,9 @@ public interface TransactionService {
      * @param transaction  {@link Transaction} to update
      * @param currentMap   {@link Map} containing all currently loaded {@link Transaction Transactions}
      * @param currentState What to set the transaction to (in terms of visibility)
+     * @return {@code true} if successful, {@code false} if not
      */
-    void toggleVisibility(Transaction transaction, Map<Integer, Transaction> currentMap, boolean currentState);
+    boolean toggleVisibility(Transaction transaction, Map<Integer, Transaction> currentMap, boolean currentState);
 
     /**
      * Gets list of all unhidden {@link Transaction transactions} (if {@code hidden} is false) or

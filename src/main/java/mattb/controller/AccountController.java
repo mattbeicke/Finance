@@ -103,9 +103,16 @@ public class AccountController {
     @FXML
     private void hideAccount() {
         Account selected = accountTable.getSelectionModel().getSelectedItem();
+
         if (selected != null) {
-            accountService.toggleVisibility(selected, map, onHidden);
-            updatePageInfo();
+            if (accountService.toggleVisibility(selected, map, onHidden)) {
+                Main.showNotification(true, "Account hidden");
+                updatePageInfo();
+            } else {
+                Main.showNotification(false, "Failed to hide account");
+            }
+        } else {
+            Main.showNotification(false, "No account selected");
         }
     }
 
@@ -150,6 +157,8 @@ public class AccountController {
             FXMLLoader loader = new FXMLLoader(resource);
             Parent root = loader.load();
 
+            AddAccountController controller = loader.getController();
+
             Stage stage = new Stage();
             stage.initModality(Modality.APPLICATION_MODAL);
             stage.setTitle("Add New Account");
@@ -157,6 +166,10 @@ public class AccountController {
             Main.darkMode(scene);
             stage.setScene(scene);
             stage.showAndWait();
+
+            if (controller.isSaveClicked()) {
+                Main.showNotification(true, "Account Created");
+            }
 
             updatePageInfo();
         } catch (IOException ignored) {
@@ -178,13 +191,19 @@ public class AccountController {
             FXMLLoader loader = new FXMLLoader(resource);
             Parent root = loader.load();
 
+            AddTypeController controller = loader.getController();
+
             Stage stage = new Stage();
             stage.initModality(Modality.APPLICATION_MODAL);
             stage.setTitle("Add New Account Type");
             Scene scene = new Scene(root);
             Main.darkMode(scene);
             stage.setScene(scene);
-            stage.show();
+            stage.showAndWait();
+
+            if (controller.isSaveClicked()) {
+                Main.showNotification(true, "Account Type Created");
+            }
         } catch (IOException ignored) {
             new FinanceException(OPEN_NEW_TYPE_MODAL_FAIL).displayAndLog();
         }
@@ -219,6 +238,10 @@ public class AccountController {
             Main.darkMode(scene);
             stage.setScene(scene);
             stage.showAndWait();
+
+            if (controller.isSaveClicked()) {
+                Main.showNotification(true, "Account Updated");
+            }
 
             refreshTable();
         } catch (IOException ignored) {

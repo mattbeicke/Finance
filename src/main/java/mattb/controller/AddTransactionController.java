@@ -52,6 +52,7 @@ public class AddTransactionController {
     private boolean editing;
     private int id;
     private boolean update = false;
+    private boolean saveClicked = false;
 
     /**
      * Initializes {@link FXML} items for the {@code Add New Transaction} modal
@@ -82,7 +83,10 @@ public class AddTransactionController {
         int fromAccId = accountService.getAccId(fromCombo.getValue());
         int toAccId = accountService.getAccId(toCombo.getValue());
 
-        if (isInvalid(fromAccId, toAccId)) return;
+        if (isInvalid(fromAccId, toAccId)) {
+            Main.showNotification(false, "Please fill all required fields");
+            return;
+        }
 
         transactionService.processFullTransaction(new TransactionRequest(
                 datePicker.getValue(),
@@ -95,6 +99,7 @@ public class AddTransactionController {
                 editing
         ), promptForBalanceUpdate());
 
+        saveClicked = true;
         cancel(event);
     }
 
@@ -204,5 +209,14 @@ public class AddTransactionController {
     private void no(ActionEvent event) {
         update = false;
         cancel(event);
+    }
+
+    /**
+     * Gets the status on if the save button was pressed or cancel button was pressed
+     *
+     * @return {@code true} if the save button was pressed, {@code false} if not
+     */
+    public boolean isSaveClicked() {
+        return saveClicked;
     }
 }

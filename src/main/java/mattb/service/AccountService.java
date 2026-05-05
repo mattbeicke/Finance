@@ -28,8 +28,9 @@ public interface AccountService {
      * @param account      {@link Account} to update
      * @param currentMap   {@link Map} containing all currently loaded {@link Account Accounts}
      * @param currentState What to set the transaction to (in terms of visibility)
+     * @return {@code true} if successful, {@code false} if not
      */
-    void toggleVisibility(Account account, Map<Integer, Account> currentMap, boolean currentState);
+    boolean toggleVisibility(Account account, Map<Integer, Account> currentMap, boolean currentState);
 
     /**
      * Updates {@link Account} balances (if they are not {@code External})
@@ -95,8 +96,9 @@ public interface AccountService {
      * Saves new {@code account type} to database
      *
      * @param type Name of the new {@code type} to save
+     * @return {@code true} if something went wrong, {@code false} if something did not
      */
-    void saveAccountType(String type);
+    boolean saveAccountType(String type);
 
     /**
      * Gets a list of all (non-{@code External} Account Types)

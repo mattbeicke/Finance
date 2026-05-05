@@ -44,11 +44,13 @@ public class TransactionServiceImpl implements TransactionService {
      * {@inheritDoc}
      */
     @Override
-    public void toggleVisibility(Transaction transaction, Map<Integer, Transaction> currentMap, boolean currentState) {
+    public boolean toggleVisibility(Transaction transaction, Map<Integer, Transaction> currentMap, boolean currentState) {
         int id = getTransactionIdFromMap(transaction, currentMap);
         if (id != -1) {
             transactionDAO.updateTransactionVisibility(id, currentState);
+            return true;
         }
+        return false;
     }
 
     /**

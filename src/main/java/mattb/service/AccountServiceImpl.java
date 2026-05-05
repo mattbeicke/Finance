@@ -58,11 +58,15 @@ public class AccountServiceImpl implements AccountService {
      * {@inheritDoc}
      */
     @Override
-    public void toggleVisibility(Account account, Map<Integer, Account> currentMap, boolean currentState) {
+    public boolean toggleVisibility(Account account, Map<Integer, Account> currentMap, boolean currentState) {
         int id = getAccountIdFromMap(account, currentMap);
+
         if (id != -1) {
             accountDAO.updateAccountVisibility(id, currentState);
+            return true;
         }
+
+        return false;
     }
 
     /**
@@ -94,10 +98,11 @@ public class AccountServiceImpl implements AccountService {
      * {@inheritDoc}
      */
     @Override
-    public void saveAccountType(String type) {
-        if (type.isBlank()) return;
+    public boolean saveAccountType(String type) {
+        if (type.isBlank()) return true;
 
         accountDAO.saveAccountType(type);
+        return false;
     }
 
     /**

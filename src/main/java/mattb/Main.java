@@ -14,6 +14,7 @@ import mattb.dao.AccountDAOImpl;
 import mattb.dao.GoalDAOImpl;
 import mattb.dao.TransactionDAOImpl;
 import mattb.service.*;
+import org.controlsfx.control.Notifications;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -233,5 +234,23 @@ public class Main extends Application {
      */
     public static TransactionService getTransactionService() {
         return transactionService;
+    }
+
+    /**
+     * Displays a notification message depending on if something succeeded or not
+     * @param success
+     * @param message
+     */
+    public static void showNotification(boolean success, String message) {
+        Notifications notif = Notifications.create();
+
+        notif.title(success ? "Success" : "Failure");
+        notif.text(message);
+
+        if (Config.getDarkMode()) {
+            notif.darkStyle();
+        }
+
+        notif.showInformation();
     }
 }

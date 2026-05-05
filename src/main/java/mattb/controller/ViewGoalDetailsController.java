@@ -27,6 +27,9 @@ public class ViewGoalDetailsController {
 
     private int id;
 
+    private boolean saveClicked = false;
+    private boolean deleteClicked = false;
+
     /**
      * Initializes {@link FXML} items for the {@code View Goal Details} modal and the {@link GoalService}
      */
@@ -50,6 +53,7 @@ public class ViewGoalDetailsController {
     private void delete(ActionEvent event) {
         goalService.deleteGoal(id);
 
+        deleteClicked = true;
         cancel(event);
     }
 
@@ -60,7 +64,12 @@ public class ViewGoalDetailsController {
      */
     @FXML
     private void update(ActionEvent event) {
-        if (goalService.updateGoal(nameField.getText(), targetField.getText(), id)) cancel(event);
+        if (goalService.updateGoal(nameField.getText(), targetField.getText(), id)) {
+            saveClicked = true;
+            cancel(event);
+        } else {
+            Main.showNotification(false, "Please fill all required fields");
+        }
     }
 
     /**
@@ -88,5 +97,23 @@ public class ViewGoalDetailsController {
         nameField.setText(g.name());
         account.setText(g.account());
         targetField.setText(String.valueOf(g.target()));
+    }
+
+    /**
+     * Gets the status on if the save button was pressed or not
+     *
+     * @return {@code true} if the save button was pressed, {@code false} if not
+     */
+    public boolean isSaveClicked() {
+        return saveClicked;
+    }
+
+    /**
+     * Gets the status on if the delete button was pressed or not
+     *
+     * @return {@code true} if the delete button was pressed, {@code false} if not
+     */
+    public boolean isDeleteClicked() {
+        return deleteClicked;
     }
 }

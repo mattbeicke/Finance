@@ -119,8 +119,14 @@ public class TransactionController {
     private void hideSelected() {
         Transaction selected = transactionTable.getSelectionModel().getSelectedItem();
         if (selected != null) {
-            transactionService.toggleVisibility(selected, map, onHidden);
-            updatePageInfo();
+            if (transactionService.toggleVisibility(selected, map, onHidden)) {
+                Main.showNotification(true, "Transaction hidden");
+                updatePageInfo();
+            } else {
+                Main.showNotification(false, "Failed to hide transaction");
+            }
+        } else {
+            Main.showNotification(false, "No transaction selected");
         }
     }
 
@@ -161,6 +167,8 @@ public class TransactionController {
             FXMLLoader loader = new FXMLLoader(resource);
             Parent root = loader.load();
 
+            AddTransactionController controller = loader.getController();
+
             Stage stage = new Stage();
             stage.initModality(Modality.APPLICATION_MODAL);
             stage.setTitle("Add New Transaction");
@@ -168,6 +176,10 @@ public class TransactionController {
             Main.darkMode(scene);
             stage.setScene(scene);
             stage.showAndWait();
+
+            if(controller.isSaveClicked()){
+                Main.showNotification(true, "Transaction Created");
+            }
 
             updatePageInfo();
         } catch (IOException ignored) {
@@ -203,6 +215,10 @@ public class TransactionController {
             Main.darkMode(scene);
             stage.setScene(scene);
             stage.showAndWait();
+
+            if(controller.isSaveClicked()){
+                Main.showNotification(true, "Transaction Updated");
+            }
 
             refreshTable();
         } catch (IOException ignored) {

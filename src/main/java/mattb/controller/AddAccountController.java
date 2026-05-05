@@ -27,6 +27,7 @@ public class AddAccountController {
 
     private boolean editing;
     private int id;
+    private boolean saveClicked = false;
 
     /**
      * Initializes {@link FXML} items for the {@code Add New Account} modal and the {@link AccountService}
@@ -53,9 +54,14 @@ public class AddAccountController {
     private void onAccountSave(ActionEvent event) {
         int typeId = accountService.getTypeIdByName(typeCombo.getValue());
 
-        if (typeId == -1 || balanceField.getText().isBlank() || nameField.getText().isBlank()) return;
+        if (typeId == -1 || balanceField.getText().isBlank() || nameField.getText().isBlank()) {
+            Main.showNotification(false, "Please fill all required fields");
+            return;
+        }
 
         accountService.saveAccount(typeId, Double.parseDouble(balanceField.getText()), nameField.getText(), id, editing);
+
+        saveClicked = true;
         cancel(event);
     }
 
@@ -85,5 +91,14 @@ public class AddAccountController {
         nameField.setText(a.name());
         typeCombo.setValue(a.type());
         balanceField.setText(String.valueOf(a.balance()));
+    }
+
+    /**
+     * Gets the status on if the save button was pressed or cancel button was pressed
+     *
+     * @return {@code true} if the save button was pressed, {@code false} if not
+     */
+    public boolean isSaveClicked() {
+        return saveClicked;
     }
 }

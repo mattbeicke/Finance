@@ -86,6 +86,8 @@ public class DashboardController {
             FXMLLoader loader = new FXMLLoader(resource);
             Parent root = loader.load();
 
+            AddGoalController controller = loader.getController();
+
             Stage stage = new Stage();
             stage.initModality(Modality.APPLICATION_MODAL);
             stage.setTitle("Add New Goal");
@@ -93,6 +95,10 @@ public class DashboardController {
             Main.darkMode(scene);
             stage.setScene(scene);
             stage.showAndWait();
+
+            if (controller.isSaveClicked()) {
+                Main.showNotification(true, "Goal Created");
+            }
 
             refreshList();
         } catch (IOException ignored) {
@@ -129,6 +135,12 @@ public class DashboardController {
             Main.darkMode(scene);
             stage.setScene(scene);
             stage.showAndWait();
+
+            if (controller.isSaveClicked()) {
+                Main.showNotification(true, "Goal Updated");
+            } else if (controller.isDeleteClicked()) {
+                Main.showNotification(true, "Goal Deleted");
+            }
 
             refreshList();
         } catch (IOException ignored) {

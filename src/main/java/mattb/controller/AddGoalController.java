@@ -27,6 +27,8 @@ public class AddGoalController {
     private GoalService goalService;
     private AccountService accountService;
 
+    private boolean saveClicked = false;
+
     /**
      * Initializes {@link FXML} items for the {@code Add New Goal} modal and the {@link GoalService} and {@link AccountService}
      */
@@ -52,10 +54,14 @@ public class AddGoalController {
     @FXML
     private void save(ActionEvent event) {
         int accId = accountService.getAccId(accountCombo.getValue());
-        if (accId == -1 || nameField.getText().isBlank() || targetField.getText().isBlank()) return;
+        if (accId == -1 || nameField.getText().isBlank() || targetField.getText().isBlank()) {
+            Main.showNotification(false, "Please fill all required fields");
+            return;
+        }
 
         goalService.saveGoal(accId, nameField.getText(), Double.parseDouble(targetField.getText()));
 
+        saveClicked = true;
         cancel(event);
     }
 
@@ -68,5 +74,14 @@ public class AddGoalController {
     private void cancel(ActionEvent event) {
         Stage stage = (Stage) ((Button) event.getSource()).getScene().getWindow();
         stage.close();
+    }
+
+    /**
+     * Gets the status on if the save button was pressed or cancel button was pressed
+     *
+     * @return {@code true} if the save button was pressed, {@code false} if not
+     */
+    public boolean isSaveClicked() {
+        return saveClicked;
     }
 }

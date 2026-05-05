@@ -19,6 +19,8 @@ public class AddTypeController {
 
     private AccountService accountService;
 
+    private boolean saveClicked = false;
+
     /**
      * Initializes {@link FXML} items for the {@code Add New Account Type} modal and the {@link AccountService}
      */
@@ -34,8 +36,12 @@ public class AddTypeController {
      */
     @FXML
     private void onTypeSave(ActionEvent event) {
-        accountService.saveAccountType(typeField.getText());
+        if(accountService.saveAccountType(typeField.getText())){
+            Main.showNotification(false,"Type field must not be blank");
+            return;
+        }
 
+        saveClicked = true;
         cancel(event);
     }
 
@@ -48,5 +54,14 @@ public class AddTypeController {
     private void cancel(ActionEvent event) {
         Stage stage = (Stage) ((Button) event.getSource()).getScene().getWindow();
         stage.close();
+    }
+
+    /**
+     * Gets the status on if the save button was pressed or cancel button was pressed
+     *
+     * @return {@code true} if the save button was pressed, {@code false} if not
+     */
+    public boolean isSaveClicked() {
+        return saveClicked;
     }
 }

@@ -31,11 +31,9 @@ public class MainController {
     @FXML
     private ToggleButton settings;
 
-    private ToggleGroup sidebarGroup;
-
     @FXML
     private void initialize() {
-        sidebarGroup = new ToggleGroup();
+        ToggleGroup sidebarGroup = new ToggleGroup();
         dashboard.setToggleGroup(sidebarGroup);
         transactions.setToggleGroup(sidebarGroup);
         accounts.setToggleGroup(sidebarGroup);
