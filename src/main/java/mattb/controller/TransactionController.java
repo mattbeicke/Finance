@@ -98,10 +98,14 @@ public class TransactionController {
         Main.useCurrency(colAmount);
 
         transactionTable.setItems(masterData);
+        colDate.setSortType(TableColumn.SortType.DESCENDING);
+        transactionTable.getSortOrder().add(colDate);
 
         perPage = Config.getNumTransactions();
         page = 1;
         updatePageInfo();
+
+        transactionTable.sort();
     }
 
     /**
@@ -145,20 +149,20 @@ public class TransactionController {
     private void viewHidden() {
         if (!onHidden) {
             onHidden = true;
-            addButton.setVisible(false);
-            addButton.setManaged(false);
+            addButton.setDisable(true);
             hideButton.setText("Unhide Selected");
             viewButton.setText("Reset View");
         } else {
             onHidden = false;
-            addButton.setVisible(true);
-            addButton.setManaged(true);
+            addButton.setDisable(false);
             hideButton.setText("Hide Selected");
             viewButton.setText("View Hidden");
         }
 
         page = 1;
         updatePageInfo();
+
+        transactionTable.sort();
     }
 
     /**
@@ -202,7 +206,10 @@ public class TransactionController {
     private void editSelected() {
         Transaction selected = transactionTable.getSelectionModel().getSelectedItem();
         int id = transactionService.getTransactionIdFromMap(selected, map);
-        if (id == -1) return;
+        if (id == -1) {
+            Main.showNotification(false, "No transaction selected");
+            return;
+        }
 
         try {
             URL resource = getClass().getResource("/mattb/controller/add_transaction.fxml");

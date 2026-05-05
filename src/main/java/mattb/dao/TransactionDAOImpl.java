@@ -170,10 +170,10 @@ public class TransactionDAOImpl implements TransactionDAO {
 
         String sql = """
                 select t.t_id, t.date, fa.name as from_acc_name, ta.name as to_acc_name, t.amount, t.memo, c.cat_name
-                from (select t_id from "transaction" where t_id %s (select t_id from hidden_transactions) order by t_id
+                from (select t_id from "transaction" where t_id %s (select t_id from hidden_transactions) order by date desc
                 limit ? offset ?) page join "transaction" t on t.t_id = page.t_id left join tcat on t.t_id = tcat.trans
                 left join category c on tcat.cat = c.cat_id left join account ta on t.to_acc = ta.acc_id
-                left join account fa on t.from_acc = fa.acc_id order by t.t_id
+                left join account fa on t.from_acc = fa.acc_id order by t.date desc
                 """.formatted(hidden ? "in" : "not in");
 
         try (PreparedStatement pstmt = conn.prepareStatement(sql)) {

@@ -237,9 +237,10 @@ public class Main extends Application {
     }
 
     /**
-     * Displays a notification message depending on if something succeeded or not
-     * @param success
-     * @param message
+     * Displays a {@link Notifications Notification} depending on if something succeeded or not
+     *
+     * @param success Whether to set title of the {@link Notifications Notification} to 'Success' or 'Failure'
+     * @param message Message to display in {@link Notifications Notification} body
      */
     public static void showNotification(boolean success, String message) {
         Notifications notif = Notifications.create();

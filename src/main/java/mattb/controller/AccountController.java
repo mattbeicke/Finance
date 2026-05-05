@@ -131,18 +131,14 @@ public class AccountController {
     private void viewHidden() {
         if (!onHidden) {
             onHidden = true;
-            addAccount.setVisible(false);
-            addAccount.setManaged(false);
-            addType.setVisible(false);
-            addType.setManaged(false);
+            addAccount.setDisable(true);
+            addType.setDisable(true);
             hideAccount.setText("Unhide Selected");
             viewHidden.setText("Reset View");
         } else {
             onHidden = false;
-            addAccount.setVisible(true);
-            addAccount.setManaged(true);
-            addType.setVisible(true);
-            addType.setManaged(true);
+            addAccount.setDisable(false);
+            addType.setDisable(false);
             hideAccount.setText("Hide Selected");
             viewHidden.setText("View Hidden");
         }
@@ -224,7 +220,10 @@ public class AccountController {
     private void editSelected() {
         Account selected = accountTable.getSelectionModel().getSelectedItem();
         int id = accountService.getAccountIdFromMap(selected, map);
-        if (id == -1) return;
+        if (id == -1) {
+            Main.showNotification(false, "No account selected");
+            return;
+        }
 
         try {
             URL resource = getClass().getResource("/mattb/controller/add_account.fxml");

@@ -113,7 +113,10 @@ public class DashboardController {
     private void viewGoalDetails() {
         Goal selected = goalList.getSelectionModel().getSelectedItem();
         int id = goalService.getGoalIdFromMap(selected, map);
-        if (id == -1) return;
+        if (id == -1) {
+            Main.showNotification(false,"No goal selected");
+            return;
+        }
 
         try {
             URL resource = getClass().getResource("/mattb/controller/view_goal_details.fxml");
