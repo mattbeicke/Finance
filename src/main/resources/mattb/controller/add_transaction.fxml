@@ -11,26 +11,24 @@
           AnchorPane.leftAnchor="0.0"
           AnchorPane.rightAnchor="0.0"
           AnchorPane.topAnchor="0.0">
-        <HBox alignment="CENTER" spacing="10.0">
-            <Label text="From"/>
-            <ComboBox fx:id="fromCombo"/>
-        </HBox>
+        <GridPane alignment="CENTER" hgap="10.0" vgap="15.0">
+            <Label text="Account From (Required):" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
+            <ComboBox fx:id="fromCombo" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
 
-        <HBox alignment="CENTER" spacing="15.0">
-            <Label text="To"/>
-            <ComboBox fx:id="toCombo"/>
-        </HBox>
+            <Label text="Account To (Required):" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
+            <ComboBox fx:id="toCombo" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+        </GridPane>
 
         <Label text="Category (comma separated):"/>
         <TextField fx:id="categoryField"/>
 
-        <Label text="Amount:"/>
+        <Label text="Amount (Required):"/>
         <TextField fx:id="amountField"/>
 
         <Label text="Memo:"/>
         <TextField fx:id="memoField"/>
 
-        <Label text="Date of transaction"/>
+        <Label text="Date of transaction:"/>
         <DatePicker fx:id="datePicker"/>
 
         <HBox alignment="CENTER" spacing="10.0">

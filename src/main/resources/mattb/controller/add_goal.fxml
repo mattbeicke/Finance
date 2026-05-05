@@ -11,15 +11,15 @@
           AnchorPane.leftAnchor="0.0"
           AnchorPane.rightAnchor="0.0"
           AnchorPane.topAnchor="0.0">
-        <Label text="Goal Name:"/>
+        <Label text="Goal Name (Required):"/>
         <TextField fx:id="nameField"/>
 
         <HBox alignment="CENTER" spacing="10.0">
-            <Label text="Account to Track"/>
+            <Label text="Account to Track (Required):"/>
             <ComboBox fx:id="accountCombo"/>
         </HBox>
 
-        <Label text="Target Balance:"/>
+        <Label text="Target Balance (Required):"/>
         <TextField fx:id="targetField"/>
 
         <Label text="Initial balance will be taken from the account's current balance"/>

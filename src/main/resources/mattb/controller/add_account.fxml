@@ -11,15 +11,15 @@
           AnchorPane.leftAnchor="0.0"
           AnchorPane.rightAnchor="0.0"
           AnchorPane.topAnchor="0.0">
-        <Label text="Account Name (must be unique):"/>
+        <Label text="Account Name (must be unique) (Required):"/>
         <TextField fx:id="nameField"/>
 
         <HBox alignment="CENTER" spacing="10.0">
-            <Label text="Account Type"/>
+            <Label text="Account Type (Required):"/>
             <ComboBox fx:id="typeCombo"/>
         </HBox>
 
-        <Label text="Initial Balance:"/>
+        <Label text="Initial Balance (Required):"/>
         <TextField fx:id="balanceField"/>
 
         <HBox alignment="CENTER" spacing="10.0">
