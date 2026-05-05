@@ -149,7 +149,7 @@ public class AccountDAOImpl implements AccountDAO {
     public ObservableList<String> getAccountNames() {
         ObservableList<String> accountNames = FXCollections.observableArrayList();
 
-        String sql = "select name from account where acc_id not in (select acc_id from hidden_accounts)";
+        String sql = "select name from account where acc_id not in (select acc_id from hidden_accounts union select 0)";
         try (PreparedStatement pstmt = conn.prepareStatement(sql); ResultSet rs = pstmt.executeQuery()) {
             while (rs.next()) {
                 accountNames.add(rs.getString("name"));

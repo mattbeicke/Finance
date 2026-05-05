@@ -308,6 +308,7 @@ src/
     │       │   ├── GoalListCellController.java
     │       │   ├── MainController.java
     │       │   ├── TransactionController.java
+    │       │   ├── UpdateBalancesController.java
     │       │   └── ViewGoalDetailsController.java
     │       │
     │       ├── dao/                     # Database interactions

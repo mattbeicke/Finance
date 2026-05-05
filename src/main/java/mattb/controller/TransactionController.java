@@ -120,10 +120,18 @@ public class TransactionController {
         Transaction selected = transactionTable.getSelectionModel().getSelectedItem();
         if (selected != null) {
             if (transactionService.toggleVisibility(selected, map, onHidden)) {
-                Main.showNotification(true, "Transaction hidden");
+                if (onHidden) {
+                    Main.showNotification(true, "Transaction unhidden");
+                } else {
+                    Main.showNotification(true, "Transaction hidden");
+                }
                 updatePageInfo();
             } else {
-                Main.showNotification(false, "Failed to hide transaction");
+                if (onHidden) {
+                    Main.showNotification(false, "Failed to unhide transaction");
+                } else {
+                    Main.showNotification(false, "Failed to hide transaction");
+                }
             }
         } else {
             Main.showNotification(false, "No transaction selected");
@@ -177,7 +185,7 @@ public class TransactionController {
             stage.setScene(scene);
             stage.showAndWait();
 
-            if(controller.isSaveClicked()){
+            if (controller.isSaveClicked()) {
                 Main.showNotification(true, "Transaction Created");
             }
 
@@ -216,7 +224,7 @@ public class TransactionController {
             stage.setScene(scene);
             stage.showAndWait();
 
-            if(controller.isSaveClicked()){
+            if (controller.isSaveClicked()) {
                 Main.showNotification(true, "Transaction Updated");
             }
 

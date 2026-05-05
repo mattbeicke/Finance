@@ -126,7 +126,7 @@ public class AccountServiceImpl implements AccountService {
      */
     @Override
     public int getAccId(String name) {
-        if (name.isBlank()) return -1;
+        if (name == null || name.isBlank()) return -1;
 
         return accountDAO.getAccId(name);
     }

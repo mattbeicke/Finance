@@ -51,7 +51,6 @@ public class AddTransactionController {
 
     private boolean editing;
     private int id;
-    private boolean update = false;
     private boolean saveClicked = false;
 
     /**
@@ -97,7 +96,7 @@ public class AddTransactionController {
                 memoField.getText(),
                 id,
                 editing
-        ), promptForBalanceUpdate());
+        ), !editing && promptForBalanceUpdate());
 
         saveClicked = true;
         cancel(event);
@@ -133,7 +132,7 @@ public class AddTransactionController {
             FXMLLoader loader = new FXMLLoader(resource);
             Parent root = loader.load();
 
-            AddTransactionController popupController = loader.getController();
+            UpdateBalancesController controller = loader.getController();
 
             Stage stage = new Stage();
             stage.initModality(Modality.APPLICATION_MODAL);
@@ -143,7 +142,7 @@ public class AddTransactionController {
             stage.setScene(scene);
             stage.showAndWait();
 
-            return popupController.update;
+            return controller.getUpdate();
         } catch (IOException ignored) {
             new FinanceException(OPEN_UPDATE_BALANCE_MODAL_FAIL).displayAndLog();
             return false;
@@ -187,28 +186,6 @@ public class AddTransactionController {
             memoField.setText(t.memo());
         }
         datePicker.setValue(LocalDate.ofInstant(t.date().toInstant(), ZoneId.systemDefault()));
-    }
-
-    /**
-     * Indicates a {@code yes} answer to the {@code Update Balances} modal
-     *
-     * @param event Button press {@link ActionEvent}
-     */
-    @FXML
-    private void yes(ActionEvent event) {
-        update = true;
-        cancel(event);
-    }
-
-    /**
-     * Indicates a {@code no} answer to the {@code Update Balances} modal
-     *
-     * @param event Button press {@link ActionEvent}
-     */
-    @FXML
-    private void no(ActionEvent event) {
-        update = false;
-        cancel(event);
     }
 
     /**

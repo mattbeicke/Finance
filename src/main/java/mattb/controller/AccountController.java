@@ -106,10 +106,18 @@ public class AccountController {
 
         if (selected != null) {
             if (accountService.toggleVisibility(selected, map, onHidden)) {
-                Main.showNotification(true, "Account hidden");
+                if (onHidden) {
+                    Main.showNotification(true, "Account unhidden");
+                } else {
+                    Main.showNotification(true, "Account hidden");
+                }
                 updatePageInfo();
             } else {
-                Main.showNotification(false, "Failed to hide account");
+                if (onHidden) {
+                    Main.showNotification(false, "Failed to unhide account");
+                } else {
+                    Main.showNotification(false, "Failed to hide account");
+                }
             }
         } else {
             Main.showNotification(false, "No account selected");

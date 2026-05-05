@@ -59,6 +59,8 @@ public class SettingsController {
 
         Config.save(Integer.parseInt(numTransactions.getText()), Integer.parseInt(numAccounts.getText()), darkMode.isSelected());
 
+        Main.showNotification(true, "Settings saved");
+
         Scene scene = darkMode.getScene();
 
         URL themes = getClass().getResource("/mattb/dark-theme.css");
