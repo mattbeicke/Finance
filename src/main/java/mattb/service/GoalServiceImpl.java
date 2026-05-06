@@ -18,7 +18,8 @@ public class GoalServiceImpl implements GoalService {
     /**
      * Sets up DAO connection
      *
-     * @param goalDAO Connection to the {@link GoalDAO}
+     * @param goalDAO        Connection to the {@link GoalDAO}
+     * @param accountService Connection to the {@link AccountService}
      */
     public GoalServiceImpl(GoalDAO goalDAO, AccountService accountService) {
         this.goalDAO = goalDAO;

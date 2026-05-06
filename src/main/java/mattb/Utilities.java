@@ -11,6 +11,11 @@ import java.util.Locale;
 
 import static mattb.FinanceError.OPEN_DARK_THEME_FAIL;
 
+/**
+ * This class has some helper methods that are used across the project
+ *
+ * @author Matthew Beicke
+ */
 public class Utilities {
     /**
      * Converts a {@link Double} (that reflects a balance or amount) to a formatted {@link String}.

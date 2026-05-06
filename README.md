@@ -472,10 +472,8 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 ## Potential Future Improvements
 
 * Add something that celebrates you hitting a goal
-* Add a section to actually delete data (instead of just hiding it)
 * Make the User Interface pretty
 * Improved goal tracking (link to accounts/categories)
 * Data visualization (charts/graphs)
 * Ability to mass import data (via CSV) and export data
 * Proper testing suite
-* Alert messages saying things worked, missing fields, etc
