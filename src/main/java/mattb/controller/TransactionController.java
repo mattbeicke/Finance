@@ -76,6 +76,14 @@ public class TransactionController {
     private int page;
     private int perPage;
 
+    /**
+     * Used by Spring Boot to do dependency injection for the below items
+     *
+     * @param context            Used to create modals properly
+     * @param transactionService The connection to the {@link TransactionService Transaction Service}
+     * @param configService      The connection to the {@link ConfigService Preferences Config Class}
+     * @param uiUtilities        The connection to the {@link UIUtilities Utlities Class}
+     */
     public TransactionController(ApplicationContext context, TransactionService transactionService, ConfigService configService, UIUtilities uiUtilities) {
         this.context = context;
         this.transactionService = transactionService;
@@ -84,7 +92,7 @@ public class TransactionController {
     }
 
     /**
-     * Initializes {@link FXML} items for the {@code Transaction} tab and the {@link TransactionService}
+     * Initializes {@link FXML} items for the {@code Transaction} tab
      */
     @FXML
     public void initialize() {

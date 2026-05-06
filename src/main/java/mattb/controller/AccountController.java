@@ -69,6 +69,14 @@ public class AccountController {
     private int page;
     private int perPage;
 
+    /**
+     * Used by Spring Boot to do dependency injection for the below items
+     *
+     * @param context        Used to create modals properly
+     * @param accountService The connection to the {@link AccountService Account Service}
+     * @param configService  The connection to the {@link ConfigService Preferences Config Class}
+     * @param uiUtilities    The connection to the {@link UIUtilities Utlities Class}
+     */
     public AccountController(ApplicationContext context, AccountService accountService, ConfigService configService, UIUtilities uiUtilities) {
         this.context = context;
         this.accountService = accountService;
@@ -77,7 +85,7 @@ public class AccountController {
     }
 
     /**
-     * Initializes {@link FXML} items for the {@code Account} tab and the {@link AccountService}
+     * Initializes {@link FXML} items for the {@code Account} tab
      */
     @FXML
     public void initialize() {

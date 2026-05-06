@@ -6,6 +6,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
+import mattb.ConfigService;
 import mattb.UIUtilities;
 import mattb.model.Account;
 import mattb.model.AccountResponse;
@@ -33,13 +34,19 @@ public class AddAccountController {
     private int id;
     private boolean saveClicked = false;
 
+    /**
+     * Used by Spring Boot to do dependency injection for the below items
+     *
+     * @param accountService The connection to the {@link AccountService Account Service}
+     * @param uiUtilities    The connection to the {@link UIUtilities Utlities Class}
+     */
     public AddAccountController(AccountService accountService, UIUtilities uiUtilities) {
         this.accountService = accountService;
         this.uiUtilities = uiUtilities;
     }
 
     /**
-     * Initializes {@link FXML} items for the {@code Add New Account} modal and the {@link AccountService}
+     * Initializes {@link FXML} items for the {@code Add New Account} modal
      */
     @FXML
     public void initialize() {

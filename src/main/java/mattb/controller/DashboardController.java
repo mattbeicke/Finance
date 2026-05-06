@@ -47,6 +47,14 @@ public class DashboardController {
     private final ObservableList<Goal> goals = FXCollections.observableArrayList();
     private HashMap<Integer, Goal> map;
 
+    /**
+     * Used by Spring Boot to do dependency injection for the below items
+     *
+     * @param context        Used to create modals properly
+     * @param accountService The connection to the {@link AccountService Account Service}
+     * @param goalService    The connection to the {@link GoalService Goal Service}
+     * @param uiUtilities    The connection to the {@link UIUtilities Utlities Class}
+     */
     public DashboardController(ApplicationContext context, AccountService accountService, GoalService goalService, UIUtilities uiUtilities) {
         this.context = context;
         this.accountService = accountService;
@@ -55,7 +63,7 @@ public class DashboardController {
     }
 
     /**
-     * Initializes {@link FXML} items for the {@code Dashboard} tab and the {@link AccountService} and {@link GoalService}
+     * Initializes {@link FXML} items for the {@code Dashboard} tab
      */
     @FXML
     private void initialize() {

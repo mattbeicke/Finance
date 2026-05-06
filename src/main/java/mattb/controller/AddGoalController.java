@@ -33,6 +33,13 @@ public class AddGoalController {
 
     private boolean saveClicked = false;
 
+    /**
+     * Used by Spring Boot to do dependency injection for the below items
+     *
+     * @param goalService    The connection to the {@link GoalService Goal Service}
+     * @param accountService The connection to the {@link AccountService Account Service}
+     * @param uiUtilities    The connection to the {@link UIUtilities Utlities Class}
+     */
     public AddGoalController(GoalService goalService, AccountService accountService, UIUtilities uiUtilities) {
         this.goalService = goalService;
         this.accountService = accountService;
@@ -40,7 +47,7 @@ public class AddGoalController {
     }
 
     /**
-     * Initializes {@link FXML} items for the {@code Add New Goal} modal and the {@link GoalService} and {@link AccountService}
+     * Initializes {@link FXML} items for the {@code Add New Goal} modal
      */
     @FXML
     private void initialize() {

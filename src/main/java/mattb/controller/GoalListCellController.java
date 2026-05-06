@@ -47,6 +47,9 @@ public class GoalListCellController extends ListCell<Goal> {
 
     /**
      * Initializes {@link FXML} items for the {@link Goal} {@link ListView List}
+     *
+     * @param context     Used to create modals properly
+     * @param uiUtilities The connection to the {@link UIUtilities Utlities Class}
      */
     public GoalListCellController(ApplicationContext context, UIUtilities uiUtilities) {
         this.context = context;

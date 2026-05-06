@@ -21,6 +21,11 @@ import static mattb.FinanceError.OPEN_DARK_THEME_FAIL;
 public class UIUtilities {
     private final ConfigService configService;
 
+    /**
+     * Used by Spring Boot to do dependency injection for the below items
+     *
+     * @param configService The connection to the {@link ConfigService Preferences Config Class}
+     */
     public UIUtilities(ConfigService configService) {
         this.configService = configService;
     }

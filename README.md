@@ -2,7 +2,7 @@
 
 ## Introduction
 
-Matt's Finance App is a JavaFX desktop application for managing personal finances.
+Matt's Finance App is a JavaFX desktop application for managing personal finances built on the Spring Boot framework.
 It allows users to track bank accounts, transactions, categorize spending, define financial goals, and monitor net worth
 using a lightweight SQLite database.
 
@@ -58,7 +58,7 @@ mvn clean install
 ### Run
 
 ```bash
-javaw -jar target/Finance-1.0.0.jar
+mvn spring-boot:run
 ```
 
 ---
@@ -163,6 +163,8 @@ The application uses SQLite with normalized relational tables
 ---
 
 ### Tables
+
+Database tables and initial data are automatically set up and populated at startup via schema.sql.
 
 #### `account`
 
@@ -294,13 +296,12 @@ src/
 └── main/
     ├── java/
     │   └── mattb/
-    │       ├── Config.java              # Connection point to Preferences API
+    │       ├── ConfigService.java       # Connection point to Preferences API
+    │       ├── FinanceApp.java          # Spring Boot entry point
     │       ├── FinanceError.java        # Centralized error messages
     │       ├── FinanceException.java    # Custom runtime exception
-    │       ├── Launcher.java            # JAR entry point
-    │       ├── Main.java                # JavaFX application entry
-    │       ├── ServiceFactory.java      # Set up of the Connection, the Services, and the DAOs
-    │       ├── Utilities.java           # Commonly used functions
+    │       ├── JavaFXApp.java           # JavaFX application entry
+    │       ├── UIUtilities.java         # Commonly used functions
     │       │
     │       ├── controllers/             # UI logic (JavaFX controllers)
     │       │   ├── AccountController.java
@@ -340,9 +341,10 @@ src/
     │           └── TransactionServiceImpl.java
     │
     └── resources/
+        ├── application.properties       # Contains information for Spring Boot (primarily for how to do SQL database)
+        ├── schema.sql                   # SQL file containing the neccessary table setup and initial population
         └── mattb/
             ├── dark-theme.css           # CSS containing dark theme
-            ├── schema.sql               # SQL file containing the neccessary table setup and initial population
             └── controllers/             # FXML UI layouts
                 ├── accounts.fxml
                 ├── add_account.fxml
@@ -363,25 +365,27 @@ src/
 
 #### Controllers (UI Layer)
 
+* Marked with ```@Component```
 * Handle user interaction
-* Bind UI to data
 * Delegate business logic to service layer
 
 ---
 
 #### Service Layer
 
-* Delegate persistence to DAO layer
+* Marked with ```@Service```
+* Uses ```@Transactional``` to ensure data integrity during multi-step database operations (like moving money between
+  accounts)
+* Delegates persistence to DAO layer
 
 ---
 
 #### DAO Layer
 
-The DAO (Data Access Object) layer is responsible for:
-
-* Encapsulating all SQL logic
-* Providing clean methods for CRUD operations
-* Isolating database concerns from UI logic
+* Marked with ```@Repository```
+* Encapsulates all SQL logic
+* Uses Spring's ```JdbcTemplate``` to remove the boilerplate nonsense
+* Isolates database concerns from UI logic
 
 ---
 
@@ -405,14 +409,23 @@ The DAO (Data Access Object) layer is responsible for:
 
 From `pom.xml`:
 
-* JavaFX Controls
-* JavaFX FXML
+* Spring Boot Starter JDBC
+    * For database connectivity and JdbcTemplate
+* Spring Boot Starter Data JPA
+    * For advanced persistence and transaction management
 * SQLite JDBC
-* Maven Shade Plugin (for fat JAR)
+    * The database engine
+* JavaFX (Controls & FXML)
+    * UI framework
+* ControlsFX
+    * Enhanced UI components
 
 ---
 
 ## Configuration
+
+**All application settings including database connection strings, initialization scripts,
+and logging levels are managed in src/main/resources/application.properties.**
 
 ### Database
 
@@ -454,6 +467,9 @@ NumberFormat.getCurrencyInstance(Locale.US)
 | Other           | Report ASAP to developer                         |
 
 Installing Java 26 and Maven, running ```mvn clean install``` should install all required dependencies
+
+Spring boot provides detailed debug logs. If you encounter database issues, check the console output for JdbcTemplate
+and HikariPool messages to identify what exactly failed.
 
 ---
 

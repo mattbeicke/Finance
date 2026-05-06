@@ -36,10 +36,18 @@ public class MainController {
 
     private final ApplicationContext context;
 
+    /**
+     * Used by Spring Boot to do dependency injection for the below items
+     *
+     * @param context Used to create modals properly
+     */
     public MainController(ApplicationContext context) {
         this.context = context;
     }
 
+    /**
+     * Initializes {@link FXML} items for the {@code Sidebar}
+     */
     @FXML
     private void initialize() {
         ToggleGroup sidebarGroup = new ToggleGroup();

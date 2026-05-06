@@ -1,5 +1,1 @@
-initialize() comments need to be fixed
-
-fix comments in settings controller because of change to config (config -> configservice)
-
 update readme

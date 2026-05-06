@@ -24,6 +24,12 @@ public class AddTypeController {
 
     private boolean saveClicked = false;
 
+    /**
+     * Used by Spring Boot to do dependency injection for the below items
+     *
+     * @param accountService The connection to the {@link AccountService Account Service}
+     * @param uiUtilities    The connection to the {@link UIUtilities Utlities Class}
+     */
     public AddTypeController(AccountService accountService, UIUtilities uiUtilities) {
         this.accountService = accountService;
         this.uiUtilities = uiUtilities;

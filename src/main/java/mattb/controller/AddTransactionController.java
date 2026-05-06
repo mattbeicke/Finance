@@ -56,6 +56,14 @@ public class AddTransactionController {
     private int id;
     private boolean saveClicked = false;
 
+    /**
+     * Used by Spring Boot to do dependency injection for the below items
+     *
+     * @param context            Used to create modals properly
+     * @param transactionService The connection to the {@link TransactionService Transaction Service}
+     * @param accountService     The connection to the {@link AccountService Account Service}
+     * @param uiUtilities        The connection to the {@link UIUtilities Utlities Class}
+     */
     public AddTransactionController(ApplicationContext context, TransactionService transactionService, AccountService accountService, UIUtilities uiUtilities) {
         this.context = context;
         this.transactionService = transactionService;

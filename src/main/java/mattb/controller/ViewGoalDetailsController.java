@@ -33,13 +33,19 @@ public class ViewGoalDetailsController {
     private boolean saveClicked = false;
     private boolean deleteClicked = false;
 
+    /**
+     * Used by Spring Boot to do dependency injection for the below items
+     *
+     * @param goalService The connection to the {@link GoalService Goal Service}
+     * @param uiUtilities The connection to the {@link UIUtilities Utlities Class}
+     */
     public ViewGoalDetailsController(GoalService goalService, UIUtilities uiUtilities) {
         this.goalService = goalService;
         this.uiUtilities = uiUtilities;
     }
 
     /**
-     * Initializes {@link FXML} items for the {@code View Goal Details} modal and the {@link GoalService}
+     * Initializes {@link FXML} items for the {@code View Goal Details} modal
      */
     @FXML
     private void initialize() {

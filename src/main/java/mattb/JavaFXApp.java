@@ -19,13 +19,17 @@ import java.util.Arrays;
 import static mattb.FinanceError.OPEN_MAIN_FAILED;
 
 /**
- * Entrypoint into the program. Does all the setup for custom exception handling and creating the main stage for the GUI
+ * Does all the setup for custom exception handling and creating the main stage for the GUI.
+ * Initializes Spring Boot.
  *
  * @author Matthew Beicke
  */
 public class JavaFXApp extends Application {
     private ConfigurableApplicationContext springContext;
 
+    /**
+     * Initializes Spring Boot
+     */
     @Override
     public void init() {
         this.springContext = new SpringApplicationBuilder()
@@ -108,6 +112,9 @@ public class JavaFXApp extends Application {
         }
     }
 
+    /**
+     * Gracefully exits Spring Boot and the GUI
+     */
     @Override
     public void stop() {
         springContext.close();

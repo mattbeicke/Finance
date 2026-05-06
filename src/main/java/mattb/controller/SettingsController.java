@@ -30,6 +30,12 @@ public class SettingsController {
     private final ConfigService configService;
     private final UIUtilities uiUtilities;
 
+    /**
+     * Used by Spring Boot to do dependency injection for the below items
+     *
+     * @param configService The connection to the {@link ConfigService Preferences Config Class}
+     * @param uiUtilities   The connection to the {@link UIUtilities Utlities Class}
+     */
     public SettingsController(ConfigService configService, UIUtilities uiUtilities) {
         this.configService = configService;
         this.uiUtilities = uiUtilities;
