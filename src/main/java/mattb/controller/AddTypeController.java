@@ -5,29 +5,28 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
-import mattb.ServiceFactory;
-import mattb.Utilities;
+import mattb.UIUtilities;
 import mattb.service.AccountService;
+import org.springframework.stereotype.Component;
 
 /**
  * Handles UI interactions on the {@code Add New Account Type} modal
  *
  * @author Matthew Beicke
  */
+@Component
 public class AddTypeController {
     @FXML
     private TextField typeField;
 
-    private AccountService accountService;
+    private final AccountService accountService;
+    private final UIUtilities uiUtilities;
 
     private boolean saveClicked = false;
 
-    /**
-     * Initializes {@link FXML} items for the {@code Add New Account Type} modal and the {@link AccountService}
-     */
-    @FXML
-    public void initialize() {
-        accountService = ServiceFactory.getAccountService();
+    public AddTypeController(AccountService accountService, UIUtilities uiUtilities) {
+        this.accountService = accountService;
+        this.uiUtilities = uiUtilities;
     }
 
     /**
@@ -38,7 +37,7 @@ public class AddTypeController {
     @FXML
     private void onTypeSave(ActionEvent event) {
         if (!accountService.saveAccountType(typeField.getText())) {
-            Utilities.showNotification(false, "Type field must not be blank");
+            uiUtilities.showNotification(false, "Type field must not be blank");
             return;
         }
 

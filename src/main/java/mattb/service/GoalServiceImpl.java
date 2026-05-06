@@ -3,6 +3,8 @@ package mattb.service;
 import mattb.dao.GoalDAO;
 import mattb.model.Goal;
 import mattb.model.GoalResponse;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Map;
 
@@ -11,6 +13,7 @@ import java.util.Map;
  *
  * @author Matthew Beicke
  */
+@Service
 public class GoalServiceImpl implements GoalService {
     private final GoalDAO goalDAO;
     private final AccountService accountService;
@@ -30,6 +33,7 @@ public class GoalServiceImpl implements GoalService {
      * {@inheritDoc}
      */
     @Override
+    @Transactional
     public GoalResponse saveGoal(String accName, String goalName, String target) {
         if (accName == null || goalName == null || target == null) {
             return new GoalResponse(false, "Please fill all required fields");
@@ -50,6 +54,7 @@ public class GoalServiceImpl implements GoalService {
      * {@inheritDoc}
      */
     @Override
+    @Transactional
     public boolean updateGoal(String name, String target, int id) {
         if (name.isBlank() || target.isBlank() || id < 1) return false;
 
@@ -62,6 +67,7 @@ public class GoalServiceImpl implements GoalService {
      * {@inheritDoc}
      */
     @Override
+    @Transactional
     public void deleteGoal(int goalId) {
         goalDAO.deleteGoal(goalId);
     }

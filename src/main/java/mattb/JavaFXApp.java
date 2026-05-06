@@ -17,7 +17,6 @@ import java.sql.Connection;
 import java.util.Arrays;
 
 import static mattb.FinanceError.OPEN_MAIN_FAILED;
-import static mattb.Utilities.darkMode;
 
 /**
  * Entrypoint into the program. Does all the setup for custom exception handling and creating the main stage for the GUI
@@ -81,7 +80,8 @@ public class JavaFXApp extends Application {
             stage.setTitle("Matt's Finance App");
             Scene scene = new Scene(root);
 
-            darkMode(scene);
+            UIUtilities uiUtilities = springContext.getBean(UIUtilities.class);
+            uiUtilities.darkMode(scene);
 
             stage.setScene(scene);
             stage.show();

@@ -4,9 +4,10 @@ import javafx.fxml.FXML;
 import javafx.scene.Scene;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.TextField;
-import mattb.Config;
+import mattb.ConfigService;
 import mattb.FinanceException;
-import mattb.Utilities;
+import mattb.UIUtilities;
+import org.springframework.stereotype.Component;
 
 import java.net.URL;
 
@@ -17,6 +18,7 @@ import static mattb.FinanceError.OPEN_DARK_THEME_FAIL;
  *
  * @author Matthew Beicke
  */
+@Component
 public class SettingsController {
     @FXML
     private TextField numTransactions;
@@ -25,14 +27,22 @@ public class SettingsController {
     @FXML
     private CheckBox darkMode;
 
+    private final ConfigService configService;
+    private final UIUtilities uiUtilities;
+
+    public SettingsController(ConfigService configService, UIUtilities uiUtilities) {
+        this.configService = configService;
+        this.uiUtilities = uiUtilities;
+    }
+
     /**
      * Initializes {@link FXML} items for the {@code Settings} tab
      */
     @FXML
     private void initialize() {
-        numTransactions.setText(String.valueOf(Config.getNumTransactions()));
-        numAccounts.setText(String.valueOf(Config.getNumAccounts()));
-        darkMode.setSelected(Config.getDarkMode());
+        numTransactions.setText(String.valueOf(configService.getNumTransactions()));
+        numAccounts.setText(String.valueOf(configService.getNumAccounts()));
+        darkMode.setSelected(configService.getDarkMode());
 
         numTransactions.textProperty().addListener((_, oldVal, newVal) -> {
             if (!newVal.matches("^(\\s*[1-9]\\d*)?$")) {
@@ -48,18 +58,18 @@ public class SettingsController {
     }
 
     /**
-     * Saves all settings via the {@link Config} class
+     * Saves all settings via the {@link ConfigService} class
      */
     @FXML
     private void save() {
         if (numTransactions.getText().isBlank() || numAccounts.getText().isBlank()) {
-            Utilities.showNotification(false, "Please fill all settings before saving");
+            uiUtilities.showNotification(false, "Please fill all settings before saving");
             return;
         }
 
-        Config.save(Integer.parseInt(numTransactions.getText()), Integer.parseInt(numAccounts.getText()), darkMode.isSelected());
+        configService.save(Integer.parseInt(numTransactions.getText()), Integer.parseInt(numAccounts.getText()), darkMode.isSelected());
 
-        Utilities.showNotification(true, "Settings saved");
+        uiUtilities.showNotification(true, "Settings saved");
 
         Scene scene = darkMode.getScene();
 

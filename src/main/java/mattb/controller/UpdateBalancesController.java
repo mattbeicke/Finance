@@ -4,12 +4,14 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.stage.Stage;
+import org.springframework.stereotype.Component;
 
 /**
  * Handles UI interactions on the {@code Update Balances} modal
  *
  * @author Matthew Beicke
  */
+@Component
 public class UpdateBalancesController {
     private boolean update = false;
 

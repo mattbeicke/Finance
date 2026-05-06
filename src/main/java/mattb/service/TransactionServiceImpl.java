@@ -4,6 +4,8 @@ import mattb.FinanceException;
 import mattb.dao.TransactionDAO;
 import mattb.model.Transaction;
 import mattb.model.TransactionResponse;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.Map;
@@ -15,6 +17,7 @@ import static mattb.FinanceError.GET_TRANSACTION_ID_FAIL;
  *
  * @author Matthew Beicke
  */
+@Service
 public class TransactionServiceImpl implements TransactionService {
     private final TransactionDAO transactionDAO;
     private final AccountService accountService;
@@ -34,6 +37,7 @@ public class TransactionServiceImpl implements TransactionService {
      * {@inheritDoc}
      */
     @Override
+    @Transactional
     public TransactionResponse processTransaction(LocalDate date, String fromAcc, String toAcc, String amount, String category, String memo, int id, boolean editing) {
         int fromAccId = accountService.getAccId(fromAcc);
         int toAccId = accountService.getAccId(toAcc);
@@ -78,6 +82,7 @@ public class TransactionServiceImpl implements TransactionService {
      * {@inheritDoc}
      */
     @Override
+    @Transactional
     public boolean updateBalances(String fromAcc, String toAcc, String amount) {
         int fromAccId = accountService.getAccId(fromAcc);
         int toAccId = accountService.getAccId(toAcc);
@@ -95,6 +100,7 @@ public class TransactionServiceImpl implements TransactionService {
      * {@inheritDoc}
      */
     @Override
+    @Transactional
     public boolean toggleVisibility(Transaction transaction, Map<Integer, Transaction> currentMap, boolean currentState) {
         if (transaction == null || currentMap == null) return false;
 

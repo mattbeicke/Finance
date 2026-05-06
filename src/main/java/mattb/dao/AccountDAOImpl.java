@@ -4,11 +4,10 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import mattb.FinanceException;
 import mattb.model.Account;
+import org.springframework.dao.DataAccessException;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.stereotype.Service;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.HashMap;
 
 import static mattb.FinanceError.*;
@@ -18,16 +17,17 @@ import static mattb.FinanceError.*;
  *
  * @author Matthew Beicke
  */
+@Service
 public class AccountDAOImpl implements AccountDAO {
-    private final Connection conn;
+    private final JdbcTemplate jdbcTemplate;
 
     /**
      * Sets database connection
      *
-     * @param conn Connection to the SQLite database
+     * @param jdbcTemplate Connection to the SQLite database
      */
-    public AccountDAOImpl(Connection conn) {
-        this.conn = conn;
+    public AccountDAOImpl(JdbcTemplate jdbcTemplate) {
+        this.jdbcTemplate = jdbcTemplate;
     }
 
     /**
@@ -36,13 +36,10 @@ public class AccountDAOImpl implements AccountDAO {
     @Override
     public void insertAccount(int typeId, double balance, String name) {
         String sql = "insert or ignore into account (acc_type, balance, name) VALUES (?, ?, ?)";
-        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setInt(1, typeId);
-            pstmt.setDouble(2, balance);
-            pstmt.setString(3, name);
 
-            pstmt.executeUpdate();
-        } catch (SQLException ignored) {
+        try {
+            jdbcTemplate.update(sql, typeId, balance, name);
+        } catch (DataAccessException ignored) {
             new FinanceException(SAVE_ACCOUNT_FAIL).displayAndLog();
         }
     }
@@ -53,14 +50,10 @@ public class AccountDAOImpl implements AccountDAO {
     @Override
     public void updateAccount(int typeId, double balance, String name, int id) {
         String sql = "update account set acc_type = ?, balance = ?, name = ? where acc_id = ?";
-        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setInt(1, typeId);
-            pstmt.setDouble(2, balance);
-            pstmt.setString(3, name);
-            pstmt.setInt(4, id);
 
-            pstmt.executeUpdate();
-        } catch (SQLException ignored) {
+        try {
+            jdbcTemplate.update(sql, typeId, balance, name, id);
+        } catch (DataAccessException ignored) {
             new FinanceException(SAVE_ACCOUNT_FAIL).displayAndLog();
         }
     }
@@ -72,11 +65,9 @@ public class AccountDAOImpl implements AccountDAO {
     public void updateAccountVisibility(int accountId, boolean hidden) {
         String sql = hidden ? "delete from hidden_accounts where acc_id = ?" : "insert or ignore into hidden_accounts (acc_id) values (?)";
 
-        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setInt(1, accountId);
-
-            pstmt.executeUpdate();
-        } catch (SQLException ignored) {
+        try {
+            jdbcTemplate.update(sql, accountId);
+        } catch (DataAccessException ignored) {
             new FinanceException(UPDATE_HIDDEN_ACCOUNT_LIST_FAIL).displayAndLog();
         }
     }
@@ -89,12 +80,10 @@ public class AccountDAOImpl implements AccountDAO {
         // Update from account's balance
         if (fromAccId != 0) {
             String sql = "update account set balance = balance - ? where acc_id = ?";
-            try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
-                pstmt.setDouble(1, amount);
-                pstmt.setInt(2, fromAccId);
 
-                pstmt.executeUpdate();
-            } catch (SQLException ignored) {
+            try {
+                jdbcTemplate.update(sql, amount, fromAccId);
+            } catch (DataAccessException ignored) {
                 new FinanceException(UPDATE_ACCOUNT_BALANCE_FAIL).displayAndLog();
             }
         }
@@ -102,12 +91,10 @@ public class AccountDAOImpl implements AccountDAO {
         // Update to account's balance
         if (toAccId != 0) {
             String sql = "update account set balance = balance + ? where acc_id = ?";
-            try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
-                pstmt.setDouble(1, amount);
-                pstmt.setInt(2, toAccId);
 
-                pstmt.executeUpdate();
-            } catch (SQLException ignored) {
+            try {
+                jdbcTemplate.update(sql, amount, fromAccId);
+            } catch (DataAccessException ignored) {
                 new FinanceException(UPDATE_ACCOUNT_BALANCE_FAIL).displayAndLog();
             }
         }
@@ -119,13 +106,10 @@ public class AccountDAOImpl implements AccountDAO {
     @Override
     public double getNetWorth() {
         String sql = "select sum(balance) as networth from account where acc_id not in (select acc_id from hidden_accounts)";
-        try (PreparedStatement pstmt = conn.prepareStatement(sql); ResultSet rs = pstmt.executeQuery()) {
-            if (!rs.next()) {
-                return 0;
-            } else {
-                return rs.getDouble("networth");
-            }
-        } catch (SQLException ignored) {
+        try {
+            Double d = jdbcTemplate.queryForObject(sql, Double.class);
+            if (d != null) return d;
+        } catch (DataAccessException ignored) {
             new FinanceException(NET_WORTH_FAIL).displayAndLog();
         }
         return 0;
@@ -143,15 +127,13 @@ public class AccountDAOImpl implements AccountDAO {
                 where acc_id %s limit ? offset ?
                 """.formatted(hidden ? "in (select acc_id from hidden_accounts)" : "not in (select acc_id from hidden_accounts union select 0)");
 
-        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setInt(1, perPage);
-            pstmt.setInt(2, ((page - 1) * perPage));
-
-            ResultSet rs = pstmt.executeQuery();
-            while (rs.next()) {
-                map.put(rs.getInt("acc_id"), new Account(rs.getDouble("balance"), rs.getString("type"), rs.getString("name")));
-            }
-        } catch (SQLException ignored) {
+        try {
+            jdbcTemplate.query(sql, rs -> {
+                while (rs.next()) {
+                    map.put(rs.getInt("acc_id"), new Account(rs.getDouble("balance"), rs.getString("type"), rs.getString("name")));
+                }
+            }, perPage, ((page - 1) * perPage));
+        } catch (DataAccessException ignored) {
             new FinanceException(LOAD_ACCOUNTS_FAIL).displayAndLog();
         }
         return map;
@@ -165,11 +147,14 @@ public class AccountDAOImpl implements AccountDAO {
         ObservableList<String> accountNames = FXCollections.observableArrayList();
 
         String sql = "select name from account where acc_id not in (select acc_id from hidden_accounts union select 0)";
-        try (PreparedStatement pstmt = conn.prepareStatement(sql); ResultSet rs = pstmt.executeQuery()) {
-            while (rs.next()) {
-                accountNames.add(rs.getString("name"));
-            }
-        } catch (SQLException ignored) {
+
+        try {
+            jdbcTemplate.query(sql, rs -> {
+                while (rs.next()) {
+                    accountNames.add(rs.getString("name"));
+                }
+            });
+        } catch (DataAccessException ignored) {
             new FinanceException(LOAD_ACCOUNTS_FAIL).displayAndLog();
         }
 
@@ -184,16 +169,18 @@ public class AccountDAOImpl implements AccountDAO {
         ObservableList<String> accountNames = FXCollections.observableArrayList();
 
         String sql = "select name from account where acc_id not in (select acc_id from hidden_accounts)";
-        try (PreparedStatement pstmt = conn.prepareStatement(sql); ResultSet rs = pstmt.executeQuery()) {
-            while (rs.next()) {
-                accountNames.add(rs.getString("name"));
-            }
 
-            accountNames.add("Add more via Accounts tab");
-        } catch (SQLException ignored) {
+        try {
+            jdbcTemplate.query(sql, rs -> {
+                while (rs.next()) {
+                    accountNames.add(rs.getString("name"));
+                }
+            });
+        } catch (DataAccessException ignored) {
             new FinanceException(LOAD_ACCOUNTS_FAIL).displayAndLog();
         }
 
+        accountNames.add("Add more via Accounts tab");
         return accountNames;
     }
 
@@ -204,13 +191,13 @@ public class AccountDAOImpl implements AccountDAO {
     public int getAccountCount(boolean hidden) {
         String sql = "select count(acc_id) as num from account where acc_id" + (hidden ? " in (select acc_id from hidden_accounts)" : " not in (select acc_id from hidden_accounts union select 0)");
 
-        try (PreparedStatement pstmt = conn.prepareStatement(sql); ResultSet rs = pstmt.executeQuery()) {
-            if (rs.next()) {
-                return rs.getInt("num");
-            }
-        } catch (SQLException ignored) {
+        try {
+            Integer count = jdbcTemplate.queryForObject(sql, Integer.class);
+            if (count != null) return count;
+        } catch (DataAccessException ignored) {
             new FinanceException(GET_ACCOUNT_COUNT_FAIL).displayAndLog();
         }
+
         return -1;
     }
 
@@ -220,15 +207,11 @@ public class AccountDAOImpl implements AccountDAO {
     @Override
     public int getAccId(String accName) {
         String sql = "select acc_id from account where name = ?";
-        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setString(1, accName);
 
-            ResultSet rs = pstmt.executeQuery();
-            if (rs.next()) {
-                return rs.getInt("acc_id");
-            }
-            return -1;
-        } catch (SQLException ignored) {
+        try {
+            Integer id = jdbcTemplate.queryForObject(sql, Integer.class, accName);
+            if (id != null) return id;
+        } catch (DataAccessException ignored) {
             new FinanceException(GET_ACCOUNT_ID_FAIL).displayAndLog();
         }
         return -1;
@@ -240,11 +223,10 @@ public class AccountDAOImpl implements AccountDAO {
     @Override
     public void saveAccountType(String type) {
         String sql = "insert or ignore into account_type(type) values (?)";
-        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setString(1, type);
 
-            pstmt.executeUpdate();
-        } catch (SQLException ignored) {
+        try {
+            jdbcTemplate.update(sql, type);
+        } catch (DataAccessException ignored) {
             new FinanceException(SAVE_ACCOUNT_TYPE_FAIL).displayAndLog();
         }
     }
@@ -257,11 +239,14 @@ public class AccountDAOImpl implements AccountDAO {
         ObservableList<String> types = FXCollections.observableArrayList();
 
         String sql = "select type_id, type from account_type where type_id <> 0";
-        try (PreparedStatement pstmt = conn.prepareStatement(sql); ResultSet rs = pstmt.executeQuery()) {
-            while (rs.next()) {
-                types.add(rs.getString("type"));
-            }
-        } catch (SQLException ignored) {
+
+        try {
+            jdbcTemplate.query(sql, rs -> {
+                while (rs.next()) {
+                    types.add(rs.getString("type"));
+                }
+            });
+        } catch (DataAccessException ignored) {
             new FinanceException(LOAD_ACCOUNT_TYPES_FAIL).displayAndLog();
         }
 
@@ -275,16 +260,11 @@ public class AccountDAOImpl implements AccountDAO {
     @Override
     public int getTypeId(String type) {
         String sql = "select type_id from account_type where type = ?";
-        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setString(1, type);
-            ResultSet rs = pstmt.executeQuery();
 
-            if (!rs.next()) {
-                return -1;
-            }
-
-            return rs.getInt("type_id");
-        } catch (SQLException ignored) {
+        try {
+            Integer id = jdbcTemplate.queryForObject(sql, Integer.class, type);
+            if (id != null) return id;
+        } catch (DataAccessException ignored) {
             new FinanceException(GET_ACCOUNT_TYPE_ID_FAIL).displayAndLog();
         }
         return -1;

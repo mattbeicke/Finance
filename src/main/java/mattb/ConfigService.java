@@ -1,5 +1,7 @@
 package mattb;
 
+import org.springframework.stereotype.Service;
+
 import java.util.prefs.Preferences;
 
 /**
@@ -7,12 +9,13 @@ import java.util.prefs.Preferences;
  *
  * @author Matthew Beicke
  */
-public class Config {
-    private static final Preferences settings = Preferences.userNodeForPackage(Config.class);
+@Service
+public class ConfigService {
+    private final Preferences settings = Preferences.userNodeForPackage(ConfigService.class);
 
-    private static final String NUM_TRANSACTIONS_KEY = "num_transactions";
-    private static final String NUM_ACCOUNTS_KEY = "num_accounts";
-    private static final String DARK_MODE_KEY = "dark_mode";
+    private final String NUM_TRANSACTIONS_KEY = "num_transactions";
+    private final String NUM_ACCOUNTS_KEY = "num_accounts";
+    private final String DARK_MODE_KEY = "dark_mode";
 
     /**
      * Saves all inputted settings
@@ -21,7 +24,7 @@ public class Config {
      * @param numAccounts     Number of accounts per page
      * @param darkMode        Whether using dark mode
      */
-    public static void save(int numTransactions, int numAccounts, boolean darkMode) {
+    public void save(int numTransactions, int numAccounts, boolean darkMode) {
         settings.putInt(NUM_TRANSACTIONS_KEY, numTransactions);
         settings.putInt(NUM_ACCOUNTS_KEY, numAccounts);
         settings.putBoolean(DARK_MODE_KEY, darkMode);
@@ -32,7 +35,7 @@ public class Config {
      *
      * @return Whatever is stored in the preferences or 25 (as a default)
      */
-    public static int getNumTransactions() {
+    public int getNumTransactions() {
         return settings.getInt(NUM_TRANSACTIONS_KEY, 25);
     }
 
@@ -41,7 +44,7 @@ public class Config {
      *
      * @return Whatever is stored in the preferences or 25 (as a default)
      */
-    public static int getNumAccounts() {
+    public int getNumAccounts() {
         return settings.getInt(NUM_ACCOUNTS_KEY, 25);
     }
 
@@ -50,7 +53,7 @@ public class Config {
      *
      * @return Whatever is stored in the preferences or false (light theme as default)
      */
-    public static boolean getDarkMode() {
+    public boolean getDarkMode() {
         return settings.getBoolean(DARK_MODE_KEY, false);
     }
 }

@@ -6,16 +6,17 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
-import mattb.ServiceFactory;
-import mattb.Utilities;
+import mattb.UIUtilities;
 import mattb.model.Goal;
 import mattb.service.GoalService;
+import org.springframework.stereotype.Component;
 
 /**
  * Handles UI interactions on the {@code View Goal Details} modal
  *
  * @author Matthew Beicke
  */
+@Component
 public class ViewGoalDetailsController {
     @FXML
     private TextField nameField;
@@ -24,20 +25,24 @@ public class ViewGoalDetailsController {
     @FXML
     private TextField targetField;
 
-    private GoalService goalService;
+    private final GoalService goalService;
+    private final UIUtilities uiUtilities;
 
     private int id;
 
     private boolean saveClicked = false;
     private boolean deleteClicked = false;
 
+    public ViewGoalDetailsController(GoalService goalService, UIUtilities uiUtilities) {
+        this.goalService = goalService;
+        this.uiUtilities = uiUtilities;
+    }
+
     /**
      * Initializes {@link FXML} items for the {@code View Goal Details} modal and the {@link GoalService}
      */
     @FXML
     private void initialize() {
-        goalService = ServiceFactory.getGoalService();
-
         targetField.textProperty().addListener((_, oldVal, newVal) -> {
             if (!newVal.matches("\\d*(\\.\\d*)?")) {
                 targetField.setText(oldVal);
@@ -69,7 +74,7 @@ public class ViewGoalDetailsController {
             saveClicked = true;
             cancel(event);
         } else {
-            Utilities.showNotification(false, "Please fill all required fields");
+            uiUtilities.showNotification(false, "Please fill all required fields");
         }
     }
 

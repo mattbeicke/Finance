@@ -6,18 +6,19 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
-import mattb.ServiceFactory;
-import mattb.Utilities;
+import mattb.UIUtilities;
 import mattb.model.Goal;
 import mattb.model.GoalResponse;
 import mattb.service.AccountService;
 import mattb.service.GoalService;
+import org.springframework.stereotype.Component;
 
 /**
  * Handles UI interactions on the {@code Add New Goal} modal
  *
  * @author Matthew Beicke
  */
+@Component
 public class AddGoalController {
     @FXML
     private TextField nameField;
@@ -26,19 +27,23 @@ public class AddGoalController {
     @FXML
     private TextField targetField;
 
-    private GoalService goalService;
-    private AccountService accountService;
+    private final GoalService goalService;
+    private final AccountService accountService;
+    private final UIUtilities uiUtilities;
 
     private boolean saveClicked = false;
+
+    public AddGoalController(GoalService goalService, AccountService accountService, UIUtilities uiUtilities) {
+        this.goalService = goalService;
+        this.accountService = accountService;
+        this.uiUtilities = uiUtilities;
+    }
 
     /**
      * Initializes {@link FXML} items for the {@code Add New Goal} modal and the {@link GoalService} and {@link AccountService}
      */
     @FXML
     private void initialize() {
-        goalService = ServiceFactory.getGoalService();
-        accountService = ServiceFactory.getAccountService();
-
         accountCombo.setItems(accountService.getAccountNames());
 
         targetField.textProperty().addListener((_, oldVal, newVal) -> {
@@ -58,7 +63,7 @@ public class AddGoalController {
         GoalResponse response = goalService.saveGoal(accountCombo.getValue(), nameField.getText(), targetField.getText());
 
         if (!response.success()) {
-            Utilities.showNotification(false, response.message());
+            uiUtilities.showNotification(false, response.message());
             return;
         }
 

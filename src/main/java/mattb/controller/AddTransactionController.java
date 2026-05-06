@@ -13,13 +13,13 @@ import javafx.scene.control.TextField;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import mattb.FinanceException;
-import mattb.ServiceFactory;
-import mattb.Utilities;
+import mattb.UIUtilities;
 import mattb.model.Account;
 import mattb.model.Transaction;
 import mattb.model.TransactionResponse;
 import mattb.service.AccountService;
 import mattb.service.TransactionService;
+import org.springframework.context.ApplicationContext;
 
 import java.io.IOException;
 import java.net.URL;
@@ -47,20 +47,27 @@ public class AddTransactionController {
     @FXML
     private DatePicker datePicker;
 
-    private TransactionService transactionService;
-    private AccountService accountService;
+    private final ApplicationContext context;
+    private final TransactionService transactionService;
+    private final AccountService accountService;
+    private final UIUtilities uiUtilities;
 
     private boolean editing;
     private int id;
     private boolean saveClicked = false;
+
+    public AddTransactionController(ApplicationContext context, TransactionService transactionService, AccountService accountService, UIUtilities uiUtilities) {
+        this.context = context;
+        this.transactionService = transactionService;
+        this.accountService = accountService;
+        this.uiUtilities = uiUtilities;
+    }
 
     /**
      * Initializes {@link FXML} items for the {@code Add New Transaction} modal
      */
     @FXML
     public void initialize() {
-        transactionService = ServiceFactory.getTransactionService();
-        accountService = ServiceFactory.getAccountService();
 
         ObservableList<String> accountNames = accountService.getAccountNamesExternal();
         fromCombo.setItems(accountNames);
@@ -92,13 +99,13 @@ public class AddTransactionController {
         );
 
         if (!response.success()) {
-            Utilities.showNotification(false, response.message());
+            uiUtilities.showNotification(false, response.message());
             return;
         }
 
         if (response.requiresBalanceConfirmation() && promptForBalanceUpdate()) {
             if (!transactionService.updateBalances(fromCombo.getValue(), toCombo.getValue(), amountField.getText())) {
-                Utilities.showNotification(false, "Balances failed to update");
+                uiUtilities.showNotification(false, "Balances failed to update");
             }
         }
 
@@ -120,6 +127,9 @@ public class AddTransactionController {
                 return false;
             }
             FXMLLoader loader = new FXMLLoader(resource);
+
+            loader.setControllerFactory(context::getBean);
+
             Parent root = loader.load();
 
             UpdateBalancesController controller = loader.getController();
@@ -128,7 +138,7 @@ public class AddTransactionController {
             stage.initModality(Modality.APPLICATION_MODAL);
             stage.setTitle("Update Balances");
             Scene scene = new Scene(root);
-            Utilities.darkMode(scene);
+            uiUtilities.darkMode(scene);
             stage.setScene(scene);
             stage.showAndWait();
 

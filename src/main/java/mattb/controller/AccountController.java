@@ -13,12 +13,13 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import mattb.Config;
+import mattb.ConfigService;
 import mattb.FinanceException;
-import mattb.ServiceFactory;
-import mattb.Utilities;
+import mattb.UIUtilities;
 import mattb.model.Account;
 import mattb.service.AccountService;
+import org.springframework.context.ApplicationContext;
+import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.net.URL;
@@ -31,6 +32,7 @@ import static mattb.FinanceError.*;
  *
  * @author Matthew Beicke
  */
+@Component
 public class AccountController {
     @FXML
     private TableView<Account> accountTable;
@@ -55,22 +57,30 @@ public class AccountController {
     @FXML
     private Label pageLabel;
 
+    private final ApplicationContext context;
+    private final AccountService accountService;
+    private final ConfigService configService;
+    private final UIUtilities uiUtilities;
+
     private final ObservableList<Account> masterData = FXCollections.observableArrayList();
     private HashMap<Integer, Account> map;
-
-    private AccountService accountService;
 
     private boolean onHidden = false;
     private int page;
     private int perPage;
+
+    public AccountController(ApplicationContext context, AccountService accountService, ConfigService configService, UIUtilities uiUtilities) {
+        this.context = context;
+        this.accountService = accountService;
+        this.configService = configService;
+        this.uiUtilities = uiUtilities;
+    }
 
     /**
      * Initializes {@link FXML} items for the {@code Account} tab and the {@link AccountService}
      */
     @FXML
     public void initialize() {
-        accountService = ServiceFactory.getAccountService();
-
         colName.setCellValueFactory(cellData ->
                 new ReadOnlyObjectWrapper<>(cellData.getValue().name())
         );
@@ -81,11 +91,11 @@ public class AccountController {
                 new ReadOnlyObjectWrapper<>(cellData.getValue().type())
         );
 
-        Utilities.useCurrency(colBalance);
+        uiUtilities.useCurrency(colBalance);
 
         accountTable.setItems(masterData);
 
-        perPage = Config.getNumAccounts();
+        perPage = configService.getNumAccounts();
         page = 1;
         updatePageInfo();
     }
@@ -107,13 +117,13 @@ public class AccountController {
 
         if (accountService.toggleVisibility(selected, map, onHidden)) {
             if (onHidden) {
-                Utilities.showNotification(true, "Account no longer hidden");
+                uiUtilities.showNotification(true, "Account no longer hidden");
             } else {
-                Utilities.showNotification(true, "Account hidden");
+                uiUtilities.showNotification(true, "Account hidden");
             }
             updatePageInfo();
         } else {
-            Utilities.showNotification(false, "No account selected");
+            uiUtilities.showNotification(false, "No account selected");
         }
     }
 
@@ -145,32 +155,59 @@ public class AccountController {
      */
     @FXML
     private void addNewAccount() {
+        loadModal("Add New Account", null, -1);
+    }
+
+    /**
+     * Opens the {@code Edit Account} modal, filling all fields with the currently selected {@link Account Account's} information
+     */
+    @FXML
+    private void editSelected() {
+        Account selected = accountTable.getSelectionModel().getSelectedItem();
+        int id = accountService.getAccountIdFromMap(selected, map);
+        if (id == -1) {
+            uiUtilities.showNotification(false, "No account selected");
+            return;
+        }
+
+        loadModal("Edit Account", selected, id);
+    }
+
+    /**
+     * Opens one of the {@link AddAccountController AddAccountController's} modals
+     *
+     * @param title  Title of the {@code modal}
+     * @param toEdit {@link Account} that will be edited (if this is the {@code Edit Account} modal
+     * @param id     Database id of the {@link Account} that will be edited or -1 if not editing
+     */
+    private void loadModal(String title, Account toEdit, int id) {
         try {
             URL resource = getClass().getResource("/mattb/controller/add_account.fxml");
-            if (resource == null) {
-                new FinanceException(OPEN_NEW_ACCOUNT_MODAL_FAIL).displayAndLog();
-                return;
-            }
             FXMLLoader loader = new FXMLLoader(resource);
-            Parent root = loader.load();
 
+            loader.setControllerFactory(context::getBean);
+
+            Parent root = loader.load();
             AddAccountController controller = loader.getController();
+
+            if (toEdit != null) {
+                controller.setFields(toEdit, id);
+            }
 
             Stage stage = new Stage();
             stage.initModality(Modality.APPLICATION_MODAL);
-            stage.setTitle("Add New Account");
+            stage.setTitle(title);
             Scene scene = new Scene(root);
-            Utilities.darkMode(scene);
+            uiUtilities.darkMode(scene);
             stage.setScene(scene);
             stage.showAndWait();
 
             if (controller.isSaveClicked()) {
-                Utilities.showNotification(true, "Account Created");
+                uiUtilities.showNotification(true, toEdit == null ? "Account Created" : "Account Updated");
+                updatePageInfo();
             }
-
-            updatePageInfo();
-        } catch (IOException ignored) {
-            new FinanceException(OPEN_NEW_ACCOUNT_MODAL_FAIL).displayAndLog();
+        } catch (IOException e) {
+            new FinanceException(toEdit == null ? OPEN_NEW_ACCOUNT_MODAL_FAIL : OPEN_EDIT_ACCOUNT_MODAL_FAIL).displayAndLog();
         }
     }
 
@@ -186,6 +223,9 @@ public class AccountController {
                 return;
             }
             FXMLLoader loader = new FXMLLoader(resource);
+
+            loader.setControllerFactory(context::getBean);
+
             Parent root = loader.load();
 
             AddTypeController controller = loader.getController();
@@ -194,58 +234,15 @@ public class AccountController {
             stage.initModality(Modality.APPLICATION_MODAL);
             stage.setTitle("Add New Account Type");
             Scene scene = new Scene(root);
-            Utilities.darkMode(scene);
+            uiUtilities.darkMode(scene);
             stage.setScene(scene);
             stage.showAndWait();
 
             if (controller.isSaveClicked()) {
-                Utilities.showNotification(true, "Account Type Created");
+                uiUtilities.showNotification(true, "Account Type Created");
             }
         } catch (IOException ignored) {
             new FinanceException(OPEN_NEW_TYPE_MODAL_FAIL).displayAndLog();
-        }
-    }
-
-    /**
-     * Opens the {@code Edit Account} modal, filling all fields with the currently selected {@link Account Account's} information
-     */
-    @FXML
-    private void editSelected() {
-        Account selected = accountTable.getSelectionModel().getSelectedItem();
-        int id = accountService.getAccountIdFromMap(selected, map);
-        if (id == -1) {
-            Utilities.showNotification(false, "No account selected");
-            return;
-        }
-
-        try {
-            URL resource = getClass().getResource("/mattb/controller/add_account.fxml");
-            if (resource == null) {
-                new FinanceException(OPEN_NEW_ACCOUNT_MODAL_FAIL).displayAndLog();
-                return;
-            }
-            FXMLLoader loader = new FXMLLoader(resource);
-            Parent root = loader.load();
-
-            AddAccountController controller = loader.getController();
-
-            controller.setFields(selected, id);
-
-            Stage stage = new Stage();
-            stage.initModality(Modality.APPLICATION_MODAL);
-            stage.setTitle("Edit Transaction");
-            Scene scene = new Scene(root);
-            Utilities.darkMode(scene);
-            stage.setScene(scene);
-            stage.showAndWait();
-
-            if (controller.isSaveClicked()) {
-                Utilities.showNotification(true, "Account Updated");
-            }
-
-            refreshTable();
-        } catch (IOException ignored) {
-            new FinanceException(OPEN_EDIT_ACCOUNT_MODAL_FAIL).displayAndLog();
         }
     }
 

@@ -6,17 +6,18 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
-import mattb.ServiceFactory;
-import mattb.Utilities;
+import mattb.UIUtilities;
 import mattb.model.Account;
 import mattb.model.AccountResponse;
 import mattb.service.AccountService;
+import org.springframework.stereotype.Component;
 
 /**
  * Handles UI interactions on the {@code Add New Account} modal
  *
  * @author Matthew Beicke
  */
+@Component
 public class AddAccountController {
     @FXML
     private ComboBox<String> typeCombo;
@@ -25,19 +26,23 @@ public class AddAccountController {
     @FXML
     private TextField balanceField;
 
-    private AccountService accountService;
+    private final AccountService accountService;
+    private final UIUtilities uiUtilities;
 
     private boolean editing;
     private int id;
     private boolean saveClicked = false;
+
+    public AddAccountController(AccountService accountService, UIUtilities uiUtilities) {
+        this.accountService = accountService;
+        this.uiUtilities = uiUtilities;
+    }
 
     /**
      * Initializes {@link FXML} items for the {@code Add New Account} modal and the {@link AccountService}
      */
     @FXML
     public void initialize() {
-        accountService = ServiceFactory.getAccountService();
-
         typeCombo.setItems(accountService.getAccountTypes());
 
         balanceField.textProperty().addListener((_, oldVal, newVal) -> {
@@ -57,7 +62,7 @@ public class AddAccountController {
         AccountResponse response = accountService.processAccount(typeCombo.getValue(), balanceField.getText(), nameField.getText(), id, editing);
 
         if (!response.success()) {
-            Utilities.showNotification(false, response.message());
+            uiUtilities.showNotification(false, response.message());
             return;
         }
 

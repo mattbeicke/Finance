@@ -4,6 +4,8 @@ import javafx.collections.ObservableList;
 import mattb.dao.AccountDAO;
 import mattb.model.Account;
 import mattb.model.AccountResponse;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Map;
 
@@ -12,6 +14,7 @@ import java.util.Map;
  *
  * @author Matthew Beicke
  */
+@Service
 public class AccountServiceImpl implements AccountService {
     private final AccountDAO accountDAO;
 
@@ -28,6 +31,7 @@ public class AccountServiceImpl implements AccountService {
      * {@inheritDoc}
      */
     @Override
+    @Transactional
     public AccountResponse processAccount(String type, String balance, String name, int id, boolean isEditing) {
         if (type == null || type.isBlank()) return new AccountResponse(false, "Please fill all required fields");
 
@@ -52,6 +56,7 @@ public class AccountServiceImpl implements AccountService {
      * {@inheritDoc}
      */
     @Override
+    @Transactional
     public boolean toggleVisibility(Account account, Map<Integer, Account> currentMap, boolean currentState) {
         if (account == null || currentMap == null) return false;
 
@@ -69,6 +74,7 @@ public class AccountServiceImpl implements AccountService {
      * {@inheritDoc}
      */
     @Override
+    @Transactional
     public void updateBalances(double amount, int fromAccId, int toAccId) {
         accountDAO.updateBalances(amount, fromAccId, toAccId);
     }
@@ -145,6 +151,7 @@ public class AccountServiceImpl implements AccountService {
      * {@inheritDoc}
      */
     @Override
+    @Transactional
     public boolean saveAccountType(String type) {
         if (type.isBlank()) return false;
 

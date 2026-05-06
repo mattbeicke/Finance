@@ -11,11 +11,12 @@ import javafx.scene.control.ListView;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import mattb.FinanceException;
-import mattb.ServiceFactory;
-import mattb.Utilities;
+import mattb.UIUtilities;
 import mattb.model.Goal;
 import mattb.service.AccountService;
 import mattb.service.GoalService;
+import org.springframework.context.ApplicationContext;
+import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.net.URL;
@@ -29,6 +30,7 @@ import static mattb.FinanceError.OPEN_VIEW_GOAL_DETAILS_MODAL_FAIL;
  *
  * @author Matthew Beicke
  */
+@Component
 public class DashboardController {
     @FXML
     private ListView<Goal> goalList;
@@ -37,26 +39,32 @@ public class DashboardController {
     @FXML
     private Label netWorth;
 
+    private final ApplicationContext context;
+    private final AccountService accountService;
+    private final GoalService goalService;
+    private final UIUtilities uiUtilities;
+
     private final ObservableList<Goal> goals = FXCollections.observableArrayList();
     private HashMap<Integer, Goal> map;
 
-    private AccountService accountService;
-    private GoalService goalService;
+    public DashboardController(ApplicationContext context, AccountService accountService, GoalService goalService, UIUtilities uiUtilities) {
+        this.context = context;
+        this.accountService = accountService;
+        this.goalService = goalService;
+        this.uiUtilities = uiUtilities;
+    }
 
     /**
      * Initializes {@link FXML} items for the {@code Dashboard} tab and the {@link AccountService} and {@link GoalService}
      */
     @FXML
     private void initialize() {
-        accountService = ServiceFactory.getAccountService();
-        goalService = ServiceFactory.getGoalService();
-
-        goalList.setCellFactory(_ -> new GoalListCellController());
+        goalList.setCellFactory(_ -> new GoalListCellController(context, uiUtilities));
 
         goalList.setItems(goals);
         refreshList();
 
-        netWorth.setText(Utilities.formatDouble(accountService.getNetWorth()));
+        netWorth.setText(uiUtilities.formatDouble(accountService.getNetWorth()));
     }
 
     /**
@@ -85,6 +93,9 @@ public class DashboardController {
                 return;
             }
             FXMLLoader loader = new FXMLLoader(resource);
+
+            loader.setControllerFactory(context::getBean);
+
             Parent root = loader.load();
 
             AddGoalController controller = loader.getController();
@@ -93,12 +104,12 @@ public class DashboardController {
             stage.initModality(Modality.APPLICATION_MODAL);
             stage.setTitle("Add New Goal");
             Scene scene = new Scene(root);
-            Utilities.darkMode(scene);
+            uiUtilities.darkMode(scene);
             stage.setScene(scene);
             stage.showAndWait();
 
             if (controller.isSaveClicked()) {
-                Utilities.showNotification(true, "Goal Created");
+                uiUtilities.showNotification(true, "Goal Created");
             }
 
             refreshList();
@@ -115,7 +126,7 @@ public class DashboardController {
         Goal selected = goalList.getSelectionModel().getSelectedItem();
         int id = goalService.getGoalIdFromMap(selected, map);
         if (id == -1) {
-            Utilities.showNotification(false, "No goal selected");
+            uiUtilities.showNotification(false, "No goal selected");
             return;
         }
 
@@ -126,6 +137,9 @@ public class DashboardController {
                 return;
             }
             FXMLLoader loader = new FXMLLoader(resource);
+
+            loader.setControllerFactory(context::getBean);
+
             Parent root = loader.load();
 
             ViewGoalDetailsController controller = loader.getController();
@@ -136,14 +150,14 @@ public class DashboardController {
             stage.initModality(Modality.APPLICATION_MODAL);
             stage.setTitle("View Goal Details");
             Scene scene = new Scene(root);
-            Utilities.darkMode(scene);
+            uiUtilities.darkMode(scene);
             stage.setScene(scene);
             stage.showAndWait();
 
             if (controller.isSaveClicked()) {
-                Utilities.showNotification(true, "Goal Updated");
+                uiUtilities.showNotification(true, "Goal Updated");
             } else if (controller.isDeleteClicked()) {
-                Utilities.showNotification(true, "Goal Deleted");
+                uiUtilities.showNotification(true, "Goal Deleted");
             }
 
             refreshList();

@@ -23,8 +23,6 @@ import static mattb.FinanceError.*;
  */
 @Component
 public class MainController {
-    private final ApplicationContext context;
-
     @FXML
     private BorderPane mainBorderPane;
     @FXML
@@ -35,6 +33,8 @@ public class MainController {
     private ToggleButton accounts;
     @FXML
     private ToggleButton settings;
+
+    private final ApplicationContext context;
 
     public MainController(ApplicationContext context) {
         this.context = context;
@@ -91,7 +91,9 @@ public class MainController {
 
         try {
             FXMLLoader loader = new FXMLLoader(resource);
+
             loader.setControllerFactory(context::getBean);
+
             Parent view = loader.load();
             mainBorderPane.setCenter(view);
         } catch (IOException e) {

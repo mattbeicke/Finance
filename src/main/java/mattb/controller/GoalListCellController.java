@@ -8,10 +8,13 @@ import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.control.ProgressBar;
 import mattb.FinanceException;
-import mattb.Utilities;
+import mattb.UIUtilities;
 import mattb.model.Goal;
+import org.springframework.context.ApplicationContext;
+import org.springframework.stereotype.Component;
 
 import java.io.IOException;
+import java.net.URL;
 
 import static mattb.FinanceError.OPEN_GOALS_LIST_FAILED;
 
@@ -20,6 +23,7 @@ import static mattb.FinanceError.OPEN_GOALS_LIST_FAILED;
  *
  * @author Matthew Beicke
  */
+@Component
 public class GoalListCellController extends ListCell<Goal> {
     private Node root;
     @FXML
@@ -38,13 +42,23 @@ public class GoalListCellController extends ListCell<Goal> {
     @SuppressWarnings("unused")
     private Label goalAccount;
 
+    private final ApplicationContext context;
+    private final UIUtilities uiUtilities;
+
     /**
      * Initializes {@link FXML} items for the {@link Goal} {@link ListView List}
      */
-    public GoalListCellController() {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/mattb/controller/goal_cell.fxml"));
-        loader.setController(this);
+    public GoalListCellController(ApplicationContext context, UIUtilities uiUtilities) {
+        this.context = context;
+        this.uiUtilities = uiUtilities;
+
         try {
+            URL resource = getClass().getResource("/mattb/controller/goal_cell.fxml");
+            FXMLLoader loader = new FXMLLoader(resource);
+
+            loader.setControllerFactory(context::getBean);
+            loader.setController(this);
+
             root = loader.load();
         } catch (IOException ignored) {
             new FinanceException(OPEN_GOALS_LIST_FAILED).displayAndLog();
@@ -67,8 +81,8 @@ public class GoalListCellController extends ListCell<Goal> {
             setGraphic(null);
         } else {
             goalName.setText(goal.name());
-            currentBalance.setText(Utilities.formatDouble(goal.current()));
-            goalTarget.setText(Utilities.formatDouble(goal.target()));
+            currentBalance.setText(uiUtilities.formatDouble(goal.current()));
+            goalTarget.setText(uiUtilities.formatDouble(goal.target()));
             goalAccount.setText(goal.account());
 
             if (goal.current() <= goal.initial()) {

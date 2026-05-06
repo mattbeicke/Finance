@@ -13,12 +13,13 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import mattb.Config;
+import mattb.ConfigService;
 import mattb.FinanceException;
-import mattb.ServiceFactory;
-import mattb.Utilities;
+import mattb.UIUtilities;
 import mattb.model.Transaction;
 import mattb.service.TransactionService;
+import org.springframework.context.ApplicationContext;
+import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.net.URL;
@@ -33,6 +34,8 @@ import static mattb.FinanceError.OPEN_NEW_TRANSACTION_MODAL_FAIL;
  *
  * @author Matthew Beicke
  */
+
+@Component
 public class TransactionController {
     @FXML
     private TableView<Transaction> transactionTable;
@@ -61,25 +64,30 @@ public class TransactionController {
     @FXML
     private Label pageLabel;
 
-    private final
+    private final ApplicationContext context;
     private final TransactionService transactionService;
-
+    private final ConfigService configService;
+    private final UIUtilities uiUtilities;
 
     private final ObservableList<Transaction> masterData = FXCollections.observableArrayList();
     private HashMap<Integer, Transaction> map;
 
-
     private boolean onHidden = false;
     private int page;
     private int perPage;
+
+    public TransactionController(ApplicationContext context, TransactionService transactionService, ConfigService configService, UIUtilities uiUtilities) {
+        this.context = context;
+        this.transactionService = transactionService;
+        this.configService = configService;
+        this.uiUtilities = uiUtilities;
+    }
 
     /**
      * Initializes {@link FXML} items for the {@code Transaction} tab and the {@link TransactionService}
      */
     @FXML
     public void initialize() {
-        transactionService = ServiceFactory.getTransactionService();
-
         colDate.setCellValueFactory(cellData ->
                 new ReadOnlyObjectWrapper<>(cellData.getValue().date())
         );
@@ -99,13 +107,13 @@ public class TransactionController {
                 new ReadOnlyObjectWrapper<>(cellData.getValue().memo())
         );
 
-        Utilities.useCurrency(colAmount);
+        uiUtilities.useCurrency(colAmount);
 
         transactionTable.setItems(masterData);
         colDate.setSortType(TableColumn.SortType.DESCENDING);
         transactionTable.getSortOrder().add(colDate);
 
-        perPage = Config.getNumTransactions();
+        perPage = configService.getNumTransactions();
         page = 1;
         updatePageInfo();
 
@@ -129,13 +137,13 @@ public class TransactionController {
 
         if (transactionService.toggleVisibility(selected, map, onHidden)) {
             if (onHidden) {
-                Utilities.showNotification(true, "Transaction no longer hidden");
+                uiUtilities.showNotification(true, "Transaction no longer hidden");
             } else {
-                Utilities.showNotification(true, "Transaction hidden");
+                uiUtilities.showNotification(true, "Transaction hidden");
             }
             updatePageInfo();
         } else {
-            Utilities.showNotification(false, "No transaction selected");
+            uiUtilities.showNotification(false, "No transaction selected");
         }
     }
 
@@ -162,38 +170,13 @@ public class TransactionController {
         transactionTable.sort();
     }
 
+
     /**
      * Opens the {@code Add New Transaction} modal
      */
     @FXML
     private void addNew() {
-        try {
-            URL resource = getClass().getResource("/mattb/controller/add_transaction.fxml");
-            if (resource == null) {
-                new FinanceException(OPEN_NEW_TRANSACTION_MODAL_FAIL).displayAndLog();
-                return;
-            }
-            FXMLLoader loader = new FXMLLoader(resource);
-            Parent root = loader.load();
-
-            AddTransactionController controller = loader.getController();
-
-            Stage stage = new Stage();
-            stage.initModality(Modality.APPLICATION_MODAL);
-            stage.setTitle("Add New Transaction");
-            Scene scene = new Scene(root);
-            Utilities.darkMode(scene);
-            stage.setScene(scene);
-            stage.showAndWait();
-
-            if (controller.isSaveClicked()) {
-                Utilities.showNotification(true, "Transaction Created");
-            }
-
-            updatePageInfo();
-        } catch (IOException ignored) {
-            new FinanceException(OPEN_NEW_TRANSACTION_MODAL_FAIL).displayAndLog();
-        }
+        loadModal("Add New Transaction", null, -1);
     }
 
     /**
@@ -202,39 +185,52 @@ public class TransactionController {
     @FXML
     private void editSelected() {
         Transaction selected = transactionTable.getSelectionModel().getSelectedItem();
+
         int id = transactionService.getTransactionIdFromMap(selected, map);
+
         if (id == -1) {
-            Utilities.showNotification(false, "No transaction selected");
+            uiUtilities.showNotification(false, "No transaction selected");
             return;
         }
 
+        loadModal("Edit Transaction", selected, id);
+    }
+
+    /**
+     * Opens one of the {@link AddTransactionController AddTransactionController's} modals
+     *
+     * @param title  Title of the {@code modal}
+     * @param toEdit {@link Transaction} that will be edited (if this is the {@code Edit Transaction} modal
+     * @param id     Database id of the {@link Transaction} that will be edited or -1 if not editing
+     */
+    private void loadModal(String title, Transaction toEdit, int id) {
         try {
             URL resource = getClass().getResource("/mattb/controller/add_transaction.fxml");
-            if (resource == null) {
-                new FinanceException(OPEN_NEW_TRANSACTION_MODAL_FAIL).displayAndLog();
-                return;
-            }
             FXMLLoader loader = new FXMLLoader(resource);
-            Parent root = loader.load();
 
+            loader.setControllerFactory(context::getBean);
+
+            Parent root = loader.load();
             AddTransactionController controller = loader.getController();
-            controller.setFields(selected, id);
+
+            if (toEdit != null) {
+                controller.setFields(toEdit, id);
+            }
 
             Stage stage = new Stage();
             stage.initModality(Modality.APPLICATION_MODAL);
-            stage.setTitle("Edit Transaction");
+            stage.setTitle(title);
             Scene scene = new Scene(root);
-            Utilities.darkMode(scene);
+            uiUtilities.darkMode(scene);
             stage.setScene(scene);
             stage.showAndWait();
 
             if (controller.isSaveClicked()) {
-                Utilities.showNotification(true, "Transaction Updated");
+                uiUtilities.showNotification(true, toEdit == null ? "Transaction Created" : "Transaction Updated");
+                updatePageInfo();
             }
-
-            refreshTable();
-        } catch (IOException ignored) {
-            new FinanceException(OPEN_EDIT_TRANSACTION_MODAL_FAIL).displayAndLog();
+        } catch (IOException e) {
+            new FinanceException(toEdit == null ? OPEN_NEW_TRANSACTION_MODAL_FAIL : OPEN_EDIT_TRANSACTION_MODAL_FAIL).displayAndLog();
         }
     }
 
