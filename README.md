@@ -158,13 +158,11 @@ Required fields are indicated
 
 ### Overview
 
-The application uses SQLite with normalized relational tables
-
+Database tables and initial data are automatically set up and populated at startup via schema.sql.
+The application uses SQLite with normalized relational tables.
 ---
 
 ### Tables
-
-Database tables and initial data are automatically set up and populated at startup via schema.sql.
 
 #### `account`
 
@@ -361,37 +359,45 @@ src/
 
 ---
 
-### Layers
+### Architecture Tiers
 
-#### Controllers (UI Layer)
+This project follows an N-Tiered MVC pattern
+
+#### View Tier
+
+* The ```FXML``` files (found in resources folder)
+* Defines how the UI works
+
+#### Controller Tier
 
 * Marked with ```@Component```
-* Handle user interaction
+* Handle user interaction with the JavaFX GUI
 * Delegate business logic to service layer
 
 ---
 
-#### Service Layer
+#### Service Tier
 
 * Marked with ```@Service```
 * Uses ```@Transactional``` to ensure data integrity during multi-step database operations (like moving money between
   accounts)
+* Handles all business logic
 * Delegates persistence to DAO layer
 
 ---
 
-#### DAO Layer
+#### DAO Tier
 
 * Marked with ```@Repository```
 * Encapsulates all SQL logic
 * Uses Spring's ```JdbcTemplate``` to remove the boilerplate nonsense
-* Isolates database concerns from UI logic
+* Isolates database concerns from UI and business logic
 
 ---
 
-#### Model Layer
+#### Model Tier
 
-* Represent core domain objects (Account, Transaction, Goal)
+* Represent core domain objects (Accounts, Transactions, and Goals)
 * Implemented as record classes
 
 ---
