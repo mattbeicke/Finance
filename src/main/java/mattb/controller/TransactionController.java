@@ -61,10 +61,13 @@ public class TransactionController {
     @FXML
     private Label pageLabel;
 
+    private final
+    private final TransactionService transactionService;
+
+
     private final ObservableList<Transaction> masterData = FXCollections.observableArrayList();
     private HashMap<Integer, Transaction> map;
 
-    private TransactionService transactionService;
 
     private boolean onHidden = false;
     private int page;

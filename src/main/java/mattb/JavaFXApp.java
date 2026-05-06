@@ -8,6 +8,8 @@ import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.stage.Stage;
 import mattb.controller.MainController;
+import org.springframework.boot.builder.SpringApplicationBuilder;
+import org.springframework.context.ConfigurableApplicationContext;
 
 import java.io.IOException;
 import java.net.URL;
@@ -22,9 +24,14 @@ import static mattb.Utilities.darkMode;
  *
  * @author Matthew Beicke
  */
-public class Main extends Application {
-    static void main() {
-        launch();
+public class JavaFXApp extends Application {
+    private ConfigurableApplicationContext springContext;
+
+    @Override
+    public void init() {
+        this.springContext = new SpringApplicationBuilder()
+                .sources(FinanceApp.class)
+                .run(getParameters().getRaw().toArray(new String[0]));
     }
 
     /**
@@ -62,14 +69,13 @@ public class Main extends Application {
         });
 
         try {
-            ServiceFactory.init();
-
             URL resource = getClass().getResource("/mattb/controller/main.fxml");
             if (resource == null) {
                 new FinanceException(OPEN_MAIN_FAILED).displayAndLog();
                 return;
             }
             FXMLLoader loader = new FXMLLoader(resource);
+            loader.setControllerFactory(springContext::getBean);
             Parent root = loader.load();
 
             stage.setTitle("Matt's Finance App");
@@ -89,7 +95,7 @@ public class Main extends Application {
             FinanceException.logToFile(e.getMessage());
             alert.showAndWait();
 
-            Platform.exit();
+            stop();
         } catch (IOException ignored) {
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle("Critical Startup Error");
@@ -98,7 +104,13 @@ public class Main extends Application {
             FinanceException.logToFile("A necessary JavaFX FXML file could not be found");
             alert.showAndWait();
 
-            Platform.exit();
+            stop();
         }
+    }
+
+    @Override
+    public void stop() {
+        springContext.close();
+        Platform.exit();
     }
 }

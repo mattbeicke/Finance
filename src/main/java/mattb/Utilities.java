@@ -54,7 +54,7 @@ public class Utilities {
      * @param scene Scene to apply dark mode to (if it is on)
      */
     public static void darkMode(Scene scene) {
-        URL themes = Main.class.getResource("/mattb/dark-theme.css");
+        URL themes = JavaFXApp.class.getResource("/mattb/dark-theme.css");
         if (themes == null) {
             new FinanceException(OPEN_DARK_THEME_FAIL).displayAndLog();
             return;

@@ -8,6 +8,8 @@ import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.BorderPane;
 import mattb.FinanceError;
 import mattb.FinanceException;
+import org.springframework.context.ApplicationContext;
+import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.net.URL;
@@ -19,7 +21,10 @@ import static mattb.FinanceError.*;
  *
  * @author Matthew Beicke
  */
+@Component
 public class MainController {
+    private final ApplicationContext context;
+
     @FXML
     private BorderPane mainBorderPane;
     @FXML
@@ -30,6 +35,10 @@ public class MainController {
     private ToggleButton accounts;
     @FXML
     private ToggleButton settings;
+
+    public MainController(ApplicationContext context) {
+        this.context = context;
+    }
 
     @FXML
     private void initialize() {
@@ -82,6 +91,7 @@ public class MainController {
 
         try {
             FXMLLoader loader = new FXMLLoader(resource);
+            loader.setControllerFactory(context::getBean);
             Parent view = loader.load();
             mainBorderPane.setCenter(view);
         } catch (IOException e) {

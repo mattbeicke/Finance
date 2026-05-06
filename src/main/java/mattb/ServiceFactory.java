@@ -47,7 +47,7 @@ public class ServiceFactory {
         try (Statement stmt = conn.createStatement()) {
             stmt.execute("PRAGMA foreign_keys = ON;");
 
-            InputStream is = Main.class.getResourceAsStream("/mattb/schema.sql");
+            InputStream is = JavaFXApp.class.getResourceAsStream("/mattb/schema.sql");
             if (is == null) {
                 new FinanceException(SCHEMA_NOT_FOUND).displayAndLog();
                 return;

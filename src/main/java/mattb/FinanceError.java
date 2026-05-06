@@ -9,9 +9,9 @@ public enum FinanceError {
     // Opening Tabs/Modals/things
 
     /**
-     * Error code for a failure to open the Main page
+     * Error code for a failure to open the JavaFXApp page
      */
-    OPEN_MAIN_FAILED("Failed to open Main page"),
+    OPEN_MAIN_FAILED("Failed to open JavaFXApp page"),
     /**
      * Error code for a failure to open the Dashboard tab
      */
