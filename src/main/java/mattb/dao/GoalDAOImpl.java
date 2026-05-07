@@ -96,7 +96,7 @@ public class GoalDAOImpl implements GoalDAO {
     }
 
     /**
-     * {@inheritDoc
+     * {@inheritDoc}
      */
     @Override
     public int getGoalId(int accId, double target, double initial, String name) {
