@@ -201,9 +201,7 @@ public class TransactionDAOImpl implements TransactionDAO {
 
         try {
             Integer t_id = jdbcTemplate.queryForObject(sql, Integer.class, date.getTime() / 1000L, fromAccId, toAccId, amount, memo);
-            if (t_id != null) {
-                return t_id;
-            }
+            if (t_id != null) return t_id;
         } catch (DataAccessException ignored) {
             new FinanceException(GET_TRANSACTION_ID_FAIL).displayAndLog();
         }

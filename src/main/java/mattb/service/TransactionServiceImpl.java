@@ -130,6 +130,8 @@ public class TransactionServiceImpl implements TransactionService {
         int fromAccId = accountService.getAccId(transaction.fromAccountName());
         int toAccId = accountService.getAccId(transaction.toAccountName());
 
+        if (fromAccId == -1 || toAccId == -1) return -1;
+
         return transactionDAO.getTID(transaction.date(), fromAccId, toAccId, transaction.amount(), transaction.memo());
     }
 

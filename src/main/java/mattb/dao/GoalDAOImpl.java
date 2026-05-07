@@ -1,12 +1,12 @@
 package mattb.dao;
 
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import mattb.FinanceException;
 import mattb.model.Goal;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
-
-import java.util.HashMap;
 
 import static mattb.FinanceError.*;
 
@@ -74,8 +74,8 @@ public class GoalDAOImpl implements GoalDAO {
      * {@inheritDoc}
      */
     @Override
-    public HashMap<Integer, Goal> getGoals() {
-        HashMap<Integer, Goal> goals = new HashMap<>();
+    public ObservableList<Goal> getGoals() {
+        ObservableList<Goal> goals = FXCollections.observableArrayList();
 
         String sql = """
                 select goal_id, account.name as acc_name, target, initial, account.balance as current, goal.name as goal_name from goal
@@ -85,7 +85,7 @@ public class GoalDAOImpl implements GoalDAO {
         try {
             jdbcTemplate.query(sql, rs -> {
                 while (rs.next()) {
-                    goals.put(rs.getInt("goal_id"), new Goal(rs.getDouble("current"), rs.getDouble("initial"), rs.getDouble("target"), rs.getString("acc_name"), rs.getString("goal_name")));
+                    goals.add(new Goal(rs.getDouble("current"), rs.getDouble("initial"), rs.getDouble("target"), rs.getString("acc_name"), rs.getString("goal_name")));
                 }
             });
         } catch (DataAccessException ignored) {
@@ -93,5 +93,22 @@ public class GoalDAOImpl implements GoalDAO {
         }
 
         return goals;
+    }
+
+    /**
+     * {@inheritDoc
+     */
+    @Override
+    public int getGoalId(int accId, double target, double initial, String name) {
+        String sql = "select goal_id from goal where acc_id = ? and target = ? and initial = ? and name = ?";
+
+        try {
+            Integer goal_id = jdbcTemplate.queryForObject(sql, Integer.class, accId, target, initial, name);
+            if (goal_id != null) return goal_id;
+        } catch (DataAccessException ignored) {
+            new FinanceException(GET_GOAL_ID_FAIL).displayAndLog();
+        }
+
+        return -1;
     }
 }

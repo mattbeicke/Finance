@@ -96,5 +96,7 @@ CREATE TABLE IF NOT EXISTS goal
             REFERENCES account (acc_id),
     target  DECIMAL(15, 2) NOT NULL,
     initial DECIMAL(15, 2) NOT NULL,
-    name    VARCHAR(50)    NOT NULL
+    name    VARCHAR(50)    NOT NULL,
+    CONSTRAINT goal_unique
+        UNIQUE (acc_id, target, initial, name)
 );

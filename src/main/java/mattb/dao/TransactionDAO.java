@@ -87,7 +87,7 @@ public interface TransactionDAO {
      * @param toAccId   Database id of the {@link Account} money went to
      * @param amount    Amount of money transferred
      * @param memo      Memo associated with {@link Transaction}
-     * @return Database id of {@code transaction} or -1 if it cannot be found
+     * @return Database id of the {@link Transaction} or -1 if it cannot be found
      */
     int getTID(Date date, int fromAccId, int toAccId, double amount, String memo);
 

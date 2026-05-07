@@ -20,7 +20,6 @@ import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.net.URL;
-import java.util.HashMap;
 
 import static mattb.FinanceError.OPEN_NEW_GOAL_MODAL_FAIL;
 import static mattb.FinanceError.OPEN_VIEW_GOAL_DETAILS_MODAL_FAIL;
@@ -45,7 +44,6 @@ public class DashboardController {
     private final UIUtilities uiUtilities;
 
     private final ObservableList<Goal> goals = FXCollections.observableArrayList();
-    private HashMap<Integer, Goal> map;
 
     /**
      * Used by Spring Boot to do dependency injection for the below items
@@ -79,8 +77,7 @@ public class DashboardController {
      * Refreshes the {@link Goal} {@link ListView List}
      */
     private void refreshList() {
-        map = (HashMap<Integer, Goal>) goalService.getGoals();
-        goals.setAll(map.values());
+        goals.setAll(goalService.getGoals());
 
         boolean hasNoGoals = goals.isEmpty();
         emptyStateLabel.setVisible(hasNoGoals);
@@ -132,7 +129,7 @@ public class DashboardController {
     @FXML
     private void viewGoalDetails() {
         Goal selected = goalList.getSelectionModel().getSelectedItem();
-        int id = goalService.getGoalIdFromMap(selected, map);
+        int id = goalService.getGoalId(selected);
         if (id == -1) {
             uiUtilities.showNotification(false, "No goal selected");
             return;

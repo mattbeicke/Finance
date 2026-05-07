@@ -1,12 +1,11 @@
 package mattb.service;
 
+import javafx.collections.ObservableList;
 import mattb.dao.GoalDAO;
 import mattb.model.Goal;
 import mattb.model.GoalResponse;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.Map;
 
 /**
  * Service Implementation for {@link Goal Goals}
@@ -76,7 +75,7 @@ public class GoalServiceImpl implements GoalService {
      * {@inheritDoc}
      */
     @Override
-    public Map<Integer, Goal> getGoals() {
+    public ObservableList<Goal> getGoals() {
         return goalDAO.getGoals();
     }
 
@@ -84,15 +83,11 @@ public class GoalServiceImpl implements GoalService {
      * {@inheritDoc}
      */
     @Override
-    public int getGoalIdFromMap(Goal goal, Map<Integer, Goal> map) {
-        if (goal == null || map == null) return -1;
+    public int getGoalId(Goal goal) {
+        int accId = accountService.getAccId(goal.account());
 
-        for (Map.Entry<Integer, Goal> entry : map.entrySet()) {
-            if (entry.getValue().equals(goal)) {
-                return entry.getKey();
-            }
-        }
+        if (accId == -1) return -1;
 
-        return -1;
+        return goalDAO.getGoalId(accId, goal.target(), goal.initial(), goal.name());
     }
 }

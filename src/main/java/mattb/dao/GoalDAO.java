@@ -1,9 +1,8 @@
 package mattb.dao;
 
+import javafx.collections.ObservableList;
 import mattb.model.Account;
 import mattb.model.Goal;
-
-import java.util.HashMap;
 
 /**
  * DAO Interface for {@link Goal Goals}
@@ -39,7 +38,18 @@ public interface GoalDAO {
     /**
      * Gets list of all {@link Goal goals} a user has
      *
-     * @return A map of all requested {@link Goal Goals}. The {@link Goal} id as key and the object itself as value
+     * @return A list of all requested {@link Goal Goals}
      */
-    HashMap<Integer, Goal> getGoals();
+    ObservableList<Goal> getGoals();
+
+    /**
+     * Gets a {@link Goal Goals} database id
+     *
+     * @param accId   Database id of the {@link Account} the {@link Goal} is tracking
+     * @param target  Target {@link Account} balance
+     * @param initial Initial {@link Account} balance
+     * @param name    Name of {@link Goal}
+     * @return Database id of the {@link Goal} or -1 if it cannot be found
+     */
+    int getGoalId(int accId, double target, double initial, String name);
 }

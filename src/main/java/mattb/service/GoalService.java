@@ -1,5 +1,6 @@
 package mattb.service;
 
+import javafx.collections.ObservableList;
 import mattb.model.Account;
 import mattb.model.Goal;
 import mattb.model.GoalResponse;
@@ -42,16 +43,15 @@ public interface GoalService {
     /**
      * Gets list of all {@link Goal goals} a user has
      *
-     * @return A map of all requested {@link Goal Goals}. The {@link Goal} id as key and the object itself as value
+     * @return A list of all requested {@link Goal Goals}
      */
-    Map<Integer, Goal> getGoals();
+    ObservableList<Goal> getGoals();
 
     /**
      * Checks if a {@link Goal} is in the local {@link Map} cache
      *
      * @param goal {@link Goal} to look for
-     * @param map  {@link Map} to check through
      * @return The database id of the {@link Goal} or -1 if it cannot be found
      */
-    int getGoalIdFromMap(Goal goal, Map<Integer, Goal> map);
+    int getGoalId(Goal goal);
 }

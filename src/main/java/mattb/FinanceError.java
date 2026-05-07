@@ -144,6 +144,10 @@ public enum FinanceError {
      */
     GET_TRANSACTION_ID_FAIL("Error finding transaction id in database"),
     /**
+     * Error code for a failure to find a goal id in the database
+     */
+    GET_GOAL_ID_FAIL("Error finding goal id in database"),
+    /**
      * Error code for a failure to find a category id in the database
      */
     GET_CATEGORY_ID_FAIL("Error finding category id in database"),
