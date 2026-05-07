@@ -13,7 +13,7 @@ import java.util.Locale;
 import static mattb.FinanceError.OPEN_DARK_THEME_FAIL;
 
 /**
- * This class has some helper methods that are used across the project
+ * This class has some helper methods that are used commonly across the project and needed a central home
  *
  * @author Matthew Beicke
  */
@@ -22,7 +22,7 @@ public class UIUtilities {
     private final ConfigService configService;
 
     /**
-     * Used by Spring Boot to do dependency injection for the below items
+     * Used by Spring Boot to do dependency injection for the methods in {@link UIUtilities this} class
      *
      * @param configService The connection to the {@link ConfigService Preferences Config Class}
      */
@@ -31,11 +31,10 @@ public class UIUtilities {
     }
 
     /**
-     * Converts a {@link Double} (that reflects a balance or amount) to a formatted {@link String}.
-     * This includes a dollar sign and two decimal places and a point (of zeros if it is the case).
+     * Converts a double amount to a US currency formatted String (e.g., "$1,234.56") via the {@link NumberFormat#getCurrencyInstance(Locale)} with {@link Locale#US}.
      *
-     * @param input String to convert
-     * @return Converted string
+     * @param input The double value to format
+     * @return Formatted currency string
      */
     public String formatDouble(double input) {
         return NumberFormat.getCurrencyInstance(Locale.US).format(input);
@@ -62,9 +61,9 @@ public class UIUtilities {
     }
 
     /**
-     * Applies dark mode to given Scene
+     * Applies dark mode to given Scene if dark mode is on
      *
-     * @param scene Scene to apply dark mode to (if it is on)
+     * @param scene {@link Scene} to apply dark mode to
      */
     public void darkMode(Scene scene) {
         URL themes = JavaFXApp.class.getResource("/mattb/dark-theme.css");
@@ -78,10 +77,10 @@ public class UIUtilities {
     }
 
     /**
-     * Displays a {@link Notifications Notification} depending on if something succeeded or not
+     * Displays a {@link Notifications Notification} box in the bottom right of the screen depending on if something succeeded or not
      *
      * @param success Whether to set title of the {@link Notifications Notification} to 'Success' or 'Failure'
-     * @param message Message to display in {@link Notifications Notification} body
+     * @param message Message to display in the {@link Notifications Notification's} body
      */
     public void showNotification(boolean success, String message) {
         Notifications notif = Notifications.create();

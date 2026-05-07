@@ -10,15 +10,15 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 /**
- * Custom exception and handling
+ * Custom exception and handling - Saves error message to the {@code error.log} file and displays it in an {@link Alert}
  *
  * @author Matthew Beicke
  */
 public class FinanceException extends RuntimeException {
     /**
-     * Sends the error to {@link RuntimeException}
+     * Sends the given error to {@link RuntimeException}
      *
-     * @param error Custom error code/message
+     * @param error The error message (provided by {@link FinanceError}
      */
     public FinanceException(FinanceError error) {
         super(error.getMessage());

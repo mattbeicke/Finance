@@ -2,6 +2,7 @@ package mattb.dao;
 
 import mattb.FinanceException;
 import mattb.model.Goal;
+import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
@@ -36,7 +37,7 @@ public class GoalDAOImpl implements GoalDAO {
 
         try {
             jdbcTemplate.update(sql, target, goalName, accId);
-        } catch (Exception e) {
+        } catch (DataAccessException ignored) {
             new FinanceException(SAVE_GOAL_FAIL).displayAndLog();
         }
     }
@@ -50,7 +51,7 @@ public class GoalDAOImpl implements GoalDAO {
 
         try {
             jdbcTemplate.update(sql, goalName, target, goalId);
-        } catch (Exception ignored) {
+        } catch (DataAccessException ignored) {
             new FinanceException(UPDATE_GOAL_FAIL).displayAndLog();
         }
     }
@@ -64,7 +65,7 @@ public class GoalDAOImpl implements GoalDAO {
 
         try {
             jdbcTemplate.update(sql, goalId);
-        } catch (Exception ignored) {
+        } catch (DataAccessException ignored) {
             new FinanceException(DELETE_GOAL_FAIL).displayAndLog();
         }
     }
@@ -80,13 +81,14 @@ public class GoalDAOImpl implements GoalDAO {
                 select goal_id, account.name as acc_name, target, initial, account.balance as current, goal.name as goal_name from goal
                 left join account on goal.acc_id = account.acc_id
                 """;
+
         try {
             jdbcTemplate.query(sql, rs -> {
                 while (rs.next()) {
                     goals.put(rs.getInt("goal_id"), new Goal(rs.getDouble("current"), rs.getDouble("initial"), rs.getDouble("target"), rs.getString("acc_name"), rs.getString("goal_name")));
                 }
             });
-        } catch (Exception ignored) {
+        } catch (DataAccessException ignored) {
             new FinanceException(LOAD_GOALS_FAIL).displayAndLog();
         }
 

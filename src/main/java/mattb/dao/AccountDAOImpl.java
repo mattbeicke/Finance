@@ -106,12 +106,14 @@ public class AccountDAOImpl implements AccountDAO {
     @Override
     public double getNetWorth() {
         String sql = "select sum(balance) as networth from account where acc_id not in (select acc_id from hidden_accounts)";
+
         try {
             Double d = jdbcTemplate.queryForObject(sql, Double.class);
             if (d != null) return d;
         } catch (DataAccessException ignored) {
             new FinanceException(NET_WORTH_FAIL).displayAndLog();
         }
+
         return 0;
     }
 
@@ -136,6 +138,7 @@ public class AccountDAOImpl implements AccountDAO {
         } catch (DataAccessException ignored) {
             new FinanceException(LOAD_ACCOUNTS_FAIL).displayAndLog();
         }
+
         return map;
     }
 
@@ -214,6 +217,7 @@ public class AccountDAOImpl implements AccountDAO {
         } catch (DataAccessException ignored) {
             new FinanceException(GET_ACCOUNT_ID_FAIL).displayAndLog();
         }
+
         return -1;
     }
 
@@ -267,6 +271,7 @@ public class AccountDAOImpl implements AccountDAO {
         } catch (DataAccessException ignored) {
             new FinanceException(GET_ACCOUNT_TYPE_ID_FAIL).displayAndLog();
         }
+
         return -1;
     }
 }

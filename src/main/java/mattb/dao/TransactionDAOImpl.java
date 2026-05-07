@@ -2,6 +2,7 @@ package mattb.dao;
 
 import mattb.FinanceException;
 import mattb.model.Transaction;
+import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
@@ -55,9 +56,10 @@ public class TransactionDAOImpl implements TransactionDAO {
                 ResultSet rs = pstmt.getGeneratedKeys();
                 return rs.next() ? rs.getInt(1) : -1;
             });
-        } catch (Exception e) {
+        } catch (DataAccessException e) {
             new FinanceException(SAVE_TRANSACTION_FAIL).displayAndLog();
         }
+
         return -1;
     }
 
@@ -73,7 +75,7 @@ public class TransactionDAOImpl implements TransactionDAO {
                 date = LocalDate.now();
             }
             jdbcTemplate.update(sql, (int) date.atStartOfDay(ZoneId.systemDefault()).toEpochSecond(), fromAccId, toAccId, amount, memo, id);
-        } catch (Exception ignored) {
+        } catch (DataAccessException ignored) {
             new FinanceException(SAVE_TRANSACTION_FAIL).displayAndLog();
         }
     }
@@ -87,7 +89,7 @@ public class TransactionDAOImpl implements TransactionDAO {
 
         try {
             jdbcTemplate.update(sql, transactionId);
-        } catch (Exception ignored) {
+        } catch (DataAccessException ignored) {
             new FinanceException(UPDATE_HIDDEN_TRANSACTION_LIST_FAIL).displayAndLog();
         }
     }
@@ -98,9 +100,10 @@ public class TransactionDAOImpl implements TransactionDAO {
     @Override
     public void linkTransactionCategory(int t_id, int cat_id) {
         String sql = "insert into tcat(trans, cat) values (?, ?)";
+
         try {
             jdbcTemplate.update(sql, t_id, cat_id);
-        } catch (Exception ignored) {
+        } catch (DataAccessException ignored) {
             new FinanceException(SAVE_TRANSACTION_CATEGORY_FAIL).displayAndLog();
         }
     }
@@ -129,10 +132,10 @@ public class TransactionDAOImpl implements TransactionDAO {
                     ResultSet rs = pstmt.getGeneratedKeys();
                     return rs.next() ? rs.getInt(1) : -1;
                 });
-            } catch (Exception ignoredE) {
+            } catch (DataAccessException ignoredE) {
                 new FinanceException(SAVE_CATEGORY_FAIL).displayAndLog();
             }
-        } catch (Exception ignored) {
+        } catch (DataAccessException ignored) {
             new FinanceException(GET_CATEGORY_ID_FAIL).displayAndLog();
         }
 
@@ -145,9 +148,10 @@ public class TransactionDAOImpl implements TransactionDAO {
     @Override
     public void clearCategoriesForTransaction(int t_id) {
         String sql = "delete from tcat where trans = ?";
+
         try {
             jdbcTemplate.update(sql, t_id);
-        } catch (Exception ignored) {
+        } catch (DataAccessException ignored) {
             new FinanceException(CLEAR_CATEGORIES_FAIL).displayAndLog();
         }
     }
@@ -178,7 +182,7 @@ public class TransactionDAOImpl implements TransactionDAO {
                     }
                 }
             }, perPage, ((page - 1) * perPage));
-        } catch (Exception ignored) {
+        } catch (DataAccessException ignored) {
             new FinanceException(LOAD_TRANSACTIONS_FAIL).displayAndLog();
         }
 
@@ -195,7 +199,7 @@ public class TransactionDAOImpl implements TransactionDAO {
         try {
             Integer count = jdbcTemplate.queryForObject(sql, Integer.class);
             return (count != null) ? count : -1;
-        } catch (Exception ignored) {
+        } catch (DataAccessException ignored) {
             new FinanceException(GET_TRANSACTION_COUNT_FAIL).displayAndLog();
         }
 

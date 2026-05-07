@@ -57,6 +57,10 @@ public class GoalListCellController extends ListCell<Goal> {
 
         try {
             URL resource = getClass().getResource("/mattb/controller/goal_cell.fxml");
+            if (resource == null) {
+                new FinanceException(OPEN_GOALS_LIST_FAILED).displayAndLog();
+                return;
+            }
             FXMLLoader loader = new FXMLLoader(resource);
 
             loader.setControllerFactory(this.context::getBean);
@@ -72,9 +76,7 @@ public class GoalListCellController extends ListCell<Goal> {
      * Sets up a row in the {@link ListView List} based on the supplied {@link Goal}
      *
      * @param goal  The new item for the cell.
-     * @param empty Whether this cell represents data from the list. If it
-     *              is empty, then it does not represent any domain data, but is a cell
-     *              being used to render an "empty" row.
+     * @param empty Whether this cell represents data from the list. If it is empty, then it does not represent any domain data, but is a cell being used to render an "empty" row.
      */
     @Override
     protected void updateItem(Goal goal, boolean empty) {

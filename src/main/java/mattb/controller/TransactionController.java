@@ -214,6 +214,10 @@ public class TransactionController {
     private void loadModal(String title, Transaction toEdit, int id) {
         try {
             URL resource = getClass().getResource("/mattb/controller/add_transaction.fxml");
+            if (resource == null) {
+                new FinanceException(toEdit == null ? OPEN_NEW_TRANSACTION_MODAL_FAIL : OPEN_EDIT_TRANSACTION_MODAL_FAIL).displayAndLog();
+                return;
+            }
             FXMLLoader loader = new FXMLLoader(resource);
 
             loader.setControllerFactory(context::getBean);
@@ -237,7 +241,7 @@ public class TransactionController {
                 uiUtilities.showNotification(true, toEdit == null ? "Transaction Created" : "Transaction Updated");
                 updatePageInfo();
             }
-        } catch (IOException e) {
+        } catch (IOException ignored) {
             new FinanceException(toEdit == null ? OPEN_NEW_TRANSACTION_MODAL_FAIL : OPEN_EDIT_TRANSACTION_MODAL_FAIL).displayAndLog();
         }
     }

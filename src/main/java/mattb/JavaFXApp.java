@@ -13,14 +13,12 @@ import org.springframework.context.ConfigurableApplicationContext;
 
 import java.io.IOException;
 import java.net.URL;
-import java.sql.Connection;
 import java.util.Arrays;
 
 import static mattb.FinanceError.OPEN_MAIN_FAILED;
 
 /**
- * Does all the setup for custom exception handling and creating the main stage for the GUI.
- * Initializes Spring Boot.
+ * Does all the sets up the {@link FinanceException custom exception handling}. Initialization of the main stage for the GUI. Initializes Spring Boot.
  *
  * @author Matthew Beicke
  */
@@ -38,14 +36,9 @@ public class JavaFXApp extends Application {
     }
 
     /**
-     * Sets up exception handling to be done via {@link FinanceException}.
-     * Initializes the Database {@link Connection}.
-     * Starts the GUI.
+     * Sets up exception handling to be done via {@link FinanceException} then starts the JavaFX GUI.
      *
-     * @param stage The primary stage for this application, onto which
-     *              the application scene can be set.
-     *              Applications may create other stages, if needed, but they will not be
-     *              primary stages.
+     * @param stage The primary stage for this application, onto which the application scene can be set. Applications may create other stages, if needed, but they will not be  primary stages.
      */
     @Override
     public void start(Stage stage) {
@@ -113,7 +106,7 @@ public class JavaFXApp extends Application {
     }
 
     /**
-     * Gracefully exits Spring Boot and the GUI
+     * Gracefully exits Spring Boot and then the JavaFX GUI
      */
     @Override
     public void stop() {

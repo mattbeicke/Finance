@@ -191,6 +191,10 @@ public class AccountController {
     private void loadModal(String title, Account toEdit, int id) {
         try {
             URL resource = getClass().getResource("/mattb/controller/add_account.fxml");
+            if (resource == null) {
+                new FinanceException(toEdit == null ? OPEN_NEW_ACCOUNT_MODAL_FAIL : OPEN_EDIT_ACCOUNT_MODAL_FAIL).displayAndLog();
+                return;
+            }
             FXMLLoader loader = new FXMLLoader(resource);
 
             loader.setControllerFactory(context::getBean);
@@ -214,7 +218,7 @@ public class AccountController {
                 uiUtilities.showNotification(true, toEdit == null ? "Account Created" : "Account Updated");
                 updatePageInfo();
             }
-        } catch (IOException e) {
+        } catch (IOException ignored) {
             new FinanceException(toEdit == null ? OPEN_NEW_ACCOUNT_MODAL_FAIL : OPEN_EDIT_ACCOUNT_MODAL_FAIL).displayAndLog();
         }
     }

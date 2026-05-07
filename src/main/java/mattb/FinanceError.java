@@ -1,7 +1,7 @@
 package mattb;
 
 /**
- * List of all the custom Error codes and messages. Used by {@code FinanceException}
+ * List of all the custom error messages. Used by {@link FinanceException}
  *
  * @author Matthew Beicke
  */

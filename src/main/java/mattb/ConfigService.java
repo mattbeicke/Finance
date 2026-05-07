@@ -18,7 +18,7 @@ public class ConfigService {
     private final String DARK_MODE_KEY = "dark_mode";
 
     /**
-     * Saves all inputted settings
+     * Saves all inputted settings to the Registry via the {@link Preferences} API
      *
      * @param numTransactions Number of transactions per page
      * @param numAccounts     Number of accounts per page
@@ -33,7 +33,7 @@ public class ConfigService {
     /**
      * Gets the number of transactions per page from the {@link Preferences} API
      *
-     * @return Whatever is stored in the preferences or 25 (as a default)
+     * @return Whatever is stored in the Registry via the {@link Preferences} API or {@code 25} as a default
      */
     public int getNumTransactions() {
         return settings.getInt(NUM_TRANSACTIONS_KEY, 25);
@@ -42,7 +42,7 @@ public class ConfigService {
     /**
      * Gets the number of accounts per page from the {@link Preferences} API
      *
-     * @return Whatever is stored in the preferences or 25 (as a default)
+     * @return Whatever is stored in the Registry via the {@link Preferences} API or {@code 25} as a default
      */
     public int getNumAccounts() {
         return settings.getInt(NUM_ACCOUNTS_KEY, 25);
@@ -51,7 +51,7 @@ public class ConfigService {
     /**
      * Gets the dark mode status from the {@link Preferences} API
      *
-     * @return Whatever is stored in the preferences or false (light theme as default)
+     * @return Whatever is stored in the Registry via the {@link Preferences} API or {@code false} (light theme) as a default
      */
     public boolean getDarkMode() {
         return settings.getBoolean(DARK_MODE_KEY, false);

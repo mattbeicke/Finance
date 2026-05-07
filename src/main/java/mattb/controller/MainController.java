@@ -39,7 +39,7 @@ public class MainController {
     /**
      * Used by Spring Boot to do dependency injection for the below items
      *
-     * @param context Used to create modals properly
+     * @param context Used to create tabs properly
      */
     public MainController(ApplicationContext context) {
         this.context = context;
