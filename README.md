@@ -169,11 +169,16 @@ The application uses SQLite with normalized relational tables.
 ```sqlite
 CREATE TABLE account
 (
-    acc_id   INTEGER PRIMARY KEY AUTOINCREMENT,
-    acc_type INTEGER        NOT NULL,
+    acc_id   INTEGER        NOT NULL
+        CONSTRAINT account_pk
+            PRIMARY KEY AUTOINCREMENT,
+    acc_type INTEGER        NOT NULL
+        CONSTRAINT account_type_fk
+            REFERENCES account_type (type_id),
     balance  DECIMAL(15, 2) NOT NULL,
-    name     VARCHAR(50)    NOT NULL,
-    FOREIGN KEY (acc_type) REFERENCES account_type
+    name     VARCHAR(50)    NOT NULL
+        CONSTRAINT name_unique
+            UNIQUE
 );
 ```
 
@@ -184,26 +189,12 @@ CREATE TABLE account
 ```sqlite
 CREATE TABLE account_type
 (
-    type_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    type_id INTEGER      NOT NULL
+        CONSTRAINT account_type_pk
+            PRIMARY KEY AUTOINCREMENT,
     type    VARCHAR(100) NOT NULL
-);
-```
-
----
-
-#### `transaction`
-
-```sqlite
-CREATE TABLE "transaction"
-(
-    t_id     INTEGER PRIMARY KEY AUTOINCREMENT,
-    date     INTEGER        NOT NULL,
-    from_acc INTEGER        NOT NULL,
-    to_acc   INTEGER        NOT NULL,
-    amount   DECIMAL(15, 2) NOT NULL,
-    memo     VARCHAR(100),
-    FOREIGN KEY (from_acc) REFERENCES account,
-    FOREIGN KEY (to_acc) REFERENCES account
+        CONSTRAINT type_unique
+            UNIQUE
 );
 ```
 
@@ -214,23 +205,31 @@ CREATE TABLE "transaction"
 ```sqlite
 CREATE TABLE category
 (
-    cat_id   INTEGER PRIMARY KEY AUTOINCREMENT,
+    cat_id   INTEGER     NOT NULL
+        CONSTRAINT category_pk
+            PRIMARY KEY AUTOINCREMENT,
     cat_name VARCHAR(50) NOT NULL
+        CONSTRAINT cat_name_unique
+            UNIQUE
 );
 ```
 
 ---
 
-#### `tcat` (Transaction <-> Category)
+#### `goal`
 
 ```sqlite
-CREATE TABLE tcat
+CREATE TABLE goal
 (
-    trans INTEGER NOT NULL,
-    cat   INTEGER NOT NULL,
-    PRIMARY KEY (trans, cat),
-    FOREIGN KEY (trans) REFERENCES "transaction",
-    FOREIGN KEY (cat) REFERENCES category
+    goal_id INTEGER        NOT NULL
+        CONSTRAINT goal_pk
+            PRIMARY KEY AUTOINCREMENT,
+    acc_id  INTEGER        NOT NULL
+        CONSTRAINT acc_id_fk
+            REFERENCES account (acc_id),
+    target  DECIMAL(15, 2) NOT NULL,
+    initial DECIMAL(15, 2) NOT NULL,
+    name    VARCHAR(50)    NOT NULL
 );
 ```
 
@@ -241,9 +240,14 @@ CREATE TABLE tcat
 ```sqlite
 CREATE TABLE hidden_accounts
 (
-    hidden_acc_id INTEGER PRIMARY KEY AUTOINCREMENT,
-    acc_id        INTEGER NOT NULL,
-    FOREIGN KEY (acc_id) REFERENCES account
+    hidden_acc_id INTEGER NOT NULL
+        CONSTRAINT hidden_accounts_pk
+            PRIMARY KEY AUTOINCREMENT,
+    acc_id        INTEGER NOT NULL
+        CONSTRAINT acc_id_fk
+            REFERENCES account (acc_id),
+    CONSTRAINT acc_id_unique
+        UNIQUE (acc_id)
 );
 ```
 
@@ -254,24 +258,55 @@ CREATE TABLE hidden_accounts
 ```sqlite
 CREATE TABLE hidden_transactions
 (
-    hidden_t_id INTEGER PRIMARY KEY AUTOINCREMENT,
-    t_id        INTEGER NOT NULL,
-    FOREIGN KEY (t_id) REFERENCES "transaction"
+    hidden_t_id INTEGER NOT NULL
+        CONSTRAINT hidden_transactions_pk
+            PRIMARY KEY AUTOINCREMENT,
+    t_id        INTEGER NOT NULL
+        CONSTRAINT t_id_fk
+            REFERENCES "transaction" (t_id),
+    CONSTRAINT t_id_unique
+        UNIQUE (t_id)
 );
 ```
 
-#### `goal`
+---
+
+#### `tcat` (Transaction <-> Category)
 
 ```sqlite
-CREATE TABLE goal
+CREATE TABLE tcat
 (
-    goal_id INTEGER PRIMARY KEY AUTOINCREMENT,
-    acc_id  INTEGER        NOT NULL,
-    target  DECIMAL(15, 2) NOT NULL,
-    initial DECIMAL(15, 2) NOT NULL,
-    name    VARCHAR(50)    NOT NULL,
-    FOREIGN KEY (acc_id) REFERENCES account
-)
+    trans INTEGER NOT NULL
+        CONSTRAINT t_id_fk
+            REFERENCES "transaction" (t_id),
+    cat   INTEGER NOT NULL
+        CONSTRAINT cat_id_fk
+            REFERENCES category (cat_id),
+    CONSTRAINT tcat_pk
+        PRIMARY KEY (trans, cat)
+);
+```
+
+---
+
+#### `transaction`
+
+```sqlite
+CREATE TABLE "transaction"
+(
+    t_id     INTEGER        NOT NULL
+        CONSTRAINT transaction_pk
+            PRIMARY KEY AUTOINCREMENT,
+    date     INTEGER        NOT NULL,
+    from_acc INTEGER        NOT NULL
+        CONSTRAINT from_acc_fk
+            REFERENCES account (acc_id),
+    to_acc   INTEGER        NOT NULL
+        CONSTRAINT to_acc_fk
+            REFERENCES account (acc_id),
+    amount   DECIMAL(15, 2) NOT NULL,
+    memo     VARCHAR(100)
+);
 ```
 
 ---
@@ -281,7 +316,7 @@ CREATE TABLE goal
 * `account -> account_type` (many-to-one)
 * `transaction -> account` (from/to)
 * `transaction <-> category` (many-to-many via `tcat`)
-* hidden tables act as filters
+* The 'hidden_...' tables act as filters
 
 ---
 
