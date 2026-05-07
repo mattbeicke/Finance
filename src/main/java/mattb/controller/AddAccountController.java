@@ -6,7 +6,6 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
-import mattb.ConfigService;
 import mattb.UIUtilities;
 import mattb.model.Account;
 import mattb.model.AccountResponse;

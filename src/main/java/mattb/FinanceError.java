@@ -71,18 +71,6 @@ public enum FinanceError {
 
     // SQL
 
-    /**
-     * Error code for a failure to connect to the database
-     */
-    DATABASE_CONNECTION_FAIL("Failed to connect to database"),
-    /**
-     * Error code for a failure to open the schema.sql file
-     */
-    SCHEMA_NOT_FOUND("Database schema file not found"),
-    /**
-     * Error code for a failure to initialize database tables
-     */
-    DATABASE_CREATION_FAIL("Failed to initialize tables"),
     // Saving
     /**
      * Error code for a failure to save a new account type to the database
@@ -179,7 +167,8 @@ public enum FinanceError {
     /**
      * Error code for a failure to save a new type to the database
      */
-    DELETE_GOAL_FAIL("Error deleting goal from database"),;
+    DELETE_GOAL_FAIL("Error deleting goal from database"),
+    ;
 
     private final String message;
 

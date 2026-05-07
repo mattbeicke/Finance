@@ -375,7 +375,8 @@ src/
     │
     └── resources/
         ├── application.properties       # Contains information for Spring Boot (primarily for how to do SQL database)
-        ├── schema.sql                   # SQL file containing the neccessary table setup and initial population
+        ├── data.sql                     # SQL file containing the initial seed data
+        ├── schema.sql                   # SQL file containing the table setup code
         └── mattb/
             ├── dark-theme.css           # CSS containing dark theme
             └── controllers/             # FXML UI layouts
@@ -414,7 +415,7 @@ This project follows an N-Tiered MVC pattern
 #### Service Tier
 
 * Marked with ```@Service```
-* Uses ```@Transactional``` to ensure data integrity during multi-step database operations (like moving money between
+* Uses ```@Transactional``` to ensure data integrity during multistep database operations (like moving money between
   accounts)
 * Handles all business logic
 * Delegates persistence to DAO layer

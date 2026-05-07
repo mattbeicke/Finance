@@ -59,7 +59,7 @@ public class GoalListCellController extends ListCell<Goal> {
             URL resource = getClass().getResource("/mattb/controller/goal_cell.fxml");
             FXMLLoader loader = new FXMLLoader(resource);
 
-            loader.setControllerFactory(context::getBean);
+            loader.setControllerFactory(this.context::getBean);
             loader.setController(this);
 
             root = loader.load();
