@@ -7,8 +7,6 @@ import mattb.model.AccountResponse;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Map;
-
 /**
  * Service Implementation for {@link Account Accounts}
  *
@@ -57,10 +55,10 @@ public class AccountServiceImpl implements AccountService {
      */
     @Override
     @Transactional
-    public boolean toggleVisibility(Account account, Map<Integer, Account> currentMap, boolean currentState) {
-        if (account == null || currentMap == null) return false;
+    public boolean toggleVisibility(Account account, boolean currentState) {
+        if (account == null) return false;
 
-        int id = getAccountIdFromMap(account, currentMap);
+        int id = getAccId(account.name());
 
         if (id != -1) {
             accountDAO.updateAccountVisibility(id, currentState);
@@ -91,7 +89,7 @@ public class AccountServiceImpl implements AccountService {
      * {@inheritDoc}
      */
     @Override
-    public Map<Integer, Account> getPagedAccounts(boolean onHidden, int perPage, int page) {
+    public ObservableList<Account> getPagedAccounts(boolean onHidden, int perPage, int page) {
         return accountDAO.getAllAccounts(onHidden, perPage, page);
     }
 
@@ -119,22 +117,6 @@ public class AccountServiceImpl implements AccountService {
         if (name == null || name.isBlank() || name.equals("Add more via Accounts tab")) return -1;
 
         return accountDAO.getAccId(name);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public int getAccountIdFromMap(Account account, Map<Integer, Account> map) {
-        if (account == null || map == null) return -1;
-
-        for (Map.Entry<Integer, Account> entry : map.entrySet()) {
-            if (entry.getValue().equals(account)) {
-                return entry.getKey();
-            }
-        }
-
-        return -1;
     }
 
     /**

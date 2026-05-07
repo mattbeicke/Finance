@@ -23,7 +23,6 @@ import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.net.URL;
-import java.util.HashMap;
 
 import static mattb.FinanceError.*;
 
@@ -63,7 +62,6 @@ public class AccountController {
     private final UIUtilities uiUtilities;
 
     private final ObservableList<Account> masterData = FXCollections.observableArrayList();
-    private HashMap<Integer, Account> map;
 
     private boolean onHidden = false;
     private int page;
@@ -112,8 +110,7 @@ public class AccountController {
      * Refreshes the {@link Account} {@link TableView Table} with either hidden or non-hidden {@link Account Accounts}
      */
     private void refreshTable() {
-        map = (HashMap<Integer, Account>) accountService.getPagedAccounts(onHidden, perPage, page);
-        masterData.setAll(map.values());
+        masterData.setAll(accountService.getPagedAccounts(onHidden, perPage, page));
     }
 
     /**
@@ -123,7 +120,7 @@ public class AccountController {
     private void hideAccount() {
         Account selected = accountTable.getSelectionModel().getSelectedItem();
 
-        if (accountService.toggleVisibility(selected, map, onHidden)) {
+        if (accountService.toggleVisibility(selected, onHidden)) {
             if (onHidden) {
                 uiUtilities.showNotification(true, "Account no longer hidden");
             } else {
@@ -172,7 +169,7 @@ public class AccountController {
     @FXML
     private void editSelected() {
         Account selected = accountTable.getSelectionModel().getSelectedItem();
-        int id = accountService.getAccountIdFromMap(selected, map);
+        int id = accountService.getAccId(selected.name());
         if (id == -1) {
             uiUtilities.showNotification(false, "No account selected");
             return;

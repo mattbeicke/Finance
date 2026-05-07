@@ -35,7 +35,9 @@ CREATE TABLE IF NOT EXISTS "transaction"
         CONSTRAINT to_acc_fk
             REFERENCES account (acc_id),
     amount   DECIMAL(15, 2) NOT NULL,
-    memo     VARCHAR(100)
+    memo     VARCHAR(100),
+    CONSTRAINT transaction_unique
+        UNIQUE (date, from_acc, to_acc, amount, memo)
 );
 
 CREATE TABLE IF NOT EXISTS category

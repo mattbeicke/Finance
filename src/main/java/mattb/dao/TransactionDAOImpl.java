@@ -1,5 +1,7 @@
 package mattb.dao;
 
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import mattb.FinanceException;
 import mattb.model.Transaction;
 import org.springframework.dao.DataAccessException;
@@ -12,6 +14,7 @@ import java.sql.ResultSet;
 import java.sql.Statement;
 import java.time.LocalDate;
 import java.time.ZoneId;
+import java.util.Date;
 import java.util.HashMap;
 
 import static mattb.FinanceError.*;
@@ -160,7 +163,7 @@ public class TransactionDAOImpl implements TransactionDAO {
      * {@inheritDoc}
      */
     @Override
-    public HashMap<Integer, Transaction> getAllTransactions(boolean hidden, int perPage, int page) {
+    public ObservableList<Transaction> getAllTransactions(boolean hidden, int perPage, int page) {
         HashMap<Integer, Transaction> map = new HashMap<>();
 
         String sql = """
@@ -186,7 +189,26 @@ public class TransactionDAOImpl implements TransactionDAO {
             new FinanceException(LOAD_TRANSACTIONS_FAIL).displayAndLog();
         }
 
-        return map;
+        return FXCollections.observableArrayList(map.values());
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public int getTID(Date date, int fromAccId, int toAccId, double amount, String memo) {
+        String sql = "select t_id from \"transaction\" where date = ? and from_acc = ? and to_acc = ? and amount = ? and memo = ?";
+
+        try {
+            Integer t_id = jdbcTemplate.queryForObject(sql, Integer.class, date.getTime() / 1000L, fromAccId, toAccId, amount, memo);
+            if (t_id != null) {
+                return t_id;
+            }
+        } catch (DataAccessException ignored) {
+            new FinanceException(GET_TRANSACTION_ID_FAIL).displayAndLog();
+        }
+
+        return -1;
     }
 
     /**

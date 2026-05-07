@@ -1,11 +1,11 @@
 package mattb.service;
 
+import javafx.collections.ObservableList;
 import mattb.model.Account;
 import mattb.model.Transaction;
 import mattb.model.TransactionResponse;
 
 import java.time.LocalDate;
-import java.util.Map;
 
 /**
  * Service Interface for {@link Transaction Transactions}
@@ -42,11 +42,10 @@ public interface TransactionService {
      * Changes a {@link Transaction Transaction's} visibility
      *
      * @param transaction  {@link Transaction} to update
-     * @param currentMap   {@link Map} containing all currently loaded {@link Transaction Transactions}
      * @param currentState What to set the transaction to (in terms of visibility)
      * @return {@code true} if successful, {@code false} if not
      */
-    boolean toggleVisibility(Transaction transaction, Map<Integer, Transaction> currentMap, boolean currentState);
+    boolean toggleVisibility(Transaction transaction, boolean currentState);
 
     /**
      * Gets list of all non-hidden {@link Transaction transactions} (if {@code hidden} is false) or
@@ -55,18 +54,17 @@ public interface TransactionService {
      * @param onHidden Whether to get the hidden or non-hidden {@link Transaction transactions}
      * @param perPage  Number of {@link Transaction transactions} to get
      * @param page     Offset of {@link Transaction transactions} request
-     * @return A map of all requested {@link Transaction Transactions}. The {@link Transaction} id as key and the object itself as value
+     * @return A list of all requested {@link Transaction Transactions}
      */
-    Map<Integer, Transaction> getPagedTransactions(boolean onHidden, int perPage, int page);
+    ObservableList<Transaction> getPagedTransactions(boolean onHidden, int perPage, int page);
 
     /**
-     * Checks if a {@link Transaction} is in the local {@link Map} cache
+     * Gets a {@link Transaction Transactions} database id
      *
-     * @param transaction {@link Transaction} to look for
-     * @param map         {@link Map} to check through
-     * @return The database id of the {@link Transaction} or -1 if it cannot be found
+     * @param transaction {@link Transaction} to find id of
+     * @return Database id of {@code transaction} or -1 if it cannot be found
      */
-    int getTransactionIdFromMap(Transaction transaction, Map<Integer, Transaction> map);
+    int getTID(Transaction transaction);
 
     /**
      * Computes the max page of the {@link Transaction} table

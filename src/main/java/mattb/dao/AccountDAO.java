@@ -3,8 +3,6 @@ package mattb.dao;
 import javafx.collections.ObservableList;
 import mattb.model.Account;
 
-import java.util.HashMap;
-
 /**
  * DAO Interface for {@link Account Accounts}
  *
@@ -61,9 +59,9 @@ public interface AccountDAO {
      * @param hidden  Whether to get the hidden or non-hidden {@link Account accounts}
      * @param perPage Number of {@link Account accounts} to get
      * @param page    Offset of {@link Account} request
-     * @return A map of all requested {@link Account Accounts}. The {@link Account} id as key and the object itself as value
+     * @return A list of all requested {@link Account Accounts}
      */
-    HashMap<Integer, Account> getAllAccounts(boolean hidden, int perPage, int page);
+    ObservableList<Account> getAllAccounts(boolean hidden, int perPage, int page);
 
     /**
      * Gets list of all non-hidden {@link Account Accounts} not including External

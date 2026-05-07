@@ -305,7 +305,9 @@ CREATE TABLE "transaction"
         CONSTRAINT to_acc_fk
             REFERENCES account (acc_id),
     amount   DECIMAL(15, 2) NOT NULL,
-    memo     VARCHAR(100)
+    memo     VARCHAR(100),
+    CONSTRAINT transaction_unique
+        UNIQUE (date, from_acc, to_acc, amount, memo)
 );
 ```
 
@@ -476,7 +478,7 @@ and logging levels are managed in src/main/resources/application.properties.**
 
 ### Currency Formatting
 
-```java
+```plaintext
 NumberFormat.getCurrencyInstance(Locale.US)
 ```
 

@@ -1,10 +1,11 @@
 package mattb.dao;
 
+import javafx.collections.ObservableList;
 import mattb.model.Account;
 import mattb.model.Transaction;
 
 import java.time.LocalDate;
-import java.util.HashMap;
+import java.util.Date;
 
 /**
  * DAO Interface for {@link Transaction Transactions}
@@ -74,9 +75,21 @@ public interface TransactionDAO {
      * @param hidden  Whether to get the hidden or non-hidden {@link Transaction transactions}
      * @param perPage Number of {@link Transaction transactions} to get
      * @param page    Offset of {@link Transaction transactions} request
-     * @return A map of all requested {@link Transaction Transactions}. The {@link Transaction} id as key and the object itself as value
+     * @return A list of all requested {@link Transaction Transactions}
      */
-    HashMap<Integer, Transaction> getAllTransactions(boolean hidden, int perPage, int page);
+    ObservableList<Transaction> getAllTransactions(boolean hidden, int perPage, int page);
+
+    /**
+     * Gets a {@link Transaction Transactions} database id
+     *
+     * @param date      Date {@link Transaction} occurred on
+     * @param fromAccId Database id of the {@link Account} money came from
+     * @param toAccId   Database id of the {@link Account} money went to
+     * @param amount    Amount of money transferred
+     * @param memo      Memo associated with {@link Transaction}
+     * @return Database id of {@code transaction} or -1 if it cannot be found
+     */
+    int getTID(Date date, int fromAccId, int toAccId, double amount, String memo);
 
     /**
      * Gets the number of {@link Transaction transactions} in the database

@@ -1,5 +1,6 @@
 package mattb.service;
 
+import javafx.collections.ObservableList;
 import mattb.FinanceException;
 import mattb.dao.TransactionDAO;
 import mattb.model.Transaction;
@@ -8,7 +9,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
-import java.util.Map;
 
 import static mattb.FinanceError.GET_TRANSACTION_ID_FAIL;
 
@@ -101,10 +101,10 @@ public class TransactionServiceImpl implements TransactionService {
      */
     @Override
     @Transactional
-    public boolean toggleVisibility(Transaction transaction, Map<Integer, Transaction> currentMap, boolean currentState) {
-        if (transaction == null || currentMap == null) return false;
+    public boolean toggleVisibility(Transaction transaction, boolean currentState) {
+        if (transaction == null) return false;
 
-        int id = getTransactionIdFromMap(transaction, currentMap);
+        int id = getTID(transaction);
 
         if (id != -1) {
             transactionDAO.updateTransactionVisibility(id, currentState);
@@ -118,7 +118,7 @@ public class TransactionServiceImpl implements TransactionService {
      * {@inheritDoc}
      */
     @Override
-    public Map<Integer, Transaction> getPagedTransactions(boolean onHidden, int perPage, int page) {
+    public ObservableList<Transaction> getPagedTransactions(boolean onHidden, int perPage, int page) {
         return transactionDAO.getAllTransactions(onHidden, perPage, page);
     }
 
@@ -126,14 +126,11 @@ public class TransactionServiceImpl implements TransactionService {
      * {@inheritDoc}
      */
     @Override
-    public int getTransactionIdFromMap(Transaction transaction, Map<Integer, Transaction> map) {
-        if (transaction == null || map == null) return -1;
-        for (Map.Entry<Integer, Transaction> entry : map.entrySet()) {
-            if (entry.getValue().equals(transaction)) {
-                return entry.getKey();
-            }
-        }
-        return -1;
+    public int getTID(Transaction transaction) {
+        int fromAccId = accountService.getAccId(transaction.fromAccountName());
+        int toAccId = accountService.getAccId(transaction.toAccountName());
+
+        return transactionDAO.getTID(transaction.date(), fromAccId, toAccId, transaction.amount(), transaction.memo());
     }
 
     /**

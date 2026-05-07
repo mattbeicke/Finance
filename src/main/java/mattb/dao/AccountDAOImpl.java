@@ -8,8 +8,6 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
-
 import static mattb.FinanceError.*;
 
 /**
@@ -121,8 +119,8 @@ public class AccountDAOImpl implements AccountDAO {
      * {@inheritDoc}
      */
     @Override
-    public HashMap<Integer, Account> getAllAccounts(boolean hidden, int perPage, int page) {
-        HashMap<Integer, Account> map = new HashMap<>();
+    public ObservableList<Account> getAllAccounts(boolean hidden, int perPage, int page) {
+        ObservableList<Account> accounts = FXCollections.observableArrayList();
 
         String sql = """
                 select acc_id, name, balance, type from account left join account_type on acc_type = type_id
@@ -132,14 +130,14 @@ public class AccountDAOImpl implements AccountDAO {
         try {
             jdbcTemplate.query(sql, rs -> {
                 while (rs.next()) {
-                    map.put(rs.getInt("acc_id"), new Account(rs.getDouble("balance"), rs.getString("type"), rs.getString("name")));
+                    accounts.add(new Account(rs.getDouble("balance"), rs.getString("type"), rs.getString("name")));
                 }
             }, perPage, ((page - 1) * perPage));
         } catch (DataAccessException ignored) {
             new FinanceException(LOAD_ACCOUNTS_FAIL).displayAndLog();
         }
 
-        return map;
+        return accounts;
     }
 
     /**

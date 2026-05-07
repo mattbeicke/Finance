@@ -20,6 +20,7 @@ import mattb.model.TransactionResponse;
 import mattb.service.AccountService;
 import mattb.service.TransactionService;
 import org.springframework.context.ApplicationContext;
+import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.net.URL;
@@ -33,6 +34,7 @@ import static mattb.FinanceError.OPEN_UPDATE_BALANCE_MODAL_FAIL;
  *
  * @author Matthew Beicke
  */
+@Component
 public class AddTransactionController {
     @FXML
     private ComboBox<String> fromCombo;

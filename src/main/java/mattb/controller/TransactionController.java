@@ -24,7 +24,6 @@ import org.springframework.stereotype.Component;
 import java.io.IOException;
 import java.net.URL;
 import java.util.Date;
-import java.util.HashMap;
 
 import static mattb.FinanceError.OPEN_EDIT_TRANSACTION_MODAL_FAIL;
 import static mattb.FinanceError.OPEN_NEW_TRANSACTION_MODAL_FAIL;
@@ -70,7 +69,6 @@ public class TransactionController {
     private final UIUtilities uiUtilities;
 
     private final ObservableList<Transaction> masterData = FXCollections.observableArrayList();
-    private HashMap<Integer, Transaction> map;
 
     private boolean onHidden = false;
     private int page;
@@ -132,8 +130,7 @@ public class TransactionController {
      * Refreshes the {@link Transaction} {@link TableView Table} with either hidden or non-hidden {@link Transaction Transactions}
      */
     private void refreshTable() {
-        map = (HashMap<Integer, Transaction>) transactionService.getPagedTransactions(onHidden, perPage, page);
-        masterData.setAll(map.values());
+        masterData.setAll(transactionService.getPagedTransactions(onHidden, perPage, page));
     }
 
     /**
@@ -143,7 +140,7 @@ public class TransactionController {
     private void hideSelected() {
         Transaction selected = transactionTable.getSelectionModel().getSelectedItem();
 
-        if (transactionService.toggleVisibility(selected, map, onHidden)) {
+        if (transactionService.toggleVisibility(selected, onHidden)) {
             if (onHidden) {
                 uiUtilities.showNotification(true, "Transaction no longer hidden");
             } else {
@@ -194,7 +191,7 @@ public class TransactionController {
     private void editSelected() {
         Transaction selected = transactionTable.getSelectionModel().getSelectedItem();
 
-        int id = transactionService.getTransactionIdFromMap(selected, map);
+        int id = transactionService.getTID(selected);
 
         if (id == -1) {
             uiUtilities.showNotification(false, "No transaction selected");
@@ -242,6 +239,7 @@ public class TransactionController {
                 updatePageInfo();
             }
         } catch (IOException ignored) {
+            System.out.println("here");
             new FinanceException(toEdit == null ? OPEN_NEW_TRANSACTION_MODAL_FAIL : OPEN_EDIT_TRANSACTION_MODAL_FAIL).displayAndLog();
         }
     }

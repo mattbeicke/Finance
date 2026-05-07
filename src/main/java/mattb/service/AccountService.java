@@ -4,8 +4,6 @@ import javafx.collections.ObservableList;
 import mattb.model.Account;
 import mattb.model.AccountResponse;
 
-import java.util.Map;
-
 /**
  * Service Interface for {@link Account Accounts}
  *
@@ -28,11 +26,10 @@ public interface AccountService {
      * Changes a {@link Account Account's} visibility
      *
      * @param account      {@link Account} to update
-     * @param currentMap   {@link Map} containing all currently loaded {@link Account Accounts}
      * @param currentState What to set the transaction to (in terms of visibility)
      * @return {@code true} if successful, {@code false} if not
      */
-    boolean toggleVisibility(Account account, Map<Integer, Account> currentMap, boolean currentState);
+    boolean toggleVisibility(Account account, boolean currentState);
 
     /**
      * Updates {@link Account} balances (if they are not {@code External})
@@ -57,9 +54,9 @@ public interface AccountService {
      * @param onHidden Whether to get the hidden or non-hidden {@link Account accounts}
      * @param perPage  Number of {@link Account accounts} to get
      * @param page     Offset of {@link Account} request
-     * @return A map of all requested {@link Account Accounts}. The {@link Account} id as key and the object itself as value
+     * @return A list of all requested {@link Account Accounts}
      */
-    Map<Integer, Account> getPagedAccounts(boolean onHidden, int perPage, int page);
+    ObservableList<Account> getPagedAccounts(boolean onHidden, int perPage, int page);
 
     /**
      * Gets list of all non-hidden {@link Account Accounts}
@@ -82,15 +79,6 @@ public interface AccountService {
      * @return Database id associated with the {@link Account} name or -1 if no account was found
      */
     int getAccId(String name);
-
-    /**
-     * Checks if a {@link Account} is in the local {@link Map} cache
-     *
-     * @param account {@link Account} to look for
-     * @param map     {@link Map} to check through
-     * @return The database id of the {@link Account} or -1 if it cannot be found
-     */
-    int getAccountIdFromMap(Account account, Map<Integer, Account> map);
 
     /**
      * Computes the max page of the {@link Account} table
