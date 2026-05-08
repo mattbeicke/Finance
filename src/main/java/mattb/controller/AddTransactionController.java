@@ -27,6 +27,7 @@ import java.net.URL;
 import java.time.LocalDate;
 import java.time.ZoneId;
 
+import static mattb.FinanceError.GET_TRANSACTION_ID_FAIL;
 import static mattb.FinanceError.OPEN_UPDATE_BALANCE_MODAL_FAIL;
 
 /**
@@ -109,6 +110,9 @@ public class AddTransactionController {
         );
 
         if (!response.success()) {
+            if (response.message().equals("Please try again later")) {
+                new FinanceException(GET_TRANSACTION_ID_FAIL).displayAndLog();
+            }
             uiUtilities.showNotification(false, response.message());
             return;
         }

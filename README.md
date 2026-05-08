@@ -330,71 +330,78 @@ CREATE TABLE "transaction"
 
 ```
 src/
-└── main/
-    ├── java/
-    │   └── mattb/
-    │       ├── ConfigService.java       # Connection point to Preferences API
-    │       ├── FinanceApp.java          # Spring Boot entry point
-    │       ├── FinanceError.java        # Centralized error messages
-    │       ├── FinanceException.java    # Custom runtime exception
-    │       ├── JavaFXApp.java           # JavaFX application entry
-    │       ├── UIUtilities.java         # Commonly used functions
-    │       │
-    │       ├── controllers/             # UI logic (JavaFX controllers)
-    │       │   ├── AccountController.java
-    │       │   ├── AddAccountController.java
-    │       │   ├── AddGoalController.java
-    │       │   ├── AddTransactionController.java
-    │       │   ├── AddTypeController.java
-    │       │   ├── DashboardController.java
-    │       │   ├── GoalListCellController.java
-    │       │   ├── MainController.java
-    │       │   ├── TransactionController.java
-    │       │   ├── UpdateBalancesController.java
-    │       │   └── ViewGoalDetailsController.java
-    │       │
-    │       ├── dao/                     # Database interactions
-    │       │   ├── AccountDAO.java
-    │       │   ├── AccountDAOImpl.java
-    │       │   ├── GoalDAO.java
-    │       │   ├── GoalDAOImpl.java
-    │       │   ├── TransactionDAO.java
-    │       │   └── TransactionDAOImpl.java
-    │       │
-    │       ├── model/                   # Data models (records)
-    │       │   ├── Account.java
-    │       │   ├── AccountResponse.java
-    │       │   ├── Goal.java
-    │       │   ├── GoalResponse.java
-    │       │   ├── Transaction.java
-    │       │   └── TransactionResponse.java
-    │       │
-    │       └── service/                   # Business logic handling
-    │           ├── AccountService.java
-    │           ├── AccountServiceImpl.java
-    │           ├── GoalService.java
-    │           ├── GoalServiceImpl.java
-    │           ├── TransactionService.java
-    │           └── TransactionServiceImpl.java
-    │
-    └── resources/
-        ├── application.properties       # Contains information for Spring Boot (primarily for how to do SQL database)
-        ├── data.sql                     # SQL file containing the initial seed data
-        ├── schema.sql                   # SQL file containing the table setup code
+├── main/
+│   ├── java/
+│   │   └── mattb/
+│   │       ├── ConfigService.java       # Connection point to Preferences API
+│   │       ├── FinanceApp.java          # Spring Boot entry point
+│   │       ├── FinanceError.java        # Centralized error messages
+│   │       ├── FinanceException.java    # Custom runtime exception
+│   │       ├── JavaFXApp.java           # JavaFX application entry
+│   │       ├── UIUtilities.java         # Commonly used functions
+│   │       │
+│   │       ├── controllers/             # UI logic (JavaFX controllers)
+│   │       │   ├── AccountController.java
+│   │       │   ├── AddAccountController.java
+│   │       │   ├── AddGoalController.java
+│   │       │   ├── AddTransactionController.java
+│   │       │   ├── AddTypeController.java
+│   │       │   ├── DashboardController.java
+│   │       │   ├── GoalListCellController.java
+│   │       │   ├── MainController.java
+│   │       │   ├── TransactionController.java
+│   │       │   ├── UpdateBalancesController.java
+│   │       │   └── ViewGoalDetailsController.java
+│   │       │
+│   │       ├── dao/                     # Database interactions
+│   │       │   ├── AccountDAO.java
+│   │       │   ├── AccountDAOImpl.java
+│   │       │   ├── GoalDAO.java
+│   │       │   ├── GoalDAOImpl.java
+│   │       │   ├── TransactionDAO.java
+│   │       │   └── TransactionDAOImpl.java
+│   │       │
+│   │       ├── model/                   # Data models (records)
+│   │       │   ├── Account.java
+│   │       │   ├── AccountResponse.java
+│   │       │   ├── Goal.java
+│   │       │   ├── GoalResponse.java
+│   │       │   ├── Transaction.java
+│   │       │   └── TransactionResponse.java
+│   │       │
+│   │       └── service/                   # Business logic handling
+│   │           ├── AccountService.java
+│   │           ├── AccountServiceImpl.java
+│   │           ├── GoalService.java
+│   │           ├── GoalServiceImpl.java
+│   │           ├── TransactionService.java
+│   │           └── TransactionServiceImpl.java
+│   │
+│   └── resources/
+│       ├── application.properties       # Contains information for Spring Boot (primarily for how to do SQL database)
+│       ├── data.sql                     # SQL file containing the initial seed data
+│       ├── schema.sql                   # SQL file containing the table setup code
+│       └── mattb/
+│           ├── dark-theme.css           # CSS containing dark theme
+│           └── controllers/             # FXML UI layouts
+│               ├── accounts.fxml
+│               ├── add_account.fxml
+│               ├── add_goal.fxml
+│               ├── add_transaction.fxml
+│               ├── add_type.fxml
+│               ├── dashboard.fxml
+│               ├── goal_cell.fxml
+│               ├── main.fxml
+│               ├── transactions.fxml
+│               ├── update_balance.fxml
+│               └── view_goal_details.fxml
+└── test/
+    └── java/
         └── mattb/
-            ├── dark-theme.css           # CSS containing dark theme
-            └── controllers/             # FXML UI layouts
-                ├── accounts.fxml
-                ├── add_account.fxml
-                ├── add_goal.fxml
-                ├── add_transaction.fxml
-                ├── add_type.fxml
-                ├── dashboard.fxml
-                ├── goal_cell.fxml
-                ├── main.fxml
-                ├── transactions.fxml
-                ├── update_balance.fxml
-                └── view_goal_details.fxml
+            └── service/
+                ├── AccountServiceImplTest.java
+                ├── GoalServiceImplTest.java
+                └── TransactionServiceImplTest.java
 ```
 
 ---
@@ -538,4 +545,4 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 * Improved goal tracking (link to accounts/categories)
 * Data visualization (charts/graphs)
 * Ability to mass import data (via CSV) and export data
-* Proper testing suite
+* Improve tests to include controller, dao, and the misc stuff (ConfigService, FinanceError/Exception, UIUtilities, and JavaFXApp)

@@ -1,7 +1,6 @@
 package mattb.service;
 
 import javafx.collections.ObservableList;
-import mattb.FinanceException;
 import mattb.dao.TransactionDAO;
 import mattb.model.Transaction;
 import mattb.model.TransactionResponse;
@@ -9,8 +8,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
-
-import static mattb.FinanceError.GET_TRANSACTION_ID_FAIL;
 
 /**
  * Service Implementation for {@link Transaction Transactions}
@@ -58,7 +55,6 @@ public class TransactionServiceImpl implements TransactionService {
         }
 
         if (t_id <= 0) {
-            new FinanceException(GET_TRANSACTION_ID_FAIL).displayAndLog();
             return new TransactionResponse(false, "Please try again later", false);
         }
 
@@ -69,12 +65,13 @@ public class TransactionServiceImpl implements TransactionService {
         if (category != null && !category.isBlank()) {
             String[] categories = category.split(",\\s*");
             for (String cat : categories) {
-                if (cat == null || cat.isBlank()) continue;
+                if (cat.isBlank()) continue;
                 int catId = transactionDAO.findOrCreateCategory(cat);
                 if (catId == -1) continue;
                 transactionDAO.linkTransactionCategory(t_id, catId);
             }
         }
+
         return new TransactionResponse(true, "", !editing);
     }
 
@@ -87,7 +84,7 @@ public class TransactionServiceImpl implements TransactionService {
         int fromAccId = accountService.getAccId(fromAcc);
         int toAccId = accountService.getAccId(toAcc);
 
-        if (fromAccId == -1 || toAccId == -1 || amount == null) {
+        if (fromAccId == -1 || toAccId == -1 || amount == null || amount.isBlank()) {
             return false;
         }
 
