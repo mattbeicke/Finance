@@ -30,7 +30,7 @@ class AccountServiceImplTest {
     void testProcessAccountSuccessCreating() {
         when(accountDAO.getTypeId("test")).thenReturn(1);
 
-        AccountResponse response = accountService.processAccount("test", "40", "savinger", anyInt(), false);
+        AccountResponse response = accountService.processAccount("test", "40", "My Savings", anyInt(), false);
 
         assertEquals(successResponse, response);
         verify(accountDAO, times(1)).insertAccount(anyInt(), anyDouble(), anyString());
@@ -40,7 +40,7 @@ class AccountServiceImplTest {
     void testProcessAccountSuccessEditing() {
         when(accountDAO.getTypeId("test")).thenReturn(1);
 
-        AccountResponse response = accountService.processAccount("test", "40", "savinger", anyInt(), true);
+        AccountResponse response = accountService.processAccount("test", "40", "My Savings", anyInt(), true);
 
         assertEquals(successResponse, response);
         verify(accountDAO, times(1)).updateAccount(anyInt(), anyDouble(), anyString(), anyInt());
@@ -48,7 +48,7 @@ class AccountServiceImplTest {
 
     @Test
     void testProcessAccountTypeNull() {
-        AccountResponse response = accountService.processAccount(null, "40", "savinger", 1, true);
+        AccountResponse response = accountService.processAccount(null, "40", "My Savings", 1, true);
 
         assertEquals(failureResponse, response);
         verify(accountDAO, never()).updateAccount(anyInt(), anyDouble(), anyString(), anyInt());
@@ -56,7 +56,7 @@ class AccountServiceImplTest {
 
     @Test
     void testProcessAccountTypeBlank() {
-        AccountResponse response = accountService.processAccount("", "40", "savinger", 1, true);
+        AccountResponse response = accountService.processAccount("", "40", "My Savings", 1, true);
 
         assertEquals(failureResponse, response);
         verify(accountDAO, never()).updateAccount(anyInt(), anyDouble(), anyString(), anyInt());
@@ -66,7 +66,7 @@ class AccountServiceImplTest {
     void testProcessAccountTypeDNE() {
         when(accountDAO.getTypeId("test")).thenReturn(-1);
 
-        AccountResponse response = accountService.processAccount("test", "40", "savinger", 1, true);
+        AccountResponse response = accountService.processAccount("test", "40", "My Savings", 1, true);
 
         assertEquals(failureResponse, response);
         verify(accountDAO, never()).updateAccount(anyInt(), anyDouble(), anyString(), anyInt());
@@ -76,7 +76,7 @@ class AccountServiceImplTest {
     void testProcessBalanceBlank() {
         when(accountDAO.getTypeId("test")).thenReturn(1);
 
-        AccountResponse response = accountService.processAccount("test", "", "savinger", 1, true);
+        AccountResponse response = accountService.processAccount("test", "", "My Savings", 1, true);
 
         assertEquals(failureResponse, response);
         verify(accountDAO, never()).updateAccount(anyInt(), anyDouble(), anyString(), anyInt());

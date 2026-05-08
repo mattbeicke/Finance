@@ -13,7 +13,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -27,7 +26,7 @@ public class TransactionServiceImplTest {
     @InjectMocks
     private TransactionServiceImpl transactionService;
 
-    TransactionResponse failureResponse = new TransactionResponse(false, "Please fill all required fields", false);
+    private final TransactionResponse failureResponse = new TransactionResponse(false, "Please fill all required fields", false);
 
     @Test
     void testProcessTransactionInsertSuccess() {
